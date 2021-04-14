@@ -4,9 +4,9 @@ flake8==3.8.3
 pytest==6.0.1
 pytest-cov==2.10.1
 pytest-mock==3.3.1
-pandas==1.2.4
+pandas==0.23.4
 numpy==1.20.2
-fbprophet==0.7.1
-plotly==4.14.3
+fbprophet==0.6
+plotly==4.11.0
 streamlit==0.80.0
 #prod

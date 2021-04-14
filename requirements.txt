@@ -4,6 +4,8 @@
 #
 #    pip-compile requirements.in
 #
+-e file:///Users/maxime.lutel/Documents/streamlit_prophet
+    # via -r requirements.in
 aiohttp==3.7.4.post0
     # via
     #   httpstan
@@ -51,7 +53,7 @@ click==7.1.2
     # via streamlit
 clikit==0.6.2
     # via pystan
-cmdstanpy==0.9.5
+cmdstanpy==0.4
     # via fbprophet
 convertdate==2.3.2
     # via
@@ -77,7 +79,7 @@ entrypoints==0.3
     #   nbconvert
 ephem==3.7.7.1
     # via lunarcalendar
-fbprophet==0.7.1
+fbprophet==0.6
     # via -r requirements.in
 flake8==3.8.3
     # via -r requirements.in
@@ -204,7 +206,7 @@ packaging==20.9
     #   bleach
     #   pytest
     #   streamlit
-pandas==1.2.4
+pandas==0.23.4
     # via
     #   -r requirements.in
     #   altair
@@ -225,7 +227,7 @@ pillow==8.2.0
     # via
     #   matplotlib
     #   streamlit
-plotly==4.14.3
+plotly==4.11.0
     # via -r requirements.in
 pluggy==0.13.1
     # via pytest
@@ -339,8 +341,6 @@ tornado==6.1
     #   notebook
     #   streamlit
     #   terminado
-tqdm==4.60.0
-    # via fbprophet
 traitlets==5.0.5
     # via
     #   ipykernel
@@ -376,3 +376,6 @@ yarl==1.6.3
     # via aiohttp
 zipp==3.4.0
     # via importlib-metadata
+
+# The following packages are considered to be unsafe in a requirements file:
+# setuptools
