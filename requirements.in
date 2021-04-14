@@ -1,0 +1,7 @@
+-e .
+#Dev
+flake8==3.8.3
+pytest==6.0.1
+pytest-cov==2.10.1
+pytest-mock==3.3.1
+#prod
