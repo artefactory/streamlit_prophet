@@ -1,0 +1,20 @@
+[dataset]
+FILENAME = 'dataset.csv'
+DATE_COLUMN = 'date'
+TARGET_COLUMN = 'target'
+
+[model]
+[model.input_params]
+seasonality_prior_scale = 10
+holidays_prior_scale = 10
+changepoint_prior_scale = 0.05
+growth = ['linear', 'logistic']
+seasonality_mode = ['additive', 'multiplicative']
+n_changepoints = 25
+changepoint_range = 0.8
+holidays = ['FRA', 'US']
+
+[evaluation]
+metrics = ['MAPE', 'SMAPE', 'MSE', 'RMSE', 'MAE', 'R2']
+
+
