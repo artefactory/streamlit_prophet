@@ -4,6 +4,7 @@ from loguru import logger
 from lib.utils.logging import suppress_stdout_stderr
 from lib.dataprep.split import make_eval_df, make_future_df
 
+
 def get_prophet_model(params):
     seasonality_params = {'yearly_seasonality': params['seasonalities']['yearly']['prophet_param'],
                           'weekly_seasonality': params['seasonalities']['weekly']['prophet_param']}
@@ -15,9 +16,10 @@ def get_prophet_model(params):
         model = model.add_country_holidays(country)
     return model
 
-def forecast_worklow(config, use_cv, make_future_forecast, df, params, dates, datasets, models, forecasts):
+
+def forecast_workflow(config, use_cv, make_future_forecast, df, params, dates, datasets, models, forecasts):
     if use_cv:
-        #TODO: Implémenter cross-val
+        # TODO: Implémenter cross-val
         logger.warning("CV not implemented yet")
     else:
         models['eval'] = get_prophet_model(params)
@@ -30,6 +32,6 @@ def forecast_worklow(config, use_cv, make_future_forecast, df, params, dates, da
         with suppress_stdout_stderr():
             models['future'].fit(pd.concat([datasets['train'], datasets['val']], axis=0), seed=config["global"]["seed"])
         datasets = make_future_df(df, dates, datasets, include_history=True)
-        #TODO : Appliquer le même cleaning / les mêmes filtres sur la donnée future que sur l'historique
+        # TODO : Appliquer le même cleaning / les mêmes filtres sur la donnée future que sur l'historique
         forecasts['future'] = models['future'].predict(datasets['future'])
     return datasets, models, forecasts

@@ -55,4 +55,7 @@ def input_forecast_dates(df, dates, config):
     timedelta_horizon = convert_into_nb_of_days(forecast_freq, forecast_horizon)
     dates['forecast_freq'] = forecast_freq
     dates['forecast_end_date'] = dates['forecast_start_date'] + timedelta(days=timedelta_horizon)
+    st.success(
+        f"""Forecast: {dates['forecast_start_date'].strftime('%d/%m/%Y')} - 
+                      {dates['forecast_end_date'].strftime('%d/%m/%Y')}""")
     return dates

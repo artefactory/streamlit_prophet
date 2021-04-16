@@ -3,7 +3,7 @@ from lib.utils.mapping import dayname_to_daynumber
 
 
 def input_cleaning():
-    del_days = st.multiselect("Remove days:",
+    del_days = st.multiselect("Remove days",
                               ['Monday', 'Tuesday', 'Wednesday', 'Thursday',
                                'Friday', 'Saturday', 'Sunday'], default=[])
     del_days = dayname_to_daynumber(del_days)

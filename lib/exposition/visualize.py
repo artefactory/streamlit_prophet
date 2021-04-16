@@ -1,6 +1,35 @@
 import pandas as pd
+from loguru import logger
+import streamlit as st
 import plotly.express as px
 import plotly.graph_objects as go
+from fbprophet.plot import plot_components_plotly, plot_plotly
+from lib.evaluation.preparation import get_evaluation_series, get_evaluation_df
+from lib.evaluation.metrics import get_perf_metrics, prettify_metrics
+
+
+def plot_overview(make_future_forecast, models, forecasts):
+    if make_future_forecast:
+        st.plotly_chart(plot_plotly(models['future'], forecasts['future'], changepoints=True, trend=True))
+        st.plotly_chart(plot_components_plotly(models['future'], forecasts['future']))
+    else:
+        st.plotly_chart(plot_plotly(models['eval'], forecasts['eval'], changepoints=True, trend=True))
+        st.plotly_chart(plot_components_plotly(models['eval'], forecasts['eval']))
+
+
+def plot_performance(use_cv, metrics, target_col, datasets, forecasts, dates, eval_set):
+    if use_cv:
+        # TODO: Implémenter cross-val evaluation
+        logger.warning("CV not implemented yet")
+    else:
+        y_true, y_pred = get_evaluation_series(datasets, forecasts, dates, eval_set)
+        eval_df = get_evaluation_df(datasets, forecasts, dates, eval_set)
+        perf = get_perf_metrics(y_true, y_pred, metrics)
+        st.success(prettify_metrics(perf))
+        st.plotly_chart(plot_forecasts_vs_truth(eval_df, target_col))
+        st.plotly_chart(plot_truth_vs_actual_scatter(eval_df))
+        st.plotly_chart(plot_residuals_distrib(eval_df))
+
 
 def plot_forecasts_vs_truth(eval_df: pd.DataFrame, target_col: str):
     """
@@ -40,6 +69,7 @@ def plot_forecasts_vs_truth(eval_df: pd.DataFrame, target_col: str):
     )
     return fig
 
+
 def plot_truth_vs_actual_scatter(eval_df: pd.DataFrame):
     fig = go.Figure(data=go.Scatter(
         x=eval_df["truth"], y=eval_df["forecast"],
@@ -54,6 +84,7 @@ def plot_truth_vs_actual_scatter(eval_df: pd.DataFrame):
     )
     return fig
 
+
 def plot_residuals_distrib(eval_df: pd.DataFrame):
     """
     Plot the distribution of residuals.
@@ -67,7 +98,7 @@ def plot_residuals_distrib(eval_df: pd.DataFrame):
     fig = px.histogram(
         pd.DataFrame(residuals, columns=['residuals']),
         x='residuals', color_discrete_sequence=["#00828c"]
-        )
+    )
     fig.update_layout(
         xaxis_title="Residual (truth - forecast)",
         yaxis_title="Count"

@@ -1,5 +1,6 @@
 import pandas as pd
 from loguru import logger
+import streamlit as st
 
 
 def train_val_split(df: pd.DataFrame,
@@ -19,6 +20,12 @@ def train_val_split(df: pd.DataFrame,
         logger.warning("There is no validation set. Evaluation won't be possible.")
     datasets['train'] = train
     datasets['val'] = val
+    st.success(
+        f"""Train: {datasets['train'].ds.min().strftime('%d/%m/%Y')} - 
+                   {datasets['train'].ds.max().strftime('%d/%m/%Y')}
+            Valid: {datasets['val'].ds.min().strftime('%d/%m/%Y')} - 
+                   {datasets['val'].ds.max().strftime('%d/%m/%Y')} 
+            ({round((len(datasets['val']) / float(len(df)) * 100))}% of data used for validation)""")
     return datasets
 
 
