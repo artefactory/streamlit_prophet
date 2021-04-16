@@ -1,6 +1,7 @@
 import pandas as pd
-import streamlit as st
-from loguru import logger
+from pathlib import Path
+import toml
+from lib.utils.path import get_project_root
 
 #@st.cache
 def load_data(filepath: str) -> pd.DataFrame:
@@ -18,3 +19,12 @@ def load_data(filepath: str) -> pd.DataFrame:
     except ValueError as e:
         print(f"{e}, File not found.")
         return None
+
+def initialisation(config_filename):
+    config = toml.load(Path(get_project_root()) / f'config/{config_filename}')
+    params = dict()
+    dates = dict()
+    datasets = dict()
+    models = dict()
+    forecasts = dict()
+    return config, params, dates, datasets, models, forecasts
