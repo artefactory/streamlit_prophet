@@ -7,6 +7,7 @@ TARGET_COLUMN = 'target'
 [model.input_params]
 seasonality_prior_scale = 10
 holidays_prior_scale = 10
+regressors_prior_scale = 10
 changepoint_prior_scale = 0.05
 growth = ['linear', 'logistic']
 seasonality_mode = ['additive', 'multiplicative']

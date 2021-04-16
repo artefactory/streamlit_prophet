@@ -3,13 +3,14 @@ from lib.utils.load import initialisation
 from lib.dataprep.clean import format_columns, clean_timeseries
 from lib.dataprep.filter import filter_and_agregate
 from lib.dataprep.split import train_val_split
-from lib.inputs.dataset import input_dataset, input_columns, input_dimensions
-from lib.inputs.dataprep import input_cleaning
+from lib.inputs.dataset import input_dataset, input_columns
+from lib.inputs.dataprep import input_dimensions, input_cleaning
 from lib.inputs.dates import input_split_dates, input_cv_dates, input_forecast_dates
 from lib.inputs.params import (input_prior_scale_params,
                                input_seasonality_params,
                                input_holidays_params,
-                               input_other_params
+                               input_other_params,
+                               input_regressors
                                )
 from lib.models.prophet import forecast_workflow
 from lib.exposition.visualize import plot_performance, plot_overview
@@ -30,9 +31,8 @@ with st.sidebar.beta_expander("Columns", expanded=False):
 # Filtering
 with st.sidebar.beta_expander("Filtering", expanded=False):
     add_dimensions = st.checkbox("My dataset has several dimensions", value=False)
-    if add_dimensions:
-        dimensions = input_dimensions(df)
-        df = filter_and_agregate(df, dimensions)
+    dimensions = input_dimensions(df, add_dimensions)
+    df = filter_and_agregate(df, dimensions)
 
 # Cleaning
 with st.sidebar.beta_expander("Cleaning", expanded=False):
@@ -73,7 +73,8 @@ with st.sidebar.beta_expander("Holidays and events"):
 
 # External regressors
 with st.sidebar.beta_expander("External regressors"):
-    """Implémenter l'ajout de régresseurs"""
+    add_regressors = st.checkbox("My dataset has external regressors", value=False)
+    params = input_regressors(df, config, params, dimensions, add_regressors)
 
 # Other parameters
 with st.sidebar.beta_expander("Other parameters", expanded=False):

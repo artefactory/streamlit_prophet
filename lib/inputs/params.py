@@ -6,16 +6,16 @@ def input_seasonality_params(params):
         'yearly': {
             'period': 365.25,
             'prophet_param': None,
-            },
+        },
         'monthly': {
             'period': 30.5,
             'prophet_param': None,
-            },
+        },
         'weekly': {
             'period': 7,
             'prophet_param': None,
-            },
-        }
+        },
+    }
     for seasonality, values in seasonalities.items():
         values['prophet_param'] = st.selectbox(
             f"{seasonality}_seasonality", ['auto', False, 'custom'])
@@ -45,6 +45,7 @@ def input_prior_scale_params(config, params):
                              }
     return params
 
+
 def input_other_params(config, params):
     default_params = config["model"]["input_params"]
     growth = st.selectbox("growth", default_params['growth'])
@@ -61,6 +62,23 @@ def input_other_params(config, params):
 
 def input_holidays_params(config, params):
     countries = config["model"]["input_params"]["holidays"]
-    #TODO: Ajouter un mapping pour avoir les noms de pays bien écrits
+    # TODO: Ajouter un mapping pour avoir les noms de pays bien écrits
     params['holidays'] = st.multiselect("Add some countries' holidays", countries, default=[])
+    return params
+
+
+def input_regressors(df, config, params, dimensions, add_regressors):
+    regressors = dict()
+    if add_regressors:
+        default_params = config["model"]["input_params"]
+        eligible_cols = set(df.columns) - set(['ds', 'y']) - set(dimensions.keys())
+        if len(eligible_cols) > 0:
+            regressor_cols = st.multiselect("Choose external regressors", eligible_cols, default=[])
+            for col in regressor_cols:
+                regressors[col]['prior_scale'] = st.number_input(f"prior_scale for {col}",
+                                                                 value=default_params['regressors_prior_scale'])
+                regressors[col]['mode'] = st.selectbox(f"mode for {col}", default_params['seasonality_mode'])
+        else:
+            st.write("There are no regressors in your dataset.")
+    params['regressors'] = regressors
     return params

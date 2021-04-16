@@ -17,15 +17,3 @@ def input_columns(config):
     date_col = st.text_input('Date column name', value=config["dataset"]["DATE_COLUMN"])
     target_col = st.text_input('Target column name', value=config["dataset"]["TARGET_COLUMN"])
     return date_col, target_col
-
-
-def input_dimensions(df):
-    eligible_cols = set(df.columns) - set(['ds', 'y'])
-    dimensions = dict()
-    if len(eligible_cols) > 0:
-        dimensions_cols = st.multiselect("Choose dimensions", eligible_cols, default=[])
-        for col in dimensions_cols:
-            dimensions[col] = st.multiselect(f"Values to keep for {col}", df[col].unique(), default=df[col].unique())
-    else:
-        """Date and target are the only columns in your dataset, there are no dimensions."""
-    return dimensions
