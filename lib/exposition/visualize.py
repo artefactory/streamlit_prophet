@@ -1,5 +1,4 @@
 import pandas as pd
-from loguru import logger
 import streamlit as st
 import plotly.express as px
 import plotly.graph_objects as go
@@ -8,10 +7,12 @@ from lib.evaluation.preparation import get_evaluation_series, get_evaluation_df
 from lib.evaluation.metrics import get_perf_metrics, prettify_metrics
 
 
-def plot_overview(make_future_forecast, models, forecasts):
+def plot_overview(make_future_forecast, use_cv, models, forecasts):
     if make_future_forecast:
         st.plotly_chart(plot_plotly(models['future'], forecasts['future'], changepoints=True, trend=True))
         st.plotly_chart(plot_components_plotly(models['future'], forecasts['future']))
+    elif use_cv:
+        st.write("Plot overview not implemented yet with cv")
     else:
         st.plotly_chart(plot_plotly(models['eval'], forecasts['eval'], changepoints=True, trend=True))
         st.plotly_chart(plot_components_plotly(models['eval'], forecasts['eval']))
@@ -19,8 +20,8 @@ def plot_overview(make_future_forecast, models, forecasts):
 
 def plot_performance(use_cv, metrics, target_col, datasets, forecasts, dates, eval_set):
     if use_cv:
-        # TODO: Implémenter cross-val evaluation
-        logger.warning("CV not implemented yet")
+        st.write("Plot performance not implemented yet with cv")
+        st.dataframe(forecasts['cv'])
     else:
         y_true, y_pred = get_evaluation_series(datasets, forecasts, dates, eval_set)
         eval_df = get_evaluation_df(datasets, forecasts, dates, eval_set)

@@ -1,43 +1,53 @@
 import streamlit as st
 from datetime import timedelta
 from lib.utils.mapping import convert_into_nb_of_days
+from lib.dataprep.split import get_max_possible_cv_horizon, get_cv_cutoffs, prettify_cv_folds_dates
 
-def input_split_dates(df, dates):
+
+def input_train_dates(df, dates):
     dates['train_start_date'] = st.date_input(
-        "Training start date:",
+        "Training start date",
         value=df.ds.min(),
         min_value=df.ds.min(),
         max_value=df.ds.max(),
     )
+    dates['train_end_date'] = st.date_input(
+        "Training end date",
+        value=df.ds.max() - timedelta(days=30), # TODO: Gérer le edge case où le dataset fait moins de 30 jours
+        min_value=dates['train_start_date'] + timedelta(days=1),
+        max_value=df.ds.max(),
+    )
+    return dates
+
+
+def input_val_dates(df, dates):
     dates['val_start_date'] = st.date_input(
-        "Validation start date:",
-        value=df.ds.max() - timedelta(days=30),
-        min_value=dates['train_start_date'],
+        "Validation start date",
+        value=dates['train_end_date'] + timedelta(days=1), # TODO: Gérer le edge case où la train end date entrée est df.ds.max()
+        min_value=dates['train_end_date'] + timedelta(days=1),
         max_value=df.ds.max(),
     )
     dates['val_end_date'] = st.date_input(
-        "Validation end date:",
+        "Validation end date",
         value=df.ds.max(),
-        min_value=dates['val_start_date'],
+        min_value=dates['val_start_date'] + timedelta(days=1),
         max_value=df.ds.max(),
     )
     return dates
 
-def input_cv_dates(df, dates):
-    dates['cv_start_date'] = st.date_input(
-        "CV start date:",
-        value=df.ds.min(),
-        min_value=df.ds.min(),
-        max_value=df.ds.max(),
-    )
-    dates['cv_end_date'] = st.date_input(
-        "CV end date:",
-        value=df.ds.max(),
-        min_value=dates['cv_start_date'],
-        max_value=df.ds.max(),
-    )
-    dates['n_folds'] = st.number_input("Number of CV folds:", min_value=1, value=5)
+
+def input_cv(dates):
+    dates['n_folds'] = st.number_input("Number of CV folds", min_value=1, value=5)
+    max_possible_horizon = get_max_possible_cv_horizon(dates)
+    dates['folds_horizon'] = st.number_input("Horizon of each fold (in days)",
+                                             min_value=1,
+                                             max_value=max_possible_horizon,
+                                             value=min(30,max_possible_horizon)
+                                             )
+    dates['cutoffs'] = get_cv_cutoffs(dates)
+    st.success(prettify_cv_folds_dates(dates))
     return dates
+
 
 def input_forecast_dates(df, dates, config):
     forecast_freq = st.selectbox("Granularity of prediction", config["forecast"]["freq"])

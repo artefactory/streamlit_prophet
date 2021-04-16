@@ -353,6 +353,8 @@ tornado==6.1
     #   notebook
     #   streamlit
     #   terminado
+tqdm==4.60.0
+    # via -r requirements.in
 traitlets==5.0.5
     # via
     #   ipykernel

@@ -2,10 +2,10 @@ import streamlit as st
 from lib.utils.load import initialisation
 from lib.dataprep.clean import format_columns, clean_timeseries
 from lib.dataprep.filter import filter_and_agregate
-from lib.dataprep.split import train_val_split
+from lib.dataprep.split import train_val_split, get_training_set
 from lib.inputs.dataset import input_dataset, input_columns
 from lib.inputs.dataprep import input_dimensions, input_cleaning
-from lib.inputs.dates import input_split_dates, input_cv_dates, input_forecast_dates
+from lib.inputs.dates import input_train_dates, input_val_dates, input_cv, input_forecast_dates
 from lib.inputs.params import (input_prior_scale_params,
                                input_seasonality_params,
                                input_holidays_params,
@@ -42,11 +42,12 @@ with st.sidebar.beta_expander("Cleaning", expanded=False):
 # Evaluation process
 with st.sidebar.beta_expander("Evaluation process", expanded=False):
     use_cv = st.checkbox("Perform cross-validation", value=False)
+    dates = input_train_dates(df, dates)
     if use_cv:
-        dates = input_cv_dates(df, dates)
-        # TODO: Implémenter st.success des dates de chaque fold de cross-val
+        dates = input_cv(dates)
+        datasets = get_training_set(df, dates, datasets)
     else:
-        dates = input_split_dates(df, dates)
+        dates = input_val_dates(df, dates)
         datasets = train_val_split(df, dates, datasets)
 
 # Forecast
@@ -105,7 +106,7 @@ with st.sidebar.beta_expander("Scope", expanded=False):
     # TODO: Implémenter granularité d'évaluation
 
 st.write('# 1. Overview')
-plot_overview(make_future_forecast, models, forecasts)
+plot_overview(make_future_forecast, use_cv, models, forecasts)
 
 st.write(f'# 2. Evaluation on {eval_set.lower()} set')
 plot_performance(use_cv, metrics, target_col, datasets, forecasts, dates, eval_set)

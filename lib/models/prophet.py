@@ -1,8 +1,7 @@
 from fbprophet import Prophet
-import pandas as pd
-from loguru import logger
 from lib.utils.logging import suppress_stdout_stderr
 from lib.dataprep.split import make_eval_df, make_future_df
+from lib.models.prophet_cv import cross_validation
 
 
 def instantiate_prophet_model(params):
@@ -23,20 +22,21 @@ def instantiate_prophet_model(params):
 
 
 def forecast_workflow(config, use_cv, make_future_forecast, df, params, dates, datasets, models, forecasts):
-    if use_cv:
-        # TODO: Implémenter cross-val
-        logger.warning("CV not implemented yet")
-    else:
+    with suppress_stdout_stderr():
         models['eval'] = instantiate_prophet_model(params)
-        with suppress_stdout_stderr():
-            models['eval'].fit(datasets['train'], seed=config["global"]["seed"])
-        datasets = make_eval_df(datasets)
-        forecasts['eval'] = models['eval'].predict(datasets['eval'])
-    if make_future_forecast:
-        models['future'] = instantiate_prophet_model(params)
-        with suppress_stdout_stderr():
-            models['future'].fit(pd.concat([datasets['train'], datasets['val']], axis=0), seed=config["global"]["seed"])
-        datasets = make_future_df(df, dates, datasets, include_history=True)
-        # TODO : Appliquer le même cleaning / les mêmes filtres sur la donnée future que sur l'historique
-        forecasts['future'] = models['future'].predict(datasets['future'])
+        models['eval'].fit(datasets['train'], seed=config["global"]["seed"])
+        if use_cv:
+            forecasts['cv'] = cross_validation(models['eval'],
+                                               cutoffs=dates['cutoffs'],
+                                               horizon=f"{dates['folds_horizon']} days"
+                                               )
+        else:
+            datasets = make_eval_df(datasets)
+            forecasts['eval'] = models['eval'].predict(datasets['eval'])
+        if make_future_forecast:
+            models['future'] = instantiate_prophet_model(params)
+            models['future'].fit(datasets['full'], seed=config["global"]["seed"])
+            datasets = make_future_df(df, dates, datasets, include_history=True)
+            # TODO : Appliquer le même cleaning / les mêmes filtres sur la donnée future que sur l'historique
+            forecasts['future'] = models['future'].predict(datasets['future'])
     return datasets, models, forecasts
