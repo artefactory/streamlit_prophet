@@ -7,7 +7,7 @@ import streamlit as st
 def input_dataset():
     #TODO: Ajouter la possibilité d'uploader son propre dataset
     data_filenames = [path.name for path in list_files(get_project_root() + '/data/', '*.*csv*')]
-    filename = st.selectbox("Select a file:", data_filenames)
+    filename = st.selectbox("Select a file", data_filenames)
     filepath = Path(get_project_root()) / 'data' / filename
     df = load_data(filepath)
     return df

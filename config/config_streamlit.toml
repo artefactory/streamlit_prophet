@@ -17,4 +17,10 @@ holidays = ['FRA', 'US']
 [evaluation]
 metrics = ['MAPE', 'SMAPE', 'MSE', 'RMSE', 'MAE', 'R2']
 
+[forecast]
+freq = ['day', 'week', 'month', 'quarter', 'year']
+
+[global]
+seed = 42
+
 
