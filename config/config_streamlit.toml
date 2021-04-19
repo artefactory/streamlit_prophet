@@ -1,7 +1,7 @@
 [dataset]
-FILENAME = 'dataset.csv'
+FILENAME = 'dataset_m5.csv'
 DATE_COLUMN = 'date'
-TARGET_COLUMN = 'target'
+TARGET_COLUMN = 'sales'
 
 [model]
 [model.input_params]

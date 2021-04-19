@@ -67,18 +67,18 @@ def input_holidays_params(config, params):
     return params
 
 
-def input_regressors(df, config, params, dimensions, add_regressors):
+def input_regressors(df, config, params):
     regressors = dict()
-    if add_regressors:
-        default_params = config["model"]["input_params"]
-        eligible_cols = set(df.columns) - set(['ds', 'y']) - set(dimensions.keys())
-        if len(eligible_cols) > 0:
-            regressor_cols = st.multiselect("Choose external regressors", eligible_cols, default=[])
-            for col in regressor_cols:
-                regressors[col]['prior_scale'] = st.number_input(f"prior_scale for {col}",
-                                                                 value=default_params['regressors_prior_scale'])
-                regressors[col]['mode'] = st.selectbox(f"mode for {col}", default_params['seasonality_mode'])
-        else:
-            st.write("There are no regressors in your dataset.")
+    default_params = config["model"]["input_params"]
+    eligible_cols = set(df.columns) - set(['ds', 'y'])
+    if len(eligible_cols) > 0:
+        regressor_cols = st.multiselect("Select external regressors if any", list(eligible_cols), default=[])
+        for col in regressor_cols:
+            regressors[col] = dict()
+            regressors[col]['prior_scale'] = st.number_input(f"prior_scale for {col}",
+                                                             value=default_params['regressors_prior_scale'])
+            regressors[col]['mode'] = st.selectbox(f"mode for {col}", default_params['seasonality_mode'])
+    else:
+        st.write("There are no regressors in your dataset.")
     params['regressors'] = regressors
     return params

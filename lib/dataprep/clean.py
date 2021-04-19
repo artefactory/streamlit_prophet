@@ -8,6 +8,7 @@ def format_columns(
         target_col: str
         ) -> pd.DataFrame:
     df[date_col] = pd.to_datetime(df[date_col])
+    df[target_col] = df[target_col].astype('float')
     df = df.rename(columns={date_col: 'ds', target_col:'y'})
     return df
 

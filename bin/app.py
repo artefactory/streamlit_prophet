@@ -1,8 +1,8 @@
 import streamlit as st
-from lib.utils.load import initialisation
+from lib.utils.load import load_config
 from lib.dataprep.clean import format_columns, clean_timeseries
-from lib.dataprep.filter import filter_and_agregate
-from lib.dataprep.split import train_val_split, get_training_set
+from lib.dataprep.filter import format_dataframe
+from lib.dataprep.split import get_train_val_sets, get_train_set
 from lib.inputs.dataset import input_dataset, input_columns
 from lib.inputs.dataprep import input_dimensions, input_cleaning
 from lib.inputs.dates import input_train_dates, input_val_dates, input_cv, input_forecast_dates
@@ -15,7 +15,9 @@ from lib.inputs.params import (input_prior_scale_params,
 from lib.models.prophet import forecast_workflow
 from lib.exposition.visualize import plot_performance, plot_overview
 
-config, params, dates, datasets, models, forecasts = initialisation('config_streamlit.toml')
+# Initialization
+config, readme = load_config('config_streamlit.toml', 'config_readme.toml')
+params, dates, datasets, models, forecasts = dict(), dict(), dict(), dict(), dict()
 
 st.sidebar.title("1. Data")
 
@@ -30,9 +32,8 @@ with st.sidebar.beta_expander("Columns", expanded=False):
 
 # Filtering
 with st.sidebar.beta_expander("Filtering", expanded=False):
-    add_dimensions = st.checkbox("My dataset has several dimensions", value=False)
-    dimensions = input_dimensions(df, add_dimensions)
-    df = filter_and_agregate(df, dimensions)
+    dimensions = input_dimensions(df)
+    df = format_dataframe(df, dimensions)
 
 # Cleaning
 with st.sidebar.beta_expander("Cleaning", expanded=False):
@@ -45,10 +46,10 @@ with st.sidebar.beta_expander("Evaluation process", expanded=False):
     dates = input_train_dates(df, dates)
     if use_cv:
         dates = input_cv(dates)
-        datasets = get_training_set(df, dates, datasets)
+        datasets = get_train_set(df, dates, datasets)
     else:
         dates = input_val_dates(df, dates)
-        datasets = train_val_split(df, dates, datasets)
+        datasets = get_train_val_sets(df, dates, datasets)
 
 # Forecast
 with st.sidebar.beta_expander("Forecast", expanded=False):
@@ -70,12 +71,11 @@ with st.sidebar.beta_expander("Seasonalities", expanded=False):
 # Holidays and events
 with st.sidebar.beta_expander("Holidays and events"):
     params = input_holidays_params(config, params)
-    # TODO: Ajouter la possibilité d'entrer une date d'événement à encoder (ex: confinemnent)
+    # TODO: Ajouter la possibilité d'entrer une date d'événement à encoder ? (ex: confinemnent)
 
 # External regressors
 with st.sidebar.beta_expander("External regressors"):
-    add_regressors = st.checkbox("My dataset has external regressors", value=False)
-    params = input_regressors(df, config, params, dimensions, add_regressors)
+    params = input_regressors(df, config, params)
 
 # Other parameters
 with st.sidebar.beta_expander("Other parameters", expanded=False):
@@ -104,6 +104,9 @@ with st.sidebar.beta_expander("Scope", expanded=False):
     eval_set = st.selectbox("Choose evaluation set", ['Validation', 'Training'])
     eval_granularity = st.selectbox("Choose evaluation granularity", ['Global', 'Daily', 'Weekly', 'Monthly', 'Yearly'])
     # TODO: Implémenter granularité d'évaluation
+
+with st.beta_expander("More info on parameters", expanded=False):
+    st.write(readme['params']['PROPHET_PARAMS_README'])
 
 st.write('# 1. Overview')
 plot_overview(make_future_forecast, use_cv, models, forecasts)

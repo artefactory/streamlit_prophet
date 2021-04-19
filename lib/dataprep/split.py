@@ -3,10 +3,10 @@ import streamlit as st
 from datetime import timedelta
 
 
-def train_val_split(df: pd.DataFrame,
-                    dates: dict,
-                    datasets: dict
-                    ) -> dict:
+def get_train_val_sets(df: pd.DataFrame,
+                       dates: dict,
+                       datasets: dict
+                       ) -> dict:
     train = df.query(f'ds >= "{dates["train_start_date"]}" & ds <= "{dates["train_end_date"]}"').copy()
     val = df.query(f'ds >= "{dates["val_start_date"]}" & ds <= "{dates["val_end_date"]}"').copy()
     datasets['train'] = train
@@ -21,7 +21,7 @@ def train_val_split(df: pd.DataFrame,
     return datasets
 
 
-def get_training_set(df: pd.DataFrame,
+def get_train_set(df: pd.DataFrame,
                     dates: dict,
                     datasets: dict
                     ) -> dict:
@@ -32,8 +32,8 @@ def get_training_set(df: pd.DataFrame,
 
 
 def make_eval_df(datasets: dict) -> dict:
-    eval = pd.DataFrame()
-    eval['ds'] = datasets['train']['ds'].to_list() + datasets['val']['ds'].to_list()
+    eval = pd.concat([datasets['train'], datasets['val']], axis=0)
+    eval = eval.drop('y', axis=1)
     datasets['eval'] = eval
     return datasets
 
@@ -43,6 +43,7 @@ def make_future_df(df: pd.DataFrame,
                    datasets: dict,
                    include_history: bool = True
                    ) -> dict:
+    # TODO: Inclure les valeurs futures de régresseurs ? Pour l'instant, use_regressors = False pour le forecast
     if include_history:
         start_date = df.ds.min()
     else:
