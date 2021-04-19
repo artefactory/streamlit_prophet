@@ -2,14 +2,15 @@ import streamlit as st
 from lib.utils.mapping import dayname_to_daynumber
 
 
-def input_cleaning():
+def input_cleaning(cleaning_options: dict):
     del_days = st.multiselect("Remove days",
                               ['Monday', 'Tuesday', 'Wednesday', 'Thursday',
                                'Friday', 'Saturday', 'Sunday'], default=[])
-    del_days = dayname_to_daynumber(del_days)
-    del_zeros = st.checkbox('Delete rows where target = 0', True, key=1)
-    del_negative = st.checkbox('Delete rows where target < 0', True, key=1)
-    return del_days, del_zeros, del_negative
+    cleaning_options['del_days'] = dayname_to_daynumber(del_days)
+    cleaning_options['del_zeros'] = st.checkbox('Delete rows where target = 0', True, key=1)
+    cleaning_options['del_negative'] = st.checkbox('Delete rows where target < 0', True, key=1)
+    cleaning_options['log_transform'] = st.checkbox('Target log transform', False, key=1)
+    return cleaning_options
 
 
 def input_dimensions(df):

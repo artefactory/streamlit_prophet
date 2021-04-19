@@ -1,7 +1,7 @@
 import pandas as pd
 
 
-def format_dataframe(df: pd.DataFrame, dimensions: dict):
+def format_df(df: pd.DataFrame, dimensions: dict):
     df = _filter(df, dimensions)
     df = _format_regressors(df)
     df = _aggregate(df)

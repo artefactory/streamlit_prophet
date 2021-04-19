@@ -1,7 +1,7 @@
 import streamlit as st
 from lib.utils.load import load_config
-from lib.dataprep.clean import format_columns, clean_timeseries
-from lib.dataprep.filter import format_dataframe
+from lib.dataprep.clean import format_date_and_target, clean_df
+from lib.dataprep.filter import format_df
 from lib.dataprep.split import get_train_val_sets, get_train_set
 from lib.inputs.dataset import input_dataset, input_columns
 from lib.inputs.dataprep import input_dimensions, input_cleaning
@@ -17,7 +17,7 @@ from lib.exposition.visualize import plot_performance, plot_overview
 
 # Initialization
 config, readme = load_config('config_streamlit.toml', 'config_readme.toml')
-params, dates, datasets, models, forecasts = dict(), dict(), dict(), dict(), dict()
+params, cleaning_options, dates, datasets, models, forecasts = dict(), dict(), dict(), dict(), dict(), dict()
 
 st.sidebar.title("1. Data")
 
@@ -28,17 +28,17 @@ with st.sidebar.beta_expander("Select a dataset", expanded=False):
 # Column names
 with st.sidebar.beta_expander("Columns", expanded=False):
     date_col, target_col = input_columns(config)
-    df = format_columns(df, date_col, target_col)
+    df = format_date_and_target(df, date_col, target_col)
 
 # Filtering
 with st.sidebar.beta_expander("Filtering", expanded=False):
     dimensions = input_dimensions(df)
-    df = format_dataframe(df, dimensions)
+    df = format_df(df, dimensions)
 
 # Cleaning
 with st.sidebar.beta_expander("Cleaning", expanded=False):
-    del_days, del_zeros, del_negative = input_cleaning()
-    df = clean_timeseries(df, del_negative, del_zeros, del_days)
+    cleaning_options = input_cleaning(cleaning_options)
+    df = clean_df(df, cleaning_options)
 
 # Evaluation process
 with st.sidebar.beta_expander("Evaluation process", expanded=False):

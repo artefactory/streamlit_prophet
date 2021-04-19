@@ -1,23 +1,27 @@
 import pandas as pd
-from typing import List, Optional
 import numpy as np
 
-def format_columns(
-        df: pd.DataFrame,
-        date_col: str,
-        target_col: str
-        ) -> pd.DataFrame:
+
+def format_date_and_target(df: pd.DataFrame, date_col: str, target_col: str) -> pd.DataFrame:
     df[date_col] = pd.to_datetime(df[date_col])
     df[target_col] = df[target_col].astype('float')
-    df = df.rename(columns={date_col: 'ds', target_col:'y'})
+    df = df.rename(columns={date_col: 'ds', target_col: 'y'})
     return df
 
-def clean_timeseries(
-        df: pd.DataFrame,
-        del_negative: bool,
-        del_zeros: bool,
-        del_days: Optional[List[int]],
-        ) -> pd.DataFrame:
+
+def clean_df(df: pd.DataFrame, cleaning_options: dict) -> pd.DataFrame:
+    df = _remove_rows(df, cleaning_options)
+    df = _log_transform(df, cleaning_options)
+    return df
+
+
+def _log_transform(df: pd.DataFrame, cleaning_options: dict) -> pd.DataFrame:
+    if cleaning_options['log_transform']:
+        df['y'] = np.log(df['y'])
+    return df
+
+
+def _remove_rows(df: pd.DataFrame, cleaning_options: dict) -> pd.DataFrame:
     """
     Parameters
     ----------
@@ -35,12 +39,12 @@ def clean_timeseries(
     # first, let's flag values that needs to be processed
     df_clean = df.copy()
     df_clean['__to_remove'] = 0
-    if del_negative is True:
+    if cleaning_options['del_negative']:
         df_clean['__to_remove'] = np.where(df_clean['y'] < 0, 1, df_clean['__to_remove'])
-    if del_days is not None:
+    if cleaning_options['del_days'] is not None:
         df_clean['__to_remove'] = np.where(
-            df_clean.ds.dt.dayofweek.isin(del_days), 1, df_clean['__to_remove'])
-    if del_zeros is True:
+            df_clean.ds.dt.dayofweek.isin(cleaning_options['del_days']), 1, df_clean['__to_remove'])
+    if cleaning_options['del_zeros']:
         df_clean['__to_remove'] = np.where(df_clean['y'] == 0, 1, df_clean['__to_remove'])
     # then, process the data and delete the flag
     df_clean = df_clean.query("__to_remove != 1")
