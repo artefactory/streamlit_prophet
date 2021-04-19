@@ -61,7 +61,7 @@ def plot_forecasts_vs_truth(eval_df: pd.DataFrame, target_col: str):
         legend=dict(
             orientation="h",
             yanchor="bottom",
-            y=1.1,
+            y=1,
             xanchor="right",
             x=1,
 

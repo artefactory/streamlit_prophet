@@ -4,15 +4,16 @@ from lib.utils.mapping import convert_into_nb_of_days
 from lib.dataprep.split import get_max_possible_cv_horizon, get_cv_cutoffs, prettify_cv_folds_dates
 
 
-def input_train_dates(df, dates):
+def input_train_dates(df, dates, use_cv):
+    set_name = "CV" if use_cv else "Training"
     dates['train_start_date'] = st.date_input(
-        "Training start date",
+        f"{set_name} start date",
         value=df.ds.min(),
         min_value=df.ds.min(),
         max_value=df.ds.max(),
     )
     dates['train_end_date'] = st.date_input(
-        "Training end date",
+        f"{set_name} end date",
         value=df.ds.max() - timedelta(days=30), # TODO: Gérer le edge case où le dataset fait moins de 30 jours
         min_value=dates['train_start_date'] + timedelta(days=1),
         max_value=df.ds.max(),

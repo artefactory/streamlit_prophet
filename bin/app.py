@@ -43,7 +43,7 @@ with st.sidebar.beta_expander("Cleaning", expanded=False):
 # Evaluation process
 with st.sidebar.beta_expander("Evaluation process", expanded=False):
     use_cv = st.checkbox("Perform cross-validation", value=False)
-    dates = input_train_dates(df, dates)
+    dates = input_train_dates(df, dates, use_cv)
     if use_cv:
         dates = input_cv(dates)
         datasets = get_train_set(df, dates, datasets)

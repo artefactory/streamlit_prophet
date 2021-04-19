@@ -22,9 +22,9 @@ def get_train_val_sets(df: pd.DataFrame,
 
 
 def get_train_set(df: pd.DataFrame,
-                    dates: dict,
-                    datasets: dict
-                    ) -> dict:
+                  dates: dict,
+                  datasets: dict
+                  ) -> dict:
     train = df.query(f'ds >= "{dates["train_start_date"]}" & ds <= "{dates["train_end_date"]}"').copy()
     datasets['train'] = train
     datasets['full'] = df.copy()
