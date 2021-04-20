@@ -15,9 +15,6 @@ n_changepoints = 25
 changepoint_range = 0.8
 holidays = ['FRA', 'US']
 
-[evaluation]
-metrics = ['MAPE', 'SMAPE', 'MSE', 'RMSE', 'MAE', 'R2']
-
 [forecast]
 freq = ['day', 'week', 'month', 'quarter', 'year']
 

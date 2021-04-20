@@ -12,12 +12,13 @@ from lib.inputs.params import (input_prior_scale_params,
                                input_other_params,
                                input_regressors
                                )
+from lib.inputs.eval import input_metrics, input_scope_eval
 from lib.models.prophet import forecast_workflow
 from lib.exposition.visualize import plot_performance, plot_overview
 
 # Initialization
 config, readme = load_config('config_streamlit.toml', 'config_readme.toml')
-params, cleaning_options, dates, datasets, models, forecasts = dict(), dict(), dict(), dict(), dict(), dict()
+params, cleaning, dates, datasets, models, forecasts, eval = dict(), dict(), dict(), dict(), dict(), dict(), dict()
 
 st.sidebar.title("1. Data")
 
@@ -37,8 +38,8 @@ with st.sidebar.beta_expander("Filtering", expanded=False):
 
 # Cleaning
 with st.sidebar.beta_expander("Cleaning", expanded=False):
-    cleaning_options = input_cleaning(cleaning_options)
-    df = clean_df(df, cleaning_options)
+    cleaning = input_cleaning(cleaning)
+    df = clean_df(df, cleaning)
 
 # Evaluation process
 with st.sidebar.beta_expander("Evaluation process", expanded=False):
@@ -94,16 +95,12 @@ st.sidebar.title("3. Evaluation")
 
 # Performance metrics
 with st.sidebar.beta_expander("Metrics", expanded=False):
-    metrics = st.multiselect("Choose evaluation metrics",
-                             config["evaluation"]["metrics"],
-                             default=['MAPE', 'RMSE']
-                             )
+    eval = input_metrics(eval)
 
 # Scope of evaluation
-with st.sidebar.beta_expander("Scope", expanded=False):
-    eval_set = st.selectbox("Choose evaluation set", ['Validation', 'Training'])
-    eval_granularity = st.selectbox("Choose evaluation granularity", ['Global', 'Daily', 'Weekly', 'Monthly', 'Yearly'])
-    # TODO: Implémenter granularité d'évaluation
+with st.sidebar.beta_expander("Scope and method", expanded=False):
+    eval = input_scope_eval(eval)
+
 
 with st.beta_expander("More info on parameters", expanded=False):
     st.write(readme['params']['PROPHET_PARAMS_README'])
@@ -111,8 +108,8 @@ with st.beta_expander("More info on parameters", expanded=False):
 st.write('# 1. Overview')
 plot_overview(make_future_forecast, use_cv, models, forecasts)
 
-st.write(f'# 2. Evaluation on {eval_set.lower()} set')
-plot_performance(use_cv, metrics, target_col, datasets, forecasts, dates, eval_set)
+st.write(f'# 2. Evaluation on {eval["set"].lower()} set')
+plot_performance(use_cv, target_col, datasets, forecasts, dates, eval)
 
 # st.write('# 3. Impact of components and regressors')
 # st.write('# 4. Future forecast')

@@ -9,9 +9,9 @@ def format_date_and_target(df: pd.DataFrame, date_col: str, target_col: str) -> 
     return df
 
 
-def clean_df(df: pd.DataFrame, cleaning_options: dict) -> pd.DataFrame:
-    df = _remove_rows(df, cleaning_options)
-    df = _log_transform(df, cleaning_options)
+def clean_df(df: pd.DataFrame, cleaning: dict) -> pd.DataFrame:
+    df = _remove_rows(df, cleaning)
+    df = _log_transform(df, cleaning)
     return df
 
 

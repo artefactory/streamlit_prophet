@@ -3,8 +3,8 @@ import streamlit as st
 import plotly.express as px
 import plotly.graph_objects as go
 from fbprophet.plot import plot_components_plotly, plot_plotly
-from lib.evaluation.preparation import get_evaluation_series, get_evaluation_df
-from lib.evaluation.metrics import get_perf_metrics, prettify_metrics
+from lib.evaluation.preparation import get_evaluation_df
+from lib.evaluation.metrics import get_perf_metrics
 
 
 def plot_overview(make_future_forecast, use_cv, models, forecasts):
@@ -18,18 +18,18 @@ def plot_overview(make_future_forecast, use_cv, models, forecasts):
         st.plotly_chart(plot_components_plotly(models['eval'], forecasts['eval']))
 
 
-def plot_performance(use_cv, metrics, target_col, datasets, forecasts, dates, eval_set):
+def plot_performance(use_cv, target_col, datasets, forecasts, dates, eval):
     if use_cv:
         st.write("Plot performance not implemented yet with cv")
         st.dataframe(forecasts['cv'])
     else:
-        y_true, y_pred = get_evaluation_series(datasets, forecasts, dates, eval_set)
-        eval_df = get_evaluation_df(datasets, forecasts, dates, eval_set)
-        perf = get_perf_metrics(y_true, y_pred, metrics)
-        st.success(prettify_metrics(perf))
-        st.plotly_chart(plot_forecasts_vs_truth(eval_df, target_col))
-        st.plotly_chart(plot_truth_vs_actual_scatter(eval_df))
-        st.plotly_chart(plot_residuals_distrib(eval_df))
+        evaluation_df = get_evaluation_df(datasets, forecasts, dates, eval)
+        metrics_df, perf = get_perf_metrics(evaluation_df, eval)
+        st.dataframe(metrics_df)
+        plot_perf_metrics(perf, eval)
+        st.plotly_chart(plot_forecasts_vs_truth(evaluation_df, target_col))
+        st.plotly_chart(plot_truth_vs_actual_scatter(evaluation_df))
+        st.plotly_chart(plot_residuals_distrib(evaluation_df))
 
 
 def plot_forecasts_vs_truth(eval_df: pd.DataFrame, target_col: str):
@@ -105,3 +105,14 @@ def plot_residuals_distrib(eval_df: pd.DataFrame):
         yaxis_title="Count"
     )
     return fig
+
+
+def plot_perf_metrics(perf: dict, eval:dict):
+    if eval['method'] == 'Compute global error':
+        for metric in perf.keys():
+            if perf[metric][eval['granularity']].nunique() > 1:
+                fig = px.bar(perf[metric], x=eval['granularity'], y=metric)
+                st.plotly_chart(fig)
+    elif eval['method'] == 'Sum all errors':
+        st.write('Viz not implemented yet.')
+        # TODO : Viz for sum method

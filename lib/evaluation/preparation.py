@@ -1,22 +1,29 @@
 import pandas as pd
 
 
-def get_evaluation_series(datasets, forecasts, dates, eval_set):
-    if eval_set == 'Validation':
-        y_true = datasets['val'].y
-        y_pred = forecasts['eval'].query(f'ds >= "{dates["val_start_date"]}" & '
-                                         f'ds <= "{dates["val_end_date"]}"').yhat
-    elif eval_set == 'Training':
-        y_true = datasets['train'].y
-        y_pred = forecasts['eval'].query(f'ds >= "{dates["train_start_date"]}" & '
-                                         f'ds <= "{dates["train_end_date"]}"').yhat
-    return y_true, y_pred
+def get_evaluation_df(datasets, forecasts, dates, eval) -> pd.DataFrame:
+    evaluation_df = pd.DataFrame()
+    if eval['set'] == 'Validation':
+        evaluation_df['ds'] = datasets['val'].ds.copy()
+        evaluation_df['truth'] = list(datasets['val'].y)
+        evaluation_df['forecast'] = list(forecasts['eval'].query(f'ds >= "{dates["val_start_date"]}" & '
+                                                                 f'ds <= "{dates["val_end_date"]}"').yhat)
+    elif eval['set'] == 'Training':
+        evaluation_df['ds'] = datasets['train'].ds.copy()
+        evaluation_df['truth'] = list(datasets['train'].y)
+        evaluation_df['forecast'] = list(forecasts['eval'].query(f'ds >= "{dates["train_start_date"]}" & '
+                                                                 f'ds <= "{dates["train_end_date"]}"').yhat)
+    return evaluation_df
 
 
-def get_evaluation_df(datasets, forecasts, dates, eval_set) -> pd.DataFrame:
-    y_true, y_pred = get_evaluation_series(datasets, forecasts, dates, eval_set)
-    eval_df = pd.DataFrame()
-    eval_df['ds'] = datasets['val'].ds.copy() if eval_set == 'Validation' else datasets['train'].ds.copy()
-    eval_df['truth'] = list(y_true)
-    eval_df['forecast'] = list(y_pred)
-    return eval_df
+def add_time_groupers(evaluation_df):
+    df = evaluation_df.copy()
+    df['Global'] = 'Global'
+    df['Daily'] = df['ds'].astype(str).map(lambda x: x[0:10])
+    df['Weekly'] = df['ds'].dt.year.astype(str) + ' - W' + df['ds'].dt.isocalendar().week.astype(str)\
+                                                                   .map(lambda x: '0'+x if len(x)<2 else x)
+    df['Monthly'] = df['ds'].dt.year.astype(str) + ' - M' + df['ds'].dt.month.astype(str)\
+                                                                    .map(lambda x: '0'+x if len(x)<2 else x)
+    df['Quarterly'] = df['ds'].dt.year.astype(str) + ' - Q' + df['ds'].dt.quarter.astype(str)
+    df['Yearly'] = df['ds'].dt.year.astype(str)
+    return df
