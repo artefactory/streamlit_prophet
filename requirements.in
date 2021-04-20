@@ -10,6 +10,5 @@ fbprophet==0.6
 plotly==4.11.0
 streamlit==0.80.0
 loguru==0.5.3
-scikit-learn==0.23.2
 tqdm==4.60.0
 #prod

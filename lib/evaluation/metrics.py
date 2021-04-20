@@ -17,24 +17,18 @@ def MAPE(y_true: pd.Series, y_pred: pd.Series) -> float:
     return mape
 
 
-def SMAPE(y_test, y_pred):
+def SMAPE(y_true, y_pred):
     """
-    adapted from https://github.com/alan-turing-institute/sktime/blob/15c5ccba8999ddfc52fe37fe4d6a7ff39a19ece3/sktime/performance_metrics/forecasting/_functions.py#L79
-    in order to symplify dependancies.
     Symmetric mean absolute percentage error
-    Parameters
-    ----------
-    y_test : pandas Series of shape = (fh,) where fh is the forecasting horizon
-        Ground truth (correct) target values.
-    y_pred : pandas Series of shape = (fh,)
-        Estimated target values.
-    Returns
-    -------
-    loss : float
-        sMAPE loss
+    Args:
+        y_true (pd.Series): ground truth Y series
+        y_pred (pd.Series): prediction Y series
+    Returns:
+        float: SMAPE
     """
-    nominator = np.abs(y_test - y_pred)
-    denominator = np.abs(y_test) + np.abs(y_pred)
+    nominator = np.abs(y_true - y_pred)
+    denominator = np.abs(y_true) + np.abs(y_pred)
+    # TODO : Gestion du cas où y_true = 0 & y_pred = 0.
     return np.mean(2.0 * nominator / denominator)
 
 
@@ -77,7 +71,6 @@ def MAE(y_true: pd.Series, y_pred: pd.Series) -> float:
 
 
 def get_perf_metrics(evaluation_df: pd.DataFrame, eval: dict) -> dict:
-    perf = dict()
     metrics = {
         'MAPE': MAPE,
         'SMAPE': SMAPE,
@@ -85,14 +78,17 @@ def get_perf_metrics(evaluation_df: pd.DataFrame, eval: dict) -> dict:
         'RMSE': RMSE,
         'MAE': MAE
     }
-    metrics_df = add_time_groupers(evaluation_df)
-    if eval['method'] == 'Compute global error':
-        metrics_df = metrics_df.groupby(eval['granularity']).agg({'truth': 'sum', 'forecast': 'sum'}).reset_index()
+    df = add_time_groupers(evaluation_df)
+    if eval['get_perf_on_agg_forecast']:
+        metrics_df = df.groupby(eval['granularity']).agg({'truth': 'sum', 'forecast': 'sum'}).reset_index()
         for m in eval['metrics']:
             metrics_df[m] = metrics_df[['truth', 'forecast']].apply(lambda x: metrics[m](x[0], x[1]), axis=1)
-            perf[m] = metrics_df[[eval['granularity'], m]]
-    elif eval['method'] == 'Sum all errors':
-        # TODO : Implémenter method 'sum all errors'
-        import streamlit as st
-        st.write('Method not implemented yet.')
-    return metrics_df.drop(['truth', 'forecast'], axis=1), perf
+    else:
+        metrics_df = pd.DataFrame({eval['granularity']: sorted(df[eval['granularity']].unique())})
+        for m in eval['metrics']:
+            metrics_df[m] = df.groupby(eval['granularity'])[['truth', 'forecast']]\
+                              .apply(lambda x: metrics[m](x.truth, x.forecast))\
+                              .sort_index().to_list()
+    perf = {m: metrics_df[[eval['granularity'], m]] for m in eval['metrics']}
+    metrics_df = metrics_df[[eval['granularity']] + eval['metrics']]
+    return metrics_df, perf

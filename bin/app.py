@@ -98,7 +98,7 @@ with st.sidebar.beta_expander("Metrics", expanded=False):
     eval = input_metrics(eval)
 
 # Scope of evaluation
-with st.sidebar.beta_expander("Scope and method", expanded=False):
+with st.sidebar.beta_expander("Scope", expanded=False):
     eval = input_scope_eval(eval)
 
 

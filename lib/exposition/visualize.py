@@ -25,7 +25,7 @@ def plot_performance(use_cv, target_col, datasets, forecasts, dates, eval):
     else:
         evaluation_df = get_evaluation_df(datasets, forecasts, dates, eval)
         metrics_df, perf = get_perf_metrics(evaluation_df, eval)
-        st.dataframe(metrics_df)
+        st.dataframe(metrics_df.set_index(eval['granularity']))
         plot_perf_metrics(perf, eval)
         st.plotly_chart(plot_forecasts_vs_truth(evaluation_df, target_col))
         st.plotly_chart(plot_truth_vs_actual_scatter(evaluation_df))
@@ -108,11 +108,7 @@ def plot_residuals_distrib(eval_df: pd.DataFrame):
 
 
 def plot_perf_metrics(perf: dict, eval:dict):
-    if eval['method'] == 'Compute global error':
-        for metric in perf.keys():
-            if perf[metric][eval['granularity']].nunique() > 1:
-                fig = px.bar(perf[metric], x=eval['granularity'], y=metric)
-                st.plotly_chart(fig)
-    elif eval['method'] == 'Sum all errors':
-        st.write('Viz not implemented yet.')
-        # TODO : Viz for sum method
+    for metric in perf.keys():
+        if perf[metric][eval['granularity']].nunique() > 1:
+            fig = px.bar(perf[metric], x=eval['granularity'], y=metric)
+            st.plotly_chart(fig)

@@ -14,8 +14,5 @@ def input_scope_eval(eval: dict) -> dict:
                                ['Validation', 'Training'])
     eval['granularity'] = st.selectbox("Select evaluation granularity",
                                        ['Global', 'Daily', 'Weekly', 'Monthly', 'Quarterly', 'Yearly'])
-    eval['method'] = 'Compute global error'
-    if eval['granularity'] != 'Global':
-        eval['method'] = st.selectbox("Select evaluation method",
-                                      ['Sum all errors', 'Compute global error'])
+    eval['get_perf_on_agg_forecast'] = st.checkbox("Get perf on aggregated forecast", value=False)
     return eval
