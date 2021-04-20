@@ -8,12 +8,6 @@ def convert_into_nb_of_days(forecast_freq, forecast_horizon):
 
 
 def dayname_to_daynumber(days: list):
-    mapping = {'Monday': 0,
-               'Tuesday': 1,
-               'Wednesday': 2,
-               'Thursday': 3,
-               'Friday': 4,
-               'Saturday': 5,
-               'Sunday': 6
-               }
+    day_names = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday']
+    mapping = {i: day for i, day in enumerate(day_names)}
     return [mapping[day] for day in days]
