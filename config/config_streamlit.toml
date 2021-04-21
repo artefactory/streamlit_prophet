@@ -1,7 +1,6 @@
-[dataset]
-FILENAME = 'dataset_m5.csv'
-DATE_COLUMN = 'date'
-TARGET_COLUMN = 'sales'
+[datasets]
+M5 = "https://raw.githubusercontent.com/MaximeLutel/streamlit_prophet_datasets/main/M5.csv"
+SAV = "https://raw.githubusercontent.com/MaximeLutel/streamlit_prophet_datasets/main/SAV.csv"
 
 [model]
 [model.input_params]

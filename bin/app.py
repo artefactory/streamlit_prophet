@@ -24,7 +24,7 @@ st.sidebar.title("1. Data")
 
 # Load data
 with st.sidebar.beta_expander("Dataset", expanded=True):
-    df = input_dataset()
+    df = input_dataset(config)
 
 # Column names
 with st.sidebar.beta_expander("Columns", expanded=True):
