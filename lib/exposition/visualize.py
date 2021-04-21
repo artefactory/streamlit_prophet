@@ -34,11 +34,11 @@ def plot_performance(use_cv, target_col, datasets, forecasts, dates, eval):
         st.plotly_chart(plot_residuals_distrib(evaluation_df))
 
 
-def plot_components(use_cv, target_col, models, forecasts):
+def plot_components(use_cv, target_col, models, forecasts, cleaning):
     if use_cv:
         st.write("Plot components not implemented yet with cv")
     else:
-        st.plotly_chart(make_separate_components_plot(models, forecasts, target_col))
+        st.plotly_chart(make_separate_components_plot(models, forecasts, target_col, cleaning))
 
 
 def plot_forecasts_vs_truth(eval_df: pd.DataFrame, target_col: str):
@@ -123,7 +123,7 @@ def plot_perf_metrics(perf: dict, eval:dict):
             st.plotly_chart(fig)
 
 
-def make_separate_components_plot(models: dict, forecasts: dict, target_col: str):
+def make_separate_components_plot(models: dict, forecasts: dict, target_col: str, cleaning:dict):
     """
     Create an area chart with the components of the prediction, each one on its own subplot.
     """
@@ -147,6 +147,7 @@ def make_separate_components_plot(models: dict, forecasts: dict, target_col: str
             x = components.index
             y = components[col]
         fig.append_trace(go.Scatter(x=x, y=y, fill='tozeroy', name=col), row=i+1, col=1)
-        fig.update_yaxes(title_text=f"{target_col} / day", row=i+1, col=1)
+        y_label = f"log {target_col}" if cleaning['log_transform'] else target_col
+        fig.update_yaxes(title_text=y_label, row=i+1, col=1)
     fig.update_layout(height=200 * n_features)
     return fig

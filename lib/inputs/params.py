@@ -72,7 +72,14 @@ def input_regressors(df, config, params):
     default_params = config["model"]["input_params"]
     eligible_cols = set(df.columns) - set(['ds', 'y'])
     if len(eligible_cols) > 0:
-        regressor_cols = st.multiselect("Select external regressors if any", list(eligible_cols), default=[])
+        if st.checkbox('Add all detected regressors', value=False):
+            default_regressors = list(eligible_cols)
+        else:
+            default_regressors = []
+        regressor_cols = st.multiselect("Select external regressors if any",
+                                        list(eligible_cols),
+                                        default=default_regressors
+                                        )
         for col in regressor_cols:
             regressors[col] = dict()
             regressors[col]['prior_scale'] = st.number_input(f"prior_scale for {col}",

@@ -1,5 +1,6 @@
 from fbprophet import Prophet
 from lib.utils.logging import suppress_stdout_stderr
+from lib.dataprep.clean import exp_transform
 from lib.dataprep.split import make_eval_df, make_future_df
 from lib.models.prophet_cv import cross_validation
 
@@ -22,7 +23,7 @@ def instantiate_prophet_model(params, use_regressors=True):
     return model
 
 
-def forecast_workflow(config, use_cv, make_future_forecast, df, params, dates, datasets, models, forecasts):
+def forecast_workflow(config, use_cv, make_future_forecast, cleaning, params, dates, datasets, models, forecasts):
     with suppress_stdout_stderr():
         models['eval'] = instantiate_prophet_model(params)
         models['eval'].fit(datasets['train'], seed=config["global"]["seed"])
@@ -37,7 +38,9 @@ def forecast_workflow(config, use_cv, make_future_forecast, df, params, dates, d
         if make_future_forecast:
             models['future'] = instantiate_prophet_model(params, use_regressors=False)
             models['future'].fit(datasets['full'], seed=config["global"]["seed"])
-            datasets = make_future_df(df, dates, datasets, include_history=True)
+            datasets = make_future_df(dates, datasets)
             # TODO : Appliquer le même cleaning / les mêmes filtres sur la donnée future que sur l'historique
             forecasts['future'] = models['future'].predict(datasets['future'])
+    if cleaning['log_transform']:
+        datasets, forecasts = exp_transform(datasets, forecasts)
     return datasets, models, forecasts

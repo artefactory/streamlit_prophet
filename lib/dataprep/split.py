@@ -38,14 +38,10 @@ def make_eval_df(datasets: dict) -> dict:
     return datasets
 
 
-def make_future_df(df: pd.DataFrame,
-                   dates: dict,
-                   datasets: dict,
-                   include_history: bool = True
-                   ) -> dict:
+def make_future_df(dates: dict, datasets: dict, include_history: bool = True) -> dict:
     # TODO: Inclure les valeurs futures de régresseurs ? Pour l'instant, use_regressors = False pour le forecast
     if include_history:
-        start_date = df.ds.min()
+        start_date = datasets['full'].ds.min()
     else:
         start_date = dates['forecast_start_date']
     future = pd.date_range(start=start_date,

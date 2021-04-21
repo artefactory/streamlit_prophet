@@ -89,7 +89,7 @@ else:
     launch_forecast = st.button('Launch forecast')
 if launch_forecast:
     datasets, models, forecasts = forecast_workflow(config, use_cv, make_future_forecast,
-                                                    df, params, dates, datasets, models, forecasts)
+                                                    cleaning, params, dates, datasets, models, forecasts)
 
 st.sidebar.title("3. Evaluation")
 
@@ -112,6 +112,6 @@ st.write(f'# 2. Evaluation on {eval["set"].lower()} set')
 plot_performance(use_cv, target_col, datasets, forecasts, dates, eval)
 
 st.write('# 3. Impact of components and regressors')
-plot_components(use_cv, target_col, models, forecasts)
+plot_components(use_cv, target_col, models, forecasts, cleaning)
 
 # st.write('# 4. Future forecast')
