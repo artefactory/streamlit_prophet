@@ -1,6 +1,12 @@
 [datasets]
-M5 = "https://raw.githubusercontent.com/MaximeLutel/streamlit_prophet_datasets/main/M5.csv"
-SAV = "https://raw.githubusercontent.com/MaximeLutel/streamlit_prophet_datasets/main/SAV.csv"
+[datasets.M5]
+url = "https://raw.githubusercontent.com/MaximeLutel/streamlit_prophet_datasets/main/M5.csv"
+date = "date"
+target = "sales"
+[datasets.SAV]
+url = "https://raw.githubusercontent.com/MaximeLutel/streamlit_prophet_datasets/main/SAV.csv"
+date = "ds"
+target = "target"
 
 [model]
 seasonality_prior_scale = 10

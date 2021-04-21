@@ -24,11 +24,11 @@ st.sidebar.title("1. Data")
 
 # Load data
 with st.sidebar.beta_expander("Dataset", expanded=True):
-    df = input_dataset(config)
+    df, load_options = input_dataset(config)
 
 # Column names
 with st.sidebar.beta_expander("Columns", expanded=True):
-    date_col, target_col = input_columns(df)
+    date_col, target_col = input_columns(config, df, load_options)
     df = format_date_and_target(df, date_col, target_col)
 
 # Filtering
