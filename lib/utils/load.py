@@ -2,10 +2,11 @@ import pandas as pd
 from pathlib import Path
 import toml
 from lib.utils.path import get_project_root
+import streamlit as st
 
 
 # @st.cache
-def load_data(filepath: str) -> pd.DataFrame:
+def load_dataset(filepath: str) -> pd.DataFrame:
     """
     Parameters
     ----------

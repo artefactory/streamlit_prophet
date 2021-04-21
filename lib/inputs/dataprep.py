@@ -7,10 +7,10 @@ def input_cleaning(cleaning: dict):
                               ['Monday', 'Tuesday', 'Wednesday', 'Thursday',
                                'Friday', 'Saturday', 'Sunday'], default=[])
     cleaning['del_days'] = dayname_to_daynumber(del_days)
-    cleaning['del_zeros'] = st.checkbox('Delete rows where target = 0', True, key=1)
-    cleaning['del_negative'] = st.checkbox('Delete rows where target < 0', True, key=1)
+    cleaning['del_zeros'] = st.checkbox('Delete rows where target = 0', True)
+    cleaning['del_negative'] = st.checkbox('Delete rows where target < 0', True)
     if cleaning['del_zeros'] & cleaning['del_negative']:
-        cleaning['log_transform'] = st.checkbox('Target log transform', False, key=1)
+        cleaning['log_transform'] = st.checkbox('Target log transform', False)
     else:
         cleaning['log_transform'] = False
     return cleaning

@@ -1,11 +1,16 @@
 import pandas as pd
 import numpy as np
+import streamlit as st
 
 
 def format_date_and_target(df: pd.DataFrame, date_col: str, target_col: str) -> pd.DataFrame:
-    df[date_col] = pd.to_datetime(df[date_col])
-    df[target_col] = df[target_col].astype('float')
-    df = df.rename(columns={date_col: 'ds', target_col: 'y'})
+    try:
+        df[date_col] = pd.to_datetime(df[date_col])
+        df[target_col] = df[target_col].astype('float')
+        df = df.rename(columns={date_col: 'ds', target_col: 'y'})
+    except:
+        st.write('Please select the correct date and target columns.')
+        st.stop()
     return df
 
 
@@ -52,7 +57,7 @@ def _remove_rows(df: pd.DataFrame, cleaning: dict) -> pd.DataFrame:
     return df_clean
 
 
-def exp_transform(datasets: dict, forecasts:dict):
+def exp_transform(datasets: dict, forecasts: dict):
     for data in set(datasets.keys()):
         if 'y' in datasets[data].columns:
             df_exp = datasets[data].copy()
