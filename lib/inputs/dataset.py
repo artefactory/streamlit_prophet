@@ -1,6 +1,7 @@
 from pathlib import Path
 from lib.utils.path import list_files, get_project_root
 from lib.utils.load import load_data
+import pandas as pd
 import streamlit as st
 
 
@@ -13,7 +14,7 @@ def input_dataset():
     return df
 
 
-def input_columns(config):
-    date_col = st.text_input('Date column name', value=config["dataset"]["DATE_COLUMN"])
-    target_col = st.text_input('Target column name', value=config["dataset"]["TARGET_COLUMN"])
+def input_columns(df: pd.DataFrame):
+    date_col = st.selectbox("Date column", list(df.columns))
+    target_col = st.selectbox("Target column", list(set(df.columns) - set([date_col])))
     return date_col, target_col

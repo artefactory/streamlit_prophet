@@ -23,12 +23,12 @@ params, cleaning, dates, datasets, models, forecasts, eval = dict(), dict(), dic
 st.sidebar.title("1. Data")
 
 # Load data
-with st.sidebar.beta_expander("Select a dataset", expanded=False):
+with st.sidebar.beta_expander("Select a dataset", expanded=True):
     df = input_dataset()
 
 # Column names
-with st.sidebar.beta_expander("Columns", expanded=False):
-    date_col, target_col = input_columns(config)
+with st.sidebar.beta_expander("Columns", expanded=True):
+    date_col, target_col = input_columns(df)
     df = format_date_and_target(df, date_col, target_col)
 
 # Filtering
