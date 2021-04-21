@@ -25,9 +25,11 @@ def input_dimensions(df):
                                          default=autodetect_dimensions(df)
                                          )
         for col in dimensions_cols:
-            # TODO: Ajouter checkbox "keep all values"
             values = list(df[col].unique())
-            dimensions[col] = st.multiselect(f"Values to keep for {col}", values, default=[values[0]])
+            if st.checkbox(f'Keep all values for {col}', True, key=1):
+                dimensions[col] = values.copy()
+            else:
+                dimensions[col] = st.multiselect(f"Values to keep for {col}", values, default=[values[0]])
     else:
         st.write("Date and target are the only columns in your dataset, there are no dimensions.")
     return dimensions

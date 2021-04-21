@@ -23,7 +23,7 @@ params, cleaning, dates, datasets, models, forecasts, eval = dict(), dict(), dic
 st.sidebar.title("1. Data")
 
 # Load data
-with st.sidebar.beta_expander("Select a dataset", expanded=True):
+with st.sidebar.beta_expander("Dataset", expanded=True):
     df = input_dataset()
 
 # Column names
