@@ -208,7 +208,7 @@ packaging==20.9
     #   bleach
     #   pytest
     #   streamlit
-pandas==1.2.4
+pandas==1.0.5
     # via
     #   -r requirements.in
     #   altair

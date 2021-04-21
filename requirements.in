@@ -4,7 +4,7 @@ flake8==3.8.3
 pytest==6.0.1
 pytest-cov==2.10.1
 pytest-mock==3.3.1
-pandas==1.2.4
+pandas==1.0.5  # Not to break fbprophet holidays
 numpy==1.20.2
 fbprophet==0.6
 plotly==4.11.0

@@ -20,7 +20,7 @@ def add_time_groupers(evaluation_df):
     df = evaluation_df.copy()
     df['Global'] = 'Global'
     df['Daily'] = df['ds'].astype(str).map(lambda x: x[0:10])
-    df['Weekly'] = df['ds'].dt.year.astype(str) + ' - W' + df['ds'].dt.isocalendar().week.astype(str)\
+    df['Weekly'] = df['ds'].dt.year.astype(str) + ' - W' + df['ds'].dt.week.astype(str)\
                                                                    .map(lambda x: '0'+x if len(x)<2 else x)
     df['Monthly'] = df['ds'].dt.year.astype(str) + ' - M' + df['ds'].dt.month.astype(str)\
                                                                     .map(lambda x: '0'+x if len(x)<2 else x)

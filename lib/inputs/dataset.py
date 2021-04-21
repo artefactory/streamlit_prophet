@@ -11,7 +11,7 @@ def input_dataset(config):
         else:
             st.stop()
     else:
-        dataset_name = st.selectbox("Select a dataset", list(config['datasets'].keys()))
+        dataset_name = st.selectbox("Or select a toy dataset", list(config['datasets'].keys()))
         df = download_dataset(config['datasets'][dataset_name])
     return df
 

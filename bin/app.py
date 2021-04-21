@@ -71,7 +71,7 @@ with st.sidebar.beta_expander("Seasonalities", expanded=False):
 
 # Holidays and events
 with st.sidebar.beta_expander("Holidays and events"):
-    params = input_holidays_params(config, params)
+    params = input_holidays_params(params)
     # TODO: Ajouter la possibilité d'entrer une date d'événement à encoder ? (ex: confinemnent)
 
 # External regressors

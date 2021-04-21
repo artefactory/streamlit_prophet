@@ -3,7 +3,6 @@ M5 = "https://raw.githubusercontent.com/MaximeLutel/streamlit_prophet_datasets/m
 SAV = "https://raw.githubusercontent.com/MaximeLutel/streamlit_prophet_datasets/main/SAV.csv"
 
 [model]
-[model.input_params]
 seasonality_prior_scale = 10
 holidays_prior_scale = 10
 regressors_prior_scale = 10
@@ -12,12 +11,9 @@ growth = ['linear', 'logistic']
 seasonality_mode = ['additive', 'multiplicative']
 n_changepoints = 25
 changepoint_range = 0.8
-holidays = ['FRA', 'US']
 
 [forecast]
 freq = ['day', 'week', 'month', 'quarter', 'year']
 
 [global]
 seed = 42
-
-
