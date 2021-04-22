@@ -3,23 +3,14 @@ import numpy as np
 import streamlit as st
 
 
-def format_date_and_target(df: pd.DataFrame, date_col: str, target_col: str) -> pd.DataFrame:
-    try:
-        df[date_col] = pd.to_datetime(df[date_col])
-        df[target_col] = df[target_col].astype('float')
-        df = df.rename(columns={date_col: 'ds', target_col: 'y'})
-    except:
-        st.write('Please select the correct date and target columns.')
-        st.stop()
-    return df
-
-
+@st.cache()
 def clean_df(df: pd.DataFrame, cleaning: dict) -> pd.DataFrame:
     df = _remove_rows(df, cleaning)
     df = _log_transform(df, cleaning)
     return df
 
 
+@st.cache()
 def clean_future_df(df: pd.DataFrame, cleaning: dict) -> pd.DataFrame:
     df_clean = df.copy()
     df_clean['__to_remove'] = 0

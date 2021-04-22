@@ -1,6 +1,21 @@
 import pandas as pd
+import streamlit as st
 
 
+@st.cache(suppress_st_warning=True)
+def format_date_and_target(df_input: pd.DataFrame, date_col: str, target_col: str) -> pd.DataFrame:
+    try:
+        df = df_input.copy() # To avoid CachedObjectMutationWarning
+        df[date_col] = pd.to_datetime(df[date_col])
+        df[target_col] = df[target_col].astype('float')
+        df = df.rename(columns={date_col: 'ds', target_col: 'y'})
+    except:
+        st.write('Please select the correct date and target columns.')
+        st.stop()
+    return df
+
+
+@st.cache()
 def filter_and_aggregate_df(df: pd.DataFrame, dimensions: dict):
     df = _filter(df, dimensions)
     df = _format_regressors(df)
@@ -8,6 +23,7 @@ def filter_and_aggregate_df(df: pd.DataFrame, dimensions: dict):
     return df
 
 
+@st.cache()
 def resample_df(df: pd.DataFrame, resampling: dict):
     freq = resampling['freq']
     cols_to_agg = set(df.columns) - set(['ds'])

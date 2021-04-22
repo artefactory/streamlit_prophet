@@ -1,4 +1,4 @@
-from lib.utils.load import download_dataset
+from lib.utils.load import load_dataset, download_toy_dataset
 import pandas as pd
 import streamlit as st
 
@@ -9,12 +9,12 @@ def input_dataset(config):
     if load_options['upload']:
         file = st.file_uploader("Upload a csv file", type='csv')
         if file:
-            df = pd.read_csv(file)
+            df = load_dataset(file)
         else:
             st.stop()
     else:
         dataset_name = st.selectbox("Or select a toy dataset", list(config['datasets'].keys()))
-        df = download_dataset(config['datasets'][dataset_name]['url'])
+        df = download_toy_dataset(config['datasets'][dataset_name]['url'])
         load_options['dataset'] = dataset_name
     return df, load_options
 
