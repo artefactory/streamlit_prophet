@@ -38,15 +38,18 @@ def input_val_dates(df, dates):
     return dates
 
 
-def input_cv(dates):
+def input_cv(dates, resampling):
     dates['n_folds'] = st.number_input("Number of CV folds", min_value=1, value=5)
-    max_possible_horizon = get_max_possible_cv_horizon(dates)
-    dates['folds_horizon'] = st.number_input("Horizon of each fold (in days)",
+    freq = resampling['freq'][-1]
+    freq_name = mapping_freq_names(freq)
+    max_possible_horizon = get_max_possible_cv_horizon(dates, resampling)
+    default_values = {'H': 24, 'D': 30, 'W': 10, 'M': 6, 'Y': 3}
+    dates['folds_horizon'] = st.number_input(f"Horizon of each fold (in {freq_name}",
                                              min_value=1,
                                              max_value=max_possible_horizon,
-                                             value=min(30, max_possible_horizon)
+                                             value=min(default_values[freq], max_possible_horizon)
                                              )
-    dates['cutoffs'] = get_cv_cutoffs(dates)
+    dates['cutoffs'] = get_cv_cutoffs(dates, freq)
     st.success(prettify_cv_folds_dates(dates))
     return dates
 

@@ -52,7 +52,7 @@ with st.sidebar.beta_expander("Evaluation process", expanded=False):
     use_cv = st.checkbox("Perform cross-validation", value=False)
     dates = input_train_dates(df, dates, use_cv)
     if use_cv:
-        dates = input_cv(dates)
+        dates = input_cv(dates, resampling)
         datasets = get_train_set(df, dates, datasets)
     else:
         dates = input_val_dates(df, dates)
@@ -94,7 +94,7 @@ with st.sidebar.beta_expander("Metrics", expanded=False):
 
 # Scope of evaluation
 with st.sidebar.beta_expander("Scope", expanded=False):
-    eval = input_scope_eval(eval)
+    eval = input_scope_eval(eval, use_cv)
 
 # Info
 with st.beta_expander("What is this app ?", expanded=False):
@@ -109,17 +109,17 @@ if st.checkbox('Relaunch forecast automatically when parameters change', value=T
 else:
     launch_forecast = st.button('Launch forecast')
 if launch_forecast:
-    datasets, models, forecasts = forecast_workflow(config, use_cv, make_future_forecast,
-                                                    cleaning, params, dates, datasets, models, forecasts)
+    datasets, models, forecasts = forecast_workflow(config, use_cv, make_future_forecast, cleaning, resampling,
+                                                    params, dates, datasets, models, forecasts)
 else:
     st.stop()
 
 # Visualizations
 
 st.write('# 1. Overview')
-plot_overview(make_future_forecast, use_cv, models, forecasts)
+plot_overview(make_future_forecast, use_cv, models, forecasts, target_col)
 
-st.write(f'# 2. Evaluation on {eval["set"].lower()} set')
+st.write(f'# 2. Evaluation on {"CV" if use_cv else ""} {eval["set"].lower()} set{"s" if use_cv else ""}')
 plot_performance(use_cv, target_col, datasets, forecasts, dates, eval)
 
 st.write('# 3. Impact of components and regressors')

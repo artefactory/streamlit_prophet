@@ -3,35 +3,31 @@ import streamlit as st
 import plotly.express as px
 import plotly.graph_objects as go
 from plotly.subplots import make_subplots
-from fbprophet.plot import plot_components_plotly, plot_plotly
+from fbprophet.plot import plot_plotly
 from lib.evaluation.preparation import get_evaluation_df
 from lib.evaluation.metrics import get_perf_metrics
 from lib.exposition.preparation import get_forecast_components
 
 
-def plot_overview(make_future_forecast, use_cv, models, forecasts):
+def plot_overview(make_future_forecast, use_cv, models, forecasts, target_col):
     if make_future_forecast:
-        st.plotly_chart(plot_plotly(models['future'], forecasts['future'], changepoints=True, trend=True))
-        st.plotly_chart(plot_components_plotly(models['future'], forecasts['future']))
+        st.plotly_chart(plot_plotly(models['future'], forecasts['future'],
+                                    changepoints=True, trend=True, ylabel=target_col))
     elif use_cv:
-        st.write("Plot overview not implemented yet with cv")
+        st.plotly_chart(plot_plotly(models['eval'], forecasts['cv_with_hist'], ylabel=target_col))
     else:
-        st.plotly_chart(plot_plotly(models['eval'], forecasts['eval'], changepoints=True, trend=True))
-        #st.plotly_chart(plot_components_plotly(models['eval'], forecasts['eval']))
+        st.plotly_chart(plot_plotly(models['eval'], forecasts['eval'],
+                                    changepoints=True, trend=True, ylabel=target_col))
 
 
 def plot_performance(use_cv, target_col, datasets, forecasts, dates, eval):
-    if use_cv:
-        st.write("Plot performance not implemented yet with cv")
-        st.dataframe(forecasts['cv'])
-    else:
-        evaluation_df = get_evaluation_df(datasets, forecasts, dates, eval)
-        metrics_df, perf = get_perf_metrics(evaluation_df, eval)
-        st.dataframe(metrics_df.set_index(eval['granularity']))
-        plot_perf_metrics(perf, eval)
-        st.plotly_chart(plot_forecasts_vs_truth(evaluation_df, target_col))
-        st.plotly_chart(plot_truth_vs_actual_scatter(evaluation_df))
-        st.plotly_chart(plot_residuals_distrib(evaluation_df))
+    evaluation_df = get_evaluation_df(datasets, forecasts, dates, eval, use_cv)
+    metrics_df, perf = get_perf_metrics(forecasts['cv'] if use_cv else evaluation_df, eval, dates, use_cv)
+    st.dataframe(metrics_df)
+    plot_perf_metrics(perf, eval)
+    st.plotly_chart(plot_forecasts_vs_truth(evaluation_df, target_col))
+    st.plotly_chart(plot_truth_vs_actual_scatter(evaluation_df))
+    st.plotly_chart(plot_residuals_distrib(evaluation_df))
 
 
 def plot_components(use_cv, target_col, models, forecasts, cleaning, resampling):
@@ -120,6 +116,7 @@ def plot_perf_metrics(perf: dict, eval:dict):
     for metric in perf.keys():
         if perf[metric][eval['granularity']].nunique() > 1:
             fig = px.bar(perf[metric], x=eval['granularity'], y=metric)
+            fig.update_layout(xaxis_title='')
             st.plotly_chart(fig)
 
 

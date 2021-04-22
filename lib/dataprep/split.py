@@ -2,6 +2,7 @@ import pandas as pd
 import streamlit as st
 from datetime import timedelta
 from lib.dataprep.clean import clean_future_df
+from lib.utils.mapping import convert_into_nb_of_days, convert_into_nb_of_seconds
 
 
 def get_train_val_sets(df: pd.DataFrame,
@@ -52,15 +53,30 @@ def make_future_df(dates: dict, datasets: dict, cleaning: dict, include_history:
     return datasets
 
 
-def get_cv_cutoffs(dates: dict) -> list:
-    cutoffs = [pd.to_datetime(dates['train_end_date'] - timedelta(days=(i + 1) * dates['folds_horizon'])) \
-               for i in range(dates['n_folds'])]
+def get_cv_cutoffs(dates: dict, freq: str) -> list:
+    horizon = dates['folds_horizon']
+    end = dates['train_end_date']
+    n_folds = dates['n_folds']
+    if freq in ['s', 'H']:
+        multiplier = convert_into_nb_of_seconds(freq, 1)
+        cutoffs = [pd.to_datetime(end - timedelta(seconds=(i + 1) * multiplier * horizon)) for i in range(n_folds)]
+    else:
+        multiplier = convert_into_nb_of_days(freq, 1)
+        cutoffs = [pd.to_datetime(end - timedelta(days=(i + 1) * multiplier * horizon)) for i in range(n_folds)]
     return cutoffs
 
 
-def get_max_possible_cv_horizon(dates: dict) -> int:
-    nb_days_training = (dates['train_end_date'] - dates['train_start_date']).days
-    return nb_days_training // dates['n_folds']
+def get_max_possible_cv_horizon(dates: dict, resampling: dict) -> int:
+    freq = resampling['freq'][-1]
+    if freq in ['s', 'H']:
+        divider = convert_into_nb_of_seconds(freq, 1)
+        nb_seconds_training = (dates['train_end_date'] - dates['train_start_date']).seconds
+        max_horizon = (nb_seconds_training // divider) // dates['n_folds']
+    else:
+        divider = convert_into_nb_of_days(freq, 1)
+        nb_days_training = (dates['train_end_date'] - dates['train_start_date']).days
+        max_horizon = (nb_days_training // divider) // dates['n_folds']
+    return max_horizon
 
 
 def prettify_cv_folds_dates(dates):

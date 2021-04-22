@@ -1,4 +1,3 @@
-from datetime import timedelta
 import pandas as pd
 
 
@@ -25,3 +24,13 @@ def get_forecast_components_col_names(forecast: pd.DataFrame) -> list:
         and 'additive' not in col
         ]
     return components_col
+
+
+def get_df_cv_with_hist(forecasts: dict, datasets: dict) -> pd.DataFrame:
+    df_cv = forecasts['cv'].drop(['cutoff'], axis=1)
+    df_past = datasets['full'].loc[datasets['full']['ds'] < df_cv.ds.min()][['ds', 'y']]
+    df_past = pd.concat([df_past] + [df_past[['y']]]*3, axis=1)
+    df_past.columns = ['ds', 'yhat', 'yhat_lower', 'yhat_upper', 'y']
+    df_cv = pd.concat([df_cv, df_past], axis=0).sort_values('ds').reset_index(drop=True)
+    return df_cv
+

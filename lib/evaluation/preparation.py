@@ -1,18 +1,23 @@
 import pandas as pd
 
 
-def get_evaluation_df(datasets, forecasts, dates, eval) -> pd.DataFrame:
-    evaluation_df = pd.DataFrame()
-    if eval['set'] == 'Validation':
-        evaluation_df['ds'] = datasets['val'].ds.copy()
-        evaluation_df['truth'] = list(datasets['val'].y)
-        evaluation_df['forecast'] = list(forecasts['eval'].query(f'ds >= "{dates["val_start_date"]}" & '
-                                                                 f'ds <= "{dates["val_end_date"]}"').yhat)
-    elif eval['set'] == 'Training':
-        evaluation_df['ds'] = datasets['train'].ds.copy()
-        evaluation_df['truth'] = list(datasets['train'].y)
-        evaluation_df['forecast'] = list(forecasts['eval'].query(f'ds >= "{dates["train_start_date"]}" & '
-                                                                 f'ds <= "{dates["train_end_date"]}"').yhat)
+def get_evaluation_df(datasets, forecasts, dates, eval, use_cv) -> pd.DataFrame:
+    if use_cv:
+        evaluation_df = forecasts['cv'].sort_values('ds')
+        evaluation_df = evaluation_df[['ds', 'y', 'yhat']]
+        evaluation_df.columns = ['ds', 'truth', 'forecast']
+    else:
+        evaluation_df = pd.DataFrame()
+        if eval['set'] == 'Validation':
+            evaluation_df['ds'] = datasets['val'].ds.copy()
+            evaluation_df['truth'] = list(datasets['val'].y)
+            evaluation_df['forecast'] = list(forecasts['eval'].query(f'ds >= "{dates["val_start_date"]}" & '
+                                                                     f'ds <= "{dates["val_end_date"]}"').yhat)
+        elif eval['set'] == 'Training':
+            evaluation_df['ds'] = datasets['train'].ds.copy()
+            evaluation_df['truth'] = list(datasets['train'].y)
+            evaluation_df['forecast'] = list(forecasts['eval'].query(f'ds >= "{dates["train_start_date"]}" & '
+                                                                     f'ds <= "{dates["train_end_date"]}"').yhat)
     return evaluation_df
 
 

@@ -52,7 +52,6 @@ def _autodetect_dimensions(df):
 
 
 def input_resampling(df):
-    # TODO: Réutiliser la fréquence détectée ou choisie pour construire future_df
     resampling = dict()
     resampling['freq'] = _autodetect_freq(df)
     st.write(f"Frequency of dataset: {resampling['freq']}")

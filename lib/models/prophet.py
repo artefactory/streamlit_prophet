@@ -3,6 +3,8 @@ from lib.utils.logging import suppress_stdout_stderr
 from lib.dataprep.clean import exp_transform
 from lib.dataprep.split import make_eval_df, make_future_df
 from lib.models.prophet_cv import cross_validation
+from lib.exposition.preparation import get_df_cv_with_hist
+from lib.utils.mapping import mapping_freq_names
 
 
 def instantiate_prophet_model(params, use_regressors=True):
@@ -23,15 +25,19 @@ def instantiate_prophet_model(params, use_regressors=True):
     return model
 
 
-def forecast_workflow(config, use_cv, make_future_forecast, cleaning, params, dates, datasets, models, forecasts):
+def forecast_workflow(config, use_cv, make_future_forecast, cleaning, resampling,
+                      params, dates, datasets, models, forecasts):
     with suppress_stdout_stderr():
         models['eval'] = instantiate_prophet_model(params)
         models['eval'].fit(datasets['train'], seed=config["global"]["seed"])
         if use_cv:
+            horizon = f"{dates['folds_horizon']} {mapping_freq_names(resampling['freq'])}"
             forecasts['cv'] = cross_validation(models['eval'],
                                                cutoffs=dates['cutoffs'],
-                                               horizon=f"{dates['folds_horizon']} days"
+                                               horizon=horizon,
+                                               parallel='processes'
                                                )
+            forecasts['cv_with_hist'] = get_df_cv_with_hist(forecasts, datasets)
         else:
             datasets = make_eval_df(datasets)
             forecasts['eval'] = models['eval'].predict(datasets['eval'])
