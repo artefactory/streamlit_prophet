@@ -1,5 +1,5 @@
 [params]
-PROPHET_PARAMS_README = """
+prophet_params = """
 **Holidays** \n
 * `holidays_prior_scale`: This parameter determines how much of an effect holidays should \
     have on your predictions. Default: 10. [20,40] works well. \n
@@ -24,3 +24,6 @@ These parameters are where Prophet shines as you can make big improvements and g
      flexible. I have found values between 10 and 25 to work well here, depending on how much \
          seasonality you notice in the components plot.
 """
+
+[app]
+app_intro = """App intro TBD."""

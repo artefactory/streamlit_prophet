@@ -1,8 +1,18 @@
 def convert_into_nb_of_days(forecast_freq: str, forecast_horizon: int) -> int:
-    mapping = {'day': forecast_horizon,
-               'week': forecast_horizon * 7,
-               'month': forecast_horizon * 30,
-               'year': forecast_horizon * 365
+    mapping = {
+               'D': forecast_horizon,
+               'W': forecast_horizon * 7,
+               'M': forecast_horizon * 30,
+               'Q': forecast_horizon * 90,
+               'Y': forecast_horizon * 365
+               }
+    return mapping[forecast_freq]
+
+
+def convert_into_nb_of_seconds(forecast_freq: str, forecast_horizon: int) -> int:
+    mapping = {
+               's': forecast_horizon,
+               'H': forecast_horizon * 3600
                }
     return mapping[forecast_freq]
 
@@ -31,3 +41,15 @@ def mapping_country_names(countries: list) -> list:
                'Poland': 'PL'
                }
     return mapping, [mapping[country] for country in countries]
+
+
+def mapping_freq_names(freq: str) -> str:
+    mapping = {'s': 'seconds',
+               'H': 'hours',
+               'D': 'days',
+               'W': 'weeks',
+               'M': 'months',
+               'Q': 'quarters',
+               'Y': 'years'
+               }
+    return mapping[freq]

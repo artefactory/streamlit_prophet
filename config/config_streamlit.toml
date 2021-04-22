@@ -18,8 +18,5 @@ seasonality_mode = ['additive', 'multiplicative']
 n_changepoints = 25
 changepoint_range = 0.8
 
-[forecast]
-freq = ['day', 'week', 'month', 'quarter', 'year']
-
 [global]
 seed = 42

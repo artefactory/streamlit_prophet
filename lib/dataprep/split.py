@@ -1,6 +1,7 @@
 import pandas as pd
 import streamlit as st
 from datetime import timedelta
+from lib.dataprep.clean import clean_future_df
 
 
 def get_train_val_sets(df: pd.DataFrame,
@@ -38,16 +39,15 @@ def make_eval_df(datasets: dict) -> dict:
     return datasets
 
 
-def make_future_df(dates: dict, datasets: dict, include_history: bool = True) -> dict:
+def make_future_df(dates: dict, datasets: dict, cleaning: dict, include_history: bool = True) -> dict:
     # TODO: Inclure les valeurs futures de régresseurs ? Pour l'instant, use_regressors = False pour le forecast
     if include_history:
         start_date = datasets['full'].ds.min()
     else:
         start_date = dates['forecast_start_date']
-    future = pd.date_range(start=start_date,
-                           end=dates['forecast_end_date'],
-                           freq=dates['forecast_freq'][0].upper())
+    future = pd.date_range(start=start_date, end=dates['forecast_end_date'], freq=dates['forecast_freq'])
     future = pd.DataFrame(future, columns=['ds'])
+    future = clean_future_df(future, cleaning)
     datasets['future'] = future
     return datasets
 

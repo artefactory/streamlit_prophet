@@ -38,8 +38,7 @@ def forecast_workflow(config, use_cv, make_future_forecast, cleaning, params, da
         if make_future_forecast:
             models['future'] = instantiate_prophet_model(params, use_regressors=False)
             models['future'].fit(datasets['full'], seed=config["global"]["seed"])
-            datasets = make_future_df(dates, datasets)
-            # TODO : Appliquer le même cleaning / les mêmes filtres sur la donnée future que sur l'historique
+            datasets = make_future_df(dates, datasets, cleaning)
             forecasts['future'] = models['future'].predict(datasets['future'])
     if cleaning['log_transform']:
         datasets, forecasts = exp_transform(datasets, forecasts)

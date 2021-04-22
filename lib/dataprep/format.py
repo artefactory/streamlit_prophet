@@ -1,10 +1,19 @@
 import pandas as pd
 
 
-def format_df(df: pd.DataFrame, dimensions: dict):
+def filter_and_aggregate_df(df: pd.DataFrame, dimensions: dict):
     df = _filter(df, dimensions)
     df = _format_regressors(df)
     df = _aggregate(df)
+    return df
+
+
+def resample_df(df: pd.DataFrame, resampling: dict):
+    freq = resampling['freq']
+    cols_to_agg = set(df.columns) - set(['ds'])
+    agg_dict = {col: 'mean' if df[col].nunique() > 2 else 'max' for col in cols_to_agg}
+    agg_dict['y'] = 'sum'
+    df = df.set_index('ds').resample(freq).agg(agg_dict).reset_index()
     return df
 
 
@@ -16,7 +25,7 @@ def _filter(df: pd.DataFrame, dimensions: dict):
 
 def _aggregate(df: pd.DataFrame):
     cols_to_agg = set(df.columns) - set(['ds'])
-    agg_dict = {col: 'sum' if df[col].nunique() > 2 else 'max' for col in cols_to_agg}
+    agg_dict = {col: 'mean' if df[col].nunique() > 2 else 'max' for col in cols_to_agg}
     df = df.groupby('ds').agg(agg_dict).reset_index()
     return df
 

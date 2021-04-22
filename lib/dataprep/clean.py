@@ -20,6 +20,17 @@ def clean_df(df: pd.DataFrame, cleaning: dict) -> pd.DataFrame:
     return df
 
 
+def clean_future_df(df: pd.DataFrame, cleaning: dict) -> pd.DataFrame:
+    df_clean = df.copy()
+    df_clean['__to_remove'] = 0
+    if cleaning['del_days'] is not None:
+        df_clean['__to_remove'] = np.where(
+            df_clean.ds.dt.dayofweek.isin(cleaning['del_days']), 1, df_clean['__to_remove'])
+    df_clean = df_clean.query("__to_remove != 1")
+    del df_clean["__to_remove"]
+    return df
+
+
 def _log_transform(df: pd.DataFrame, cleaning: dict) -> pd.DataFrame:
     if cleaning['log_transform']:
         df['y'] = np.log(df['y'])
@@ -27,20 +38,6 @@ def _log_transform(df: pd.DataFrame, cleaning: dict) -> pd.DataFrame:
 
 
 def _remove_rows(df: pd.DataFrame, cleaning: dict) -> pd.DataFrame:
-    """
-    Parameters
-    ----------
-    - df : DataFrame
-        DataFrame with Y
-    - target_col : str
-        name of the column that contains the values
-    - del_negative : bool
-        if True, will clean negative y values
-    - del_zeros : bool
-        if True, clean rows where y=0
-    - del_days : List[integers], Optional
-        Clean specified day(s). 0 for Monday, 6 for Sunday.
-    """
     # first, let's flag values that needs to be processed
     df_clean = df.copy()
     df_clean['__to_remove'] = 0
