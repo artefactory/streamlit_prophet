@@ -3,9 +3,11 @@ import pandas as pd
 
 def get_evaluation_df(datasets, forecasts, dates, eval, use_cv) -> pd.DataFrame:
     if use_cv:
-        evaluation_df = forecasts['cv'].sort_values('ds')
-        evaluation_df = evaluation_df[['ds', 'y', 'yhat']]
-        evaluation_df.columns = ['ds', 'truth', 'forecast']
+        evaluation_df = forecasts['cv'].rename(columns={'y': 'truth', 'yhat': 'forecast'})
+        mapping = {cutoff: f"Fold {i + 1}" for i, cutoff in enumerate(sorted(evaluation_df['cutoff'].unique(),
+                                                                             reverse=True))}
+        evaluation_df['Fold'] = evaluation_df['cutoff'].map(mapping)
+        evaluation_df = evaluation_df.sort_values('ds')
     else:
         evaluation_df = pd.DataFrame()
         if eval['set'] == 'Validation':

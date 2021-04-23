@@ -3,10 +3,12 @@ import streamlit as st
 import plotly.express as px
 import plotly.graph_objects as go
 from plotly.subplots import make_subplots
+import plotly.figure_factory as ff
 from fbprophet.plot import plot_plotly
 from lib.evaluation.preparation import get_evaluation_df
 from lib.evaluation.metrics import get_perf_metrics
 from lib.exposition.preparation import get_forecast_components
+from lib.utils.palette import cat10_strong
 
 
 def plot_overview(make_future_forecast, use_cv, models, forecasts, target_col):
@@ -22,12 +24,11 @@ def plot_overview(make_future_forecast, use_cv, models, forecasts, target_col):
 
 def plot_performance(use_cv, target_col, datasets, forecasts, dates, eval, resampling):
     evaluation_df = get_evaluation_df(datasets, forecasts, dates, eval, use_cv)
-    metrics_df, metrics_dict = get_perf_metrics(forecasts['cv'] if use_cv else evaluation_df,
-                                                eval, dates, resampling, use_cv)
+    metrics_df, metrics_dict = get_perf_metrics(evaluation_df, eval, dates, resampling, use_cv)
     st.dataframe(metrics_df)
     plot_perf_metrics(metrics_dict, eval)
-    st.plotly_chart(plot_forecasts_vs_truth(evaluation_df, target_col))
-    st.plotly_chart(plot_truth_vs_actual_scatter(evaluation_df))
+    st.plotly_chart(plot_forecasts_vs_truth(evaluation_df, target_col, use_cv))
+    st.plotly_chart(plot_truth_vs_actual_scatter(evaluation_df, use_cv))
     st.plotly_chart(plot_residuals_distrib(evaluation_df))
 
 
@@ -38,15 +39,19 @@ def plot_components(use_cv, target_col, models, forecasts, cleaning, resampling)
         st.plotly_chart(make_separate_components_plot(models, forecasts, target_col, cleaning, resampling))
 
 
-def plot_forecasts_vs_truth(eval_df: pd.DataFrame, target_col: str):
+def plot_forecasts_vs_truth(eval_df: pd.DataFrame, target_col: str, use_cv: bool):
     """
     Parameters
     ----------
     - eval_df : pd.DataFrame
         a dataframe structured with : 1 column date named 'ds', then 1 column per timeseries.
     """
-    value_cols = [col for col in eval_df.columns if col != 'ds']
-    fig = px.line(eval_df, x='ds', y=value_cols)
+    if use_cv:
+        fig = px.line(eval_df, x='ds', y='forecast', color='Fold', color_discrete_sequence=cat10_strong)
+        fig.add_trace(go.Scatter(x=eval_df['ds'], y=eval_df['truth'], name='Truth', mode='lines',
+                                 line={'color': '#d62728', 'dash': 'dot', 'width': 1.5}))
+    else:
+        fig = px.line(eval_df, x='ds', y=['truth', 'forecast'])
     fig.update_xaxes(
         rangeslider_visible=True,
         rangeselector=dict(
@@ -61,55 +66,33 @@ def plot_forecasts_vs_truth(eval_df: pd.DataFrame, target_col: str):
             ])
         )
     )
-    fig.update_layout(
-        xaxis_title="Date",
-        yaxis_title=target_col,
-        legend=dict(
-            orientation="h",
-            yanchor="bottom",
-            y=1,
-            xanchor="right",
-            x=1,
-
-        ),
-        legend_title_text=""
-    )
+    fig.update_layout(yaxis_title=target_col, legend_title_text="")
     return fig
 
 
-def plot_truth_vs_actual_scatter(eval_df: pd.DataFrame):
-    fig = go.Figure(data=go.Scatter(
-        x=eval_df["truth"], y=eval_df["forecast"],
-        mode="markers",
-        name='values',
-        marker=dict(color="#00828c", opacity=0.2),
-    ))
-    fig.add_trace(go.Scatter(x=eval_df["truth"], y=eval_df["truth"], name='optimal'))
-    fig.update_layout(
-        xaxis_title="Truth",
-        yaxis_title="Forecast"
-    )
+def plot_truth_vs_actual_scatter(eval_df: pd.DataFrame, use_cv: bool):
+    if use_cv:
+        fig = px.scatter(eval_df, x='truth', y='forecast',
+                         color='Fold', opacity=0.5, color_discrete_sequence=cat10_strong)
+    else:
+        fig = px.scatter(eval_df, x='truth', y='forecast', opacity=0.5)
+    fig.add_trace(go.Scatter(x=eval_df["truth"], y=eval_df["truth"], name='optimal',
+                             mode='lines', line=dict(color='#d62728', width=1.5)))
+    fig.update_layout(xaxis_title="Truth", yaxis_title="Forecast")
     return fig
 
 
 def plot_residuals_distrib(eval_df: pd.DataFrame):
-    """
-    Plot the distribution of residuals.
-    We expect it to be symmetric, approximately normal, and centered at zero.
-    Parameters
-    ----------
-    - residuals: pd.Series
-        Series containing y - yhat
-    """
     residuals = (eval_df["truth"] - eval_df["forecast"])
-    fig = px.histogram(
-        pd.DataFrame(residuals, columns=['residuals']),
-        x='residuals', color_discrete_sequence=["#00828c"]
-    )
-    fig.update_layout(
-        xaxis_title="Residual (truth - forecast)",
-        yaxis_title="Count"
-    )
+    residuals = residuals[residuals.between(residuals.quantile(.01), residuals.quantile(.99))]
+    fig = ff.create_distplot([residuals], ['residuals'], show_hist=False, colors=["#00828c"])
+    fig.update_layout(xaxis_title="Residuals distribution (Truth - Forecast)",
+                      yaxis_showticklabels=False,
+                      showlegend=False,
+                      xaxis_zeroline=True,
+                      xaxis_zerolinecolor='#d62728',
+                      xaxis_zerolinewidth=1
+                      )
     return fig
 
 

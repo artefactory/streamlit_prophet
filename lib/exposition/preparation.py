@@ -33,4 +33,3 @@ def get_df_cv_with_hist(forecasts: dict, datasets: dict) -> pd.DataFrame:
     df_past.columns = ['ds', 'yhat', 'yhat_lower', 'yhat_upper', 'y']
     df_cv = pd.concat([df_cv, df_past], axis=0).sort_values('ds').reset_index(drop=True)
     return df_cv
-

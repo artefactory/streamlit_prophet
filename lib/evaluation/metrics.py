@@ -93,7 +93,7 @@ def get_perf_metrics(evaluation_df: pd.DataFrame, eval: dict, dates: dict, resam
 
 def _preprocess_eval_df(evaluation_df: pd.DataFrame, use_cv: bool) -> pd.DataFrame:
     if use_cv:
-        df = evaluation_df.rename(columns={'y': 'truth', 'yhat': 'forecast'})
+        df = evaluation_df.copy()
     else:
         df = add_time_groupers(evaluation_df)
     return df
