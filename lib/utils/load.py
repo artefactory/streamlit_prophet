@@ -1,10 +1,13 @@
 import pandas as pd
 from pathlib import Path
 import toml
-from lib.utils.path import get_project_root
 import streamlit as st
 import requests
 import io
+
+
+def get_project_root() -> str:
+    return str(Path(__file__).parent.parent.parent)
 
 
 @st.cache()
