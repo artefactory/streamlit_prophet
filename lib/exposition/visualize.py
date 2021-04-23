@@ -32,11 +32,10 @@ def plot_performance(use_cv, target_col, datasets, forecasts, dates, eval, resam
     st.plotly_chart(plot_residuals_distrib(evaluation_df))
 
 
-def plot_components(use_cv, target_col, models, forecasts, cleaning, resampling):
+def plot_components(use_cv, target_col, datasets, models, forecasts, cleaning, resampling):
     if use_cv:
-        st.write("Plot components not implemented yet with cv")
-    else:
-        st.plotly_chart(make_separate_components_plot(models, forecasts, target_col, cleaning, resampling))
+        forecasts['eval'] = models['eval'].predict(datasets['train'].drop('y', axis=1))
+    st.plotly_chart(make_separate_components_plot(models, forecasts, target_col, cleaning, resampling))
 
 
 def plot_forecasts_vs_truth(eval_df: pd.DataFrame, target_col: str, use_cv: bool):
@@ -91,7 +90,10 @@ def plot_residuals_distrib(eval_df: pd.DataFrame):
                       showlegend=False,
                       xaxis_zeroline=True,
                       xaxis_zerolinecolor='#d62728',
-                      xaxis_zerolinewidth=1
+                      xaxis_zerolinewidth=1,
+                      yaxis_zeroline=True,
+                      yaxis_zerolinecolor='#d62728',
+                      yaxis_zerolinewidth=1,
                       )
     return fig
 

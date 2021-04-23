@@ -123,6 +123,6 @@ st.write(f'# 2. Evaluation on {"CV" if use_cv else ""} {eval["set"].lower()} set
 plot_performance(use_cv, target_col, datasets, forecasts, dates, eval, resampling)
 
 st.write('# 3. Impact of components and regressors')
-plot_components(use_cv, target_col, models, forecasts, cleaning, resampling)
+plot_components(use_cv, target_col, datasets, models, forecasts, cleaning, resampling)
 
 # st.write('# 4. Future forecast')
