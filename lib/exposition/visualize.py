@@ -29,7 +29,7 @@ def plot_performance(use_cv, target_col, datasets, forecasts, dates, eval, resam
     plot_perf_metrics(metrics_dict, eval)
     st.plotly_chart(plot_forecasts_vs_truth(evaluation_df, target_col, use_cv))
     st.plotly_chart(plot_truth_vs_actual_scatter(evaluation_df, use_cv))
-    st.plotly_chart(plot_residuals_distrib(evaluation_df))
+    st.plotly_chart(plot_residuals_distrib(evaluation_df, use_cv))
 
 
 def plot_components(use_cv, target_col, datasets, models, forecasts, cleaning, resampling):
@@ -81,19 +81,28 @@ def plot_truth_vs_actual_scatter(eval_df: pd.DataFrame, use_cv: bool):
     return fig
 
 
-def plot_residuals_distrib(eval_df: pd.DataFrame):
-    residuals = (eval_df["truth"] - eval_df["forecast"])
-    residuals = residuals[residuals.between(residuals.quantile(.01), residuals.quantile(.99))]
-    fig = ff.create_distplot([residuals], ['residuals'], show_hist=False, colors=["#00828c"])
+def plot_residuals_distrib(eval_df: pd.DataFrame, use_cv):
+    eval_df['residuals'] = eval_df["truth"] - eval_df["forecast"]
+    x_min, x_max = eval_df['residuals'].quantile(.01), eval_df['residuals'].quantile(.99)
+    if use_cv:
+        labels = sorted(eval_df['Fold'].unique(), reverse=True)
+        residuals = [eval_df.loc[eval_df['Fold'] == fold, 'residuals'] for fold in labels]
+        residuals = [x[x.between(x_min, x_max)] for x in residuals]
+    else:
+        labels = ['']
+        residuals = pd.Series(eval_df['residuals'])
+        residuals = [residuals[residuals.between(x_min, x_max)]]
+    fig = ff.create_distplot(residuals, labels, show_hist=False, colors=cat10_strong if use_cv else ["#00828c"])
     fig.update_layout(xaxis_title="Residuals distribution (Truth - Forecast)",
                       yaxis_showticklabels=False,
-                      showlegend=False,
+                      showlegend=True if use_cv else False,
                       xaxis_zeroline=True,
                       xaxis_zerolinecolor='#d62728',
                       xaxis_zerolinewidth=1,
                       yaxis_zeroline=True,
                       yaxis_zerolinecolor='#d62728',
                       yaxis_zerolinewidth=1,
+                      yaxis_rangemode='tozero'
                       )
     return fig
 
