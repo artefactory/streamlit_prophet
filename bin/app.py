@@ -16,6 +16,7 @@ from lib.inputs.eval import input_metrics, input_scope_eval
 from lib.models.prophet import forecast_workflow
 from lib.exposition.visualize import plot_overview, plot_performance, plot_components, plot_future
 
+
 # Initialization
 config, readme = load_config('config_streamlit.toml', 'config_readme.toml')
 params, cleaning, dates, datasets, models, forecasts, eval = dict(), dict(), dict(), dict(), dict(), dict(), dict()

@@ -7,7 +7,7 @@ import plotly.figure_factory as ff
 from fbprophet.plot import plot_plotly
 from lib.evaluation.preparation import get_evaluation_df
 from lib.evaluation.metrics import get_perf_metrics
-from lib.exposition.preparation import get_forecast_components
+from lib.exposition.preparation import get_forecast_components, get_cv_dates_dict
 from lib.utils.palette import cat10_strong
 
 
@@ -23,6 +23,9 @@ def plot_overview(make_future_forecast, use_cv, models, forecasts, target_col):
 
 
 def plot_performance(use_cv, target_col, datasets, forecasts, dates, eval, resampling):
+    if use_cv:
+        cv_dates = get_cv_dates_dict(dates, resampling)
+        st.plotly_chart(plot_cv_dates(cv_dates))
     evaluation_df = get_evaluation_df(datasets, forecasts, dates, eval, use_cv)
     metrics_df, metrics_dict = get_perf_metrics(evaluation_df, eval, dates, resampling, use_cv)
     st.dataframe(metrics_df)
@@ -71,7 +74,8 @@ def plot_forecasts_vs_truth(eval_df: pd.DataFrame, target_col: str, use_cv: bool
             ])
         )
     )
-    fig.update_layout(yaxis_title=target_col, legend_title_text="")
+    fig.update_layout(yaxis_title=target_col, legend_title_text="",
+                      title_text='Forecast vs Truth', title_x=0.5, title_y=1)
     return fig
 
 
@@ -83,7 +87,8 @@ def plot_truth_vs_actual_scatter(eval_df: pd.DataFrame, use_cv: bool):
         fig = px.scatter(eval_df, x='truth', y='forecast', opacity=0.5)
     fig.add_trace(go.Scatter(x=eval_df["truth"], y=eval_df["truth"], name='optimal',
                              mode='lines', line=dict(color='#d62728', width=1.5)))
-    fig.update_layout(xaxis_title="Truth", yaxis_title="Forecast")
+    fig.update_layout(xaxis_title="Truth", yaxis_title="Forecast",
+                      title_text='Forecast vs Truth', title_x=0.5, title_y=1)
     return fig
 
 
@@ -99,7 +104,10 @@ def plot_residuals_distrib(eval_df: pd.DataFrame, use_cv):
         residuals = pd.Series(eval_df['residuals'])
         residuals = [residuals[residuals.between(x_min, x_max)]]
     fig = ff.create_distplot(residuals, labels, show_hist=False, colors=cat10_strong if use_cv else ["#00828c"])
-    fig.update_layout(xaxis_title="Residuals distribution (Truth - Forecast)",
+    fig.update_layout(title_text='Distribution of residuals',
+                      title_x=0.5,
+                      title_y=0.85,
+                      xaxis_title="Residuals (Truth - Forecast)",
                       yaxis_showticklabels=False,
                       showlegend=True if use_cv else False,
                       xaxis_zeroline=True,
@@ -148,4 +156,30 @@ def make_separate_components_plot(models: dict, forecasts: dict, target_col: str
         y_label = f"log {target_col}" if cleaning['log_transform'] else target_col
         fig.update_yaxes(title_text=f"{y_label} / {resampling['freq']}", row=i+1, col=1)
     fig.update_layout(height=200 * n_features)
+    return fig
+
+
+def plot_cv_dates(cv_dates: dict):
+    fig = go.Figure()
+    fig.add_trace(go.Bar(
+        y=list(cv_dates.keys()),
+        x=[cv_dates[fold]['val_end'] for fold in cv_dates.keys()],
+        name='Val end',
+        orientation='h',
+        marker=dict(color=cat10_strong[1], line=dict(color=cat10_strong[1], width=2))))
+    fig.add_trace(go.Bar(
+        y=list(cv_dates.keys()),
+        x=[cv_dates[fold]['train_start'] for fold in cv_dates.keys()],
+        name='Train start',
+        orientation='h',
+        marker=dict(color=cat10_strong[0], line=dict(color=cat10_strong[1], width=2))))
+    fig.add_trace(go.Bar(
+        y=list(cv_dates.keys()),
+        x=[cv_dates[fold]['train_end'] for fold in cv_dates.keys()],
+        name='Train end',
+        orientation='h',
+        marker=dict(color=cat10_strong[0], line=dict(color=cat10_strong[1], width=2))))
+
+    fig.update_layout(showlegend=False, barmode='overlay', xaxis_type='date',
+                      title_text='Cross-Validation Folds', title_x=0.5, title_y=0.85)
     return fig
