@@ -38,6 +38,12 @@ def plot_components(use_cv, target_col, datasets, models, forecasts, cleaning, r
     st.plotly_chart(make_separate_components_plot(models, forecasts, target_col, cleaning, resampling))
 
 
+def plot_future(models, forecasts, dates, target_col):
+    fig = plot_plotly(models['future'], forecasts['future'], changepoints=True, trend=True, ylabel=target_col)
+    fig.update_layout(xaxis_range=[dates['forecast_start_date'], dates['forecast_end_date']])
+    st.plotly_chart(fig)
+
+
 def plot_forecasts_vs_truth(eval_df: pd.DataFrame, target_col: str, use_cv: bool):
     """
     Parameters
