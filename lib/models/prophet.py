@@ -4,7 +4,7 @@ from lib.dataprep.clean import exp_transform
 from lib.dataprep.split import make_eval_df, make_future_df
 from lib.models.prophet_cv import cross_validation
 from lib.exposition.preparation import get_df_cv_with_hist
-from lib.utils.mapping import mapping_freq_names
+from lib.utils.mapping import convert_into_nb_of_days, convert_into_nb_of_seconds
 
 
 def instantiate_prophet_model(params, use_regressors=True):
@@ -31,10 +31,9 @@ def forecast_workflow(config, use_cv, make_future_forecast, cleaning, resampling
         models['eval'] = instantiate_prophet_model(params)
         models['eval'].fit(datasets['train'], seed=config["global"]["seed"])
         if use_cv:
-            horizon = f"{dates['folds_horizon']} {mapping_freq_names(resampling['freq'])}"
             forecasts['cv'] = cross_validation(models['eval'],
                                                cutoffs=dates['cutoffs'],
-                                               horizon=horizon,
+                                               horizon=get_prophet_cv_horizon(dates, resampling),
                                                parallel='processes'
                                                )
             forecasts['cv_with_hist'] = get_df_cv_with_hist(forecasts, datasets)
@@ -49,3 +48,15 @@ def forecast_workflow(config, use_cv, make_future_forecast, cleaning, resampling
     if cleaning['log_transform']:
         datasets, forecasts = exp_transform(datasets, forecasts)
     return datasets, models, forecasts
+
+
+def get_prophet_cv_horizon(dates: dict, resampling: dict) -> str:
+    freq = resampling['freq'][-1]
+    horizon = dates['folds_horizon']
+    if freq in ['s', 'H']:
+        multiplier = convert_into_nb_of_seconds(freq, 1)
+        prophet_horizon = f"{multiplier * horizon} seconds"
+    else:
+        multiplier = convert_into_nb_of_days(freq, 1)
+        prophet_horizon = f"{multiplier * horizon} days"
+    return prophet_horizon

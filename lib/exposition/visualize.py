@@ -20,11 +20,12 @@ def plot_overview(make_future_forecast, use_cv, models, forecasts, target_col):
                                     changepoints=True, trend=True, ylabel=target_col))
 
 
-def plot_performance(use_cv, target_col, datasets, forecasts, dates, eval):
+def plot_performance(use_cv, target_col, datasets, forecasts, dates, eval, resampling):
     evaluation_df = get_evaluation_df(datasets, forecasts, dates, eval, use_cv)
-    metrics_df, perf = get_perf_metrics(forecasts['cv'] if use_cv else evaluation_df, eval, dates, use_cv)
+    metrics_df, metrics_dict = get_perf_metrics(forecasts['cv'] if use_cv else evaluation_df,
+                                                eval, dates, resampling, use_cv)
     st.dataframe(metrics_df)
-    plot_perf_metrics(perf, eval)
+    plot_perf_metrics(metrics_dict, eval)
     st.plotly_chart(plot_forecasts_vs_truth(evaluation_df, target_col))
     st.plotly_chart(plot_truth_vs_actual_scatter(evaluation_df))
     st.plotly_chart(plot_residuals_distrib(evaluation_df))

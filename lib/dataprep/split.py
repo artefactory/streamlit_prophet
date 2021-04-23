@@ -15,10 +15,10 @@ def get_train_val_sets(df: pd.DataFrame,
     datasets['val'] = val
     datasets['full'] = df.copy()
     st.success(
-        f"""Train: {datasets['train'].ds.min().strftime('%d/%m/%Y')} - 
-                   {datasets['train'].ds.max().strftime('%d/%m/%Y')}
-            Valid: {datasets['val'].ds.min().strftime('%d/%m/%Y')} - 
-                   {datasets['val'].ds.max().strftime('%d/%m/%Y')} 
+        f"""Train: {datasets['train'].ds.min().strftime('%Y/%m/%d')} - 
+                   {datasets['train'].ds.max().strftime('%Y/%m/%d')}
+            Valid: {datasets['val'].ds.min().strftime('%Y/%m/%d')} - 
+                   {datasets['val'].ds.max().strftime('%Y/%m/%d')} 
             ({round((len(datasets['val']) / float(len(df)) * 100))}% of data used for validation)""")
     return datasets
 
@@ -79,14 +79,23 @@ def get_max_possible_cv_horizon(dates: dict, resampling: dict) -> int:
     return max_horizon
 
 
-def prettify_cv_folds_dates(dates):
+def prettify_cv_folds_dates(dates: dict, freq: str) -> str:
     # TODO : Remplacer par figure plotly cross-val ?
+    horizon = dates['folds_horizon']
     cutoffs_text = []
     for i, cutoff in enumerate(dates['cutoffs']):
         cutoffs_text.append(f"Fold {i + 1}:           ")
-        cutoffs_text.append(f"Train: {dates['train_start_date'].strftime('%d-%m-%Y')} - "
-                            f"{(cutoff - timedelta(days=1)).strftime('%d-%m-%Y')}")
-        cutoffs_text.append(f"Valid: {cutoff.strftime('%d-%m-%Y')} - "
-                            f"{(cutoff + timedelta(days=dates['folds_horizon'])).strftime('%d-%m-%Y')}")
+        if freq in ['s', 'H']:
+            multiplier = convert_into_nb_of_seconds(freq, 1)
+            cutoffs_text.append(f"Train: {dates['train_start_date'].strftime('%Y/%m/%d %H:%M:%S')} - "
+                                f"{(cutoff - timedelta(seconds=1)).strftime('%Y/%m/%d %H:%M:%S')}")
+            cutoffs_text.append(f"Valid: {cutoff.strftime('%Y/%m/%d %H:%M:%S')} - "
+                                f"{(cutoff + timedelta(seconds=horizon*multiplier)).strftime('%Y/%m/%d %H:%M:%S')}")
+        else:
+            multiplier = convert_into_nb_of_days(freq, 1)
+            cutoffs_text.append(f"Train: {dates['train_start_date'].strftime('%Y/%m/%d')} - "
+                                f"{(cutoff - timedelta(days=1)).strftime('%Y/%m/%d')}")
+            cutoffs_text.append(f"Valid: {cutoff.strftime('%Y/%m/%d')} - "
+                                f"{(cutoff + timedelta(days=horizon*multiplier)).strftime('%Y/%m/%d')}")
         cutoffs_text.append("")
     return '\n'.join(cutoffs_text)
