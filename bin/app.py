@@ -16,6 +16,7 @@ from lib.inputs.eval import input_metrics, input_scope_eval
 from lib.models.prophet import forecast_workflow
 from lib.exposition.visualize import plot_overview, plot_performance, plot_components, plot_future
 
+
 # Load config
 config, readme = load_config('config_streamlit.toml', 'config_readme.toml')
 
@@ -119,10 +120,10 @@ st.write('# 1. Overview')
 plot_overview(make_future_forecast, use_cv, models, forecasts, target_col)
 
 st.write(f'# 2. Evaluation on {"CV" if use_cv else ""} {eval["set"].lower()} set{"s" if use_cv else ""}')
-plot_performance(use_cv, target_col, datasets, forecasts, dates, eval, resampling)
+plot_performance(use_cv, target_col, datasets, forecasts, dates, eval, resampling, config)
 
 st.write('# 3. Impact of components and regressors')
-plot_components(use_cv, target_col, models, forecasts, cleaning, resampling)
+plot_components(use_cv, target_col, models, forecasts, cleaning, resampling, config)
 
 if make_future_forecast:
     st.write('# 4. Future forecast')

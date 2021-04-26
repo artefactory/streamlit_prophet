@@ -55,3 +55,18 @@ def get_cv_dates_dict(dates: dict, resampling: dict) -> dict:
             cv_dates[f"Fold {i + 1}"]['train_end'] = cutoff - timedelta(days=1)
             cv_dates[f"Fold {i + 1}"]['val_end'] = cutoff + timedelta(days=horizon * multiplier)
     return cv_dates
+
+
+def get_hover_template_cv(cv_dates: dict, resampling: dict):
+    hover_data = pd.DataFrame(cv_dates).T
+    if resampling['freq'][-1] in ['s', 'H']:
+        hover_data = hover_data.applymap(lambda x: x.strftime('%Y/%m/%d %H:%M:%S'))
+    else:
+        hover_data = hover_data.applymap(lambda x: x.strftime('%Y/%m/%d'))
+    hover_template = "<br>".join(["%{y}",
+                                  "Training start date: %{text[0]}",
+                                  "Training end date: %{text[2]}",
+                                  "Validation start date: %{text[1]}",
+                                  "Validation end date: %{text[3]}",
+                                  ])
+    return hover_data, hover_template

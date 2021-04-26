@@ -18,5 +18,9 @@ seasonality_mode = ['additive', 'multiplicative']
 n_changepoints = 25
 changepoint_range = 0.8
 
+[style]
+colors = ["#002244", "#ff0066", "#66cccc", "#ff9933", "#337788", "#429e79", "#474747", "#f7d126", "#ee5eab", "#b8b8b8"]
+color_axis = '#d62728'
+
 [global]
 seed = 42
