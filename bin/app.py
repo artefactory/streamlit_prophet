@@ -16,10 +16,8 @@ from lib.inputs.eval import input_metrics, input_scope_eval
 from lib.models.prophet import forecast_workflow
 from lib.exposition.visualize import plot_overview, plot_performance, plot_components, plot_future
 
-
-# Initialization
+# Load config
 config, readme = load_config('config_streamlit.toml', 'config_readme.toml')
-params, cleaning, dates, datasets, models, forecasts, eval = dict(), dict(), dict(), dict(), dict(), dict(), dict()
 
 st.sidebar.title("1. Data")
 
@@ -45,19 +43,19 @@ with st.sidebar.beta_expander("Resampling", expanded=False):
 
 # Cleaning
 with st.sidebar.beta_expander("Cleaning", expanded=False):
-    cleaning = input_cleaning(cleaning, resampling)
+    cleaning = input_cleaning(resampling)
     df = clean_df(df, cleaning)
 
 # Evaluation process
 with st.sidebar.beta_expander("Evaluation process", expanded=False):
     use_cv = st.checkbox("Perform cross-validation", value=False)
-    dates = input_train_dates(df, dates, use_cv)
+    dates = input_train_dates(df, use_cv)
     if use_cv:
         dates = input_cv(dates, resampling)
-        datasets = get_train_set(df, dates, datasets)
+        datasets = get_train_set(df, dates)
     else:
         dates = input_val_dates(df, dates)
-        datasets = get_train_val_sets(df, dates, datasets)
+        datasets = get_train_val_sets(df, dates)
 
 # Forecast
 with st.sidebar.beta_expander("Forecast", expanded=False):
@@ -69,7 +67,7 @@ st.sidebar.title("2. Modelling")
 
 # Prior scale
 with st.sidebar.beta_expander("Prior scale", expanded=False):
-    params = input_prior_scale_params(config, params)
+    params = input_prior_scale_params(config)
 
 # Seasonalities
 with st.sidebar.beta_expander("Seasonalities", expanded=False):
@@ -91,7 +89,7 @@ st.sidebar.title("3. Evaluation")
 
 # Performance metrics
 with st.sidebar.beta_expander("Metrics", expanded=False):
-    eval = input_metrics(eval)
+    eval = input_metrics()
 
 # Scope of evaluation
 with st.sidebar.beta_expander("Scope", expanded=False):
@@ -110,8 +108,8 @@ if st.checkbox('Relaunch forecast automatically when parameters change', value=T
 else:
     launch_forecast = st.button('Launch forecast')
 if launch_forecast:
-    datasets, models, forecasts = forecast_workflow(config, use_cv, make_future_forecast, cleaning, resampling,
-                                                    params, dates, datasets, models, forecasts)
+    datasets, models, forecasts = forecast_workflow(config, use_cv, make_future_forecast,
+                                                    cleaning, resampling, params, dates, datasets)
 else:
     st.stop()
 

@@ -1,8 +1,9 @@
 import streamlit as st
+import pandas as pd
 from lib.utils.mapping import mapping_country_names
 
 
-def input_seasonality_params(params):
+def input_seasonality_params(params: dict) -> dict:
     seasonalities = {
         'yearly': {
             'period': 365.25,
@@ -32,7 +33,8 @@ def input_seasonality_params(params):
     return params
 
 
-def input_prior_scale_params(config, params):
+def input_prior_scale_params(config: dict) -> dict:
+    params = dict()
     default_params = config["model"]
     seasonality_prior_scale = st.number_input("seasonality_prior_scale",
                                               value=default_params['seasonality_prior_scale'], )
@@ -47,7 +49,7 @@ def input_prior_scale_params(config, params):
     return params
 
 
-def input_other_params(config, params):
+def input_other_params(config: dict, params: dict) -> dict:
     default_params = config["model"]
     growth = st.selectbox("growth", default_params['growth'])
     seasonality_mode = st.selectbox("seasonality_mode", default_params['seasonality_mode'])
@@ -61,14 +63,14 @@ def input_other_params(config, params):
     return params
 
 
-def input_holidays_params(params):
+def input_holidays_params(params: dict) -> dict:
     countries = sorted(mapping_country_names([])[0].keys())
     params['holidays'] = st.multiselect("Add some countries' holidays", countries, default=[])
     _, params['holidays'] = mapping_country_names(params['holidays'])
     return params
 
 
-def input_regressors(df, config, params):
+def input_regressors(df: pd.DataFrame, config: dict, params: dict) -> dict:
     regressors = dict()
     default_params = config["model"]
     eligible_cols = set(df.columns) - set(['ds', 'y'])

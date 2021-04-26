@@ -25,8 +25,9 @@ def instantiate_prophet_model(params, use_regressors=True):
     return model
 
 
-def forecast_workflow(config, use_cv, make_future_forecast, cleaning, resampling,
-                      params, dates, datasets, models, forecasts):
+def forecast_workflow(config: dict, use_cv: bool, make_future_forecast: bool, cleaning: dict, resampling: dict,
+                      params: dict, dates: dict, datasets: dict):
+    models, forecasts = dict(), dict()
     with suppress_stdout_stderr():
         models['eval'] = instantiate_prophet_model(params)
         models['eval'].fit(datasets['train'], seed=config["global"]["seed"])

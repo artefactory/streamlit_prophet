@@ -3,8 +3,9 @@ import pandas as pd
 from lib.utils.mapping import dayname_to_daynumber
 
 
-def input_cleaning(cleaning: dict, resampling: dict):
+def input_cleaning(resampling: dict):
     # TODO : Ajouter une option "Remove holidays"
+    cleaning = dict()
     if resampling['freq'][-1] in ['s', 'H', 'D']:
         del_days = st.multiselect("Remove days",
                                   ['Monday', 'Tuesday', 'Wednesday', 'Thursday',

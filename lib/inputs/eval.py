@@ -1,7 +1,8 @@
 import streamlit as st
 
 
-def input_metrics(eval: dict) -> dict:
+def input_metrics() -> dict:
+    eval = dict()
     eval['metrics'] = st.multiselect("Select evaluation metrics",
                                      ['MAPE', 'SMAPE', 'MSE', 'RMSE', 'MAE'],
                                      default=['MAPE', 'RMSE']

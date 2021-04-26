@@ -5,9 +5,10 @@ from lib.utils.mapping import convert_into_nb_of_days, convert_into_nb_of_second
 from lib.dataprep.split import get_max_possible_cv_horizon, get_cv_cutoffs, prettify_cv_folds_dates
 
 
-def input_train_dates(df, dates, use_cv):
+def input_train_dates(df: pd.DataFrame, use_cv: bool) -> dict:
     # TODO: Gérer le edge case où le dataset fait moins de 30 jours
     # TODO : Choisir les valeurs par défaut en fonction de resampling
+    dates = dict()
     set_name = "CV" if use_cv else "Training"
     dates['train_start_date'] = st.date_input(
         f"{set_name} start date",
@@ -24,7 +25,7 @@ def input_train_dates(df, dates, use_cv):
     return dates
 
 
-def input_val_dates(df, dates):
+def input_val_dates(df: pd.DataFrame, dates: dict) -> dict:
     # TODO: Gérer le edge case où la train end date entrée est df.ds.max()
     # TODO : Choisir les valeurs par défaut en fonction de resampling
     dates['val_start_date'] = st.date_input(
@@ -42,7 +43,7 @@ def input_val_dates(df, dates):
     return dates
 
 
-def input_cv(dates, resampling):
+def input_cv(dates: dict, resampling: dict) -> dict:
     dates['n_folds'] = st.number_input("Number of CV folds", min_value=1, value=5)
     freq = resampling['freq'][-1]
     freq_name = mapping_freq_names(freq)

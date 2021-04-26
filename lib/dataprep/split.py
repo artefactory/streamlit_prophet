@@ -5,10 +5,8 @@ from lib.dataprep.clean import clean_future_df
 from lib.utils.mapping import convert_into_nb_of_days, convert_into_nb_of_seconds
 
 
-def get_train_val_sets(df: pd.DataFrame,
-                       dates: dict,
-                       datasets: dict
-                       ) -> dict:
+def get_train_val_sets(df: pd.DataFrame, dates: dict) -> dict:
+    datasets = dict()
     train = df.query(f'ds >= "{dates["train_start_date"]}" & ds <= "{dates["train_end_date"]}"').copy()
     val = df.query(f'ds >= "{dates["val_start_date"]}" & ds <= "{dates["val_end_date"]}"').copy()
     datasets['train'] = train
@@ -23,10 +21,8 @@ def get_train_val_sets(df: pd.DataFrame,
     return datasets
 
 
-def get_train_set(df: pd.DataFrame,
-                  dates: dict,
-                  datasets: dict
-                  ) -> dict:
+def get_train_set(df: pd.DataFrame, dates: dict) -> dict:
+    datasets = dict()
     train = df.query(f'ds >= "{dates["train_start_date"]}" & ds <= "{dates["train_end_date"]}"').copy()
     datasets['train'] = train
     datasets['full'] = df.copy()
