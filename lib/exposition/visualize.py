@@ -16,7 +16,8 @@ def plot_overview(make_future_forecast, use_cv, models, forecasts, target_col):
         st.plotly_chart(plot_plotly(models['future'], forecasts['future'],
                                     changepoints=True, trend=True, ylabel=target_col))
     elif use_cv:
-        st.plotly_chart(plot_plotly(models['eval'], forecasts['cv_with_hist'], ylabel=target_col))
+        st.plotly_chart(plot_plotly(models['eval'], forecasts['cv_with_hist'],
+                                    changepoints=True, trend=True, ylabel=target_col))
     else:
         st.plotly_chart(plot_plotly(models['eval'], forecasts['eval'],
                                     changepoints=True, trend=True, ylabel=target_col))
@@ -35,9 +36,10 @@ def plot_performance(use_cv, target_col, datasets, forecasts, dates, eval, resam
     st.plotly_chart(plot_residuals_distrib(evaluation_df, use_cv))
 
 
-def plot_components(use_cv, target_col, datasets, models, forecasts, cleaning, resampling):
+def plot_components(use_cv, target_col, models, forecasts, cleaning, resampling):
     if use_cv:
-        forecast_df = models['eval'].predict(datasets['train'].drop('y', axis=1))
+        forecast_df = forecasts['cv_with_hist'].copy()
+        forecast_df = forecast_df.loc[forecast_df['ds'] < forecasts['cv'].ds.min()]
     else:
         forecast_df = forecasts['eval'].copy()
     st.plotly_chart(make_separate_components_plot(models, forecast_df, target_col, cleaning, resampling))

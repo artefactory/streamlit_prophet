@@ -37,7 +37,7 @@ def forecast_workflow(config: dict, use_cv: bool, make_future_forecast: bool, cl
                                                horizon=get_prophet_cv_horizon(dates, resampling),
                                                parallel='processes'
                                                )
-            forecasts['cv_with_hist'] = get_df_cv_with_hist(forecasts, datasets)
+            forecasts['cv_with_hist'] = get_df_cv_with_hist(forecasts, datasets, models)
         else:
             datasets = make_eval_df(datasets)
             forecasts['eval'] = models['eval'].predict(datasets['eval'])
