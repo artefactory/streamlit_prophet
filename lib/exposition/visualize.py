@@ -37,8 +37,10 @@ def plot_performance(use_cv, target_col, datasets, forecasts, dates, eval, resam
 
 def plot_components(use_cv, target_col, datasets, models, forecasts, cleaning, resampling):
     if use_cv:
-        forecasts['eval'] = models['eval'].predict(datasets['train'].drop('y', axis=1))
-    st.plotly_chart(make_separate_components_plot(models, forecasts, target_col, cleaning, resampling))
+        forecast_df = models['eval'].predict(datasets['train'].drop('y', axis=1))
+    else:
+        forecast_df = forecasts['eval'].copy()
+    st.plotly_chart(make_separate_components_plot(models, forecast_df, target_col, cleaning, resampling))
 
 
 def plot_future(models, forecasts, dates, target_col):
@@ -121,7 +123,7 @@ def plot_residuals_distrib(eval_df: pd.DataFrame, use_cv):
     return fig
 
 
-def plot_perf_metrics(perf: dict, eval:dict):
+def plot_perf_metrics(perf: dict, eval: dict):
     for metric in perf.keys():
         if perf[metric][eval['granularity']].nunique() > 1:
             fig = px.bar(perf[metric], x=eval['granularity'], y=metric)
@@ -129,32 +131,33 @@ def plot_perf_metrics(perf: dict, eval:dict):
             st.plotly_chart(fig)
 
 
-def make_separate_components_plot(models: dict, forecasts: dict, target_col: str, cleaning:dict, resampling: dict):
+def make_separate_components_plot(models: dict, forecast_df: pd.DataFrame, target_col: str,
+                                  cleaning: dict, resampling: dict):
     """
     Create an area chart with the components of the prediction, each one on its own subplot.
     """
-    components = get_forecast_components(models, forecasts)
+    components = get_forecast_components(models, forecast_df)
     features = components.columns
     n_features = len(components.columns)
     fig = make_subplots(rows=n_features, cols=1, subplot_titles=features)
     for i, col in enumerate(features):
         if col == "weekly":
-            days = forecasts['eval']["ds"].groupby(forecasts['eval'].ds.dt.dayofweek).last()
-            values = forecasts['eval'].loc[forecasts['eval'].ds.isin(days), ("ds", col)]
+            days = forecast_df["ds"].groupby(forecast_df.ds.dt.dayofweek).last()
+            values = forecast_df.loc[forecast_df.ds.isin(days), ("ds", col)]
             values = values.iloc[values.ds.dt.dayofweek.values.argsort()]  # sort by day of week order
             y = values[col]
             x = values.ds.dt.day_name()
         elif col == "yearly":
-            year = forecasts['eval']["ds"].max().year - 1
+            year = forecast_df["ds"].max().year - 1
             days = pd.date_range(start=f'{year}-01-01', end=f"{year}-12-31")
-            y = forecasts['eval'].loc[forecasts['eval']["ds"].isin(days), col]
+            y = forecast_df.loc[forecast_df["ds"].isin(days), col]
             x = days
         else:
             x = components.index
             y = components[col]
-        fig.append_trace(go.Scatter(x=x, y=y, fill='tozeroy', name=col), row=i+1, col=1)
+        fig.append_trace(go.Scatter(x=x, y=y, fill='tozeroy', name=col), row=i + 1, col=1)
         y_label = f"log {target_col}" if cleaning['log_transform'] else target_col
-        fig.update_yaxes(title_text=f"{y_label} / {resampling['freq']}", row=i+1, col=1)
+        fig.update_yaxes(title_text=f"{y_label} / {resampling['freq']}", row=i + 1, col=1)
     fig.update_layout(height=200 * n_features)
     return fig
 

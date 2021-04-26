@@ -3,11 +3,11 @@ from lib.utils.mapping import convert_into_nb_of_days, convert_into_nb_of_second
 from datetime import timedelta
 
 
-def get_forecast_components(models: dict, forecasts: dict) -> pd.DataFrame:
+def get_forecast_components(models: dict, forecast_df: pd.DataFrame) -> pd.DataFrame:
     """
     Return a dataframe with only the relevant components to sum to get the prediction
     """
-    fcst = forecasts['eval'].copy()
+    fcst = forecast_df.copy()
     components_col_names = get_forecast_components_col_names(fcst) + ['ds']
     components = fcst[components_col_names]
     for col in components_col_names:
