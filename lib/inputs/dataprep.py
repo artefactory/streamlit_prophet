@@ -77,8 +77,8 @@ def _autodetect_freq(df):
     if days == 1:
         return 'D'
     elif days < 1:
-        if seconds >= '3600':
-            return f'{round(seconds/60)}H'
+        if seconds >= 3600:
+            return f'{round(seconds/3600)}H'
         else:
             return f'{seconds}s'
     elif days > 1:

@@ -5,7 +5,7 @@ import streamlit as st
 @st.cache(suppress_st_warning=True)
 def format_date_and_target(df_input: pd.DataFrame, date_col: str, target_col: str) -> pd.DataFrame:
     try:
-        df = df_input.copy() # To avoid CachedObjectMutationWarning
+        df = df_input.copy()  # To avoid CachedObjectMutationWarning
         df[date_col] = pd.to_datetime(df[date_col])
         df[target_col] = df[target_col].astype('float')
         df = df.rename(columns={date_col: 'ds', target_col: 'y'})
@@ -24,12 +24,17 @@ def filter_and_aggregate_df(df: pd.DataFrame, dimensions: dict):
 
 
 @st.cache()
-def resample_df(df: pd.DataFrame, resampling: dict):
+def resample_df(df_input: pd.DataFrame, resampling: dict):
+    df = df_input.copy() # To avoid CachedObjectMutationWarning
     freq = resampling['freq']
-    cols_to_agg = set(df.columns) - set(['ds'])
-    agg_dict = {col: 'mean' if df[col].nunique() > 2 else 'max' for col in cols_to_agg}
-    agg_dict['y'] = 'sum'
-    df = df.set_index('ds').resample(freq).agg(agg_dict).reset_index()
+    if freq[-1] in ['H', 's']:
+        df['ds'] = df['ds'].map(lambda x: x.strftime('%Y-%m-%d %H:%M:%S'))
+        df['ds'] = pd.to_datetime(df['ds'])
+    if resampling['resample']:
+        cols_to_agg = set(df.columns) - set(['ds'])
+        agg_dict = {col: 'mean' if df[col].nunique() > 2 else 'max' for col in cols_to_agg}
+        agg_dict['y'] = 'mean' # TODO : Variabiliser la fonction d'agrégation ?
+        df = df.set_index('ds').resample(freq).agg(agg_dict).reset_index()
     return df
 
 
@@ -58,7 +63,3 @@ def _format_regressors(df: pd.DataFrame):
             except:
                 df = df.drop(col, axis=1)
     return df
-
-
-
-

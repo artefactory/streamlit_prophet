@@ -39,8 +39,7 @@ with st.sidebar.beta_expander("Filtering", expanded=False):
 # Resampling
 with st.sidebar.beta_expander("Resampling", expanded=False):
     resampling = input_resampling(df)
-    if resampling['resample']:
-        df = resample_df(df, resampling)
+    df = resample_df(df, resampling)
 
 # Cleaning
 with st.sidebar.beta_expander("Cleaning", expanded=False):

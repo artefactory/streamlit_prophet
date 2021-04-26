@@ -127,6 +127,7 @@ def plot_residuals_distrib(eval_df: pd.DataFrame, use_cv: bool, style: dict):
 
 
 def plot_perf_metrics(perf: dict, eval: dict, use_cv: bool, style: dict):
+    # TODO : Tout inclure dans un unique subplot
     for i, metric in enumerate(perf.keys()):
         color_sequence = style['colors'] if use_cv else [style['colors'][i % len(style['colors'])]]
         if perf[metric][eval['granularity']].nunique() > 1:
@@ -146,7 +147,13 @@ def make_separate_components_plot(models: dict, forecast_df: pd.DataFrame, targe
     n_features = len(components.columns)
     fig = make_subplots(rows=n_features, cols=1, subplot_titles=features)
     for i, col in enumerate(features):
-        if col == "weekly":
+        if col == "daily":
+            hours = forecast_df["ds"].groupby(forecast_df.ds.dt.hour).last()
+            values = forecast_df.loc[forecast_df.ds.isin(hours), ("ds", col)]
+            values = values.iloc[values.ds.dt.hour.values.argsort()]  # sort by hour order
+            y = values[col]
+            x = values.ds.map(lambda h: h.strftime('%H:%M'))
+        elif col == "weekly":
             days = forecast_df["ds"].groupby(forecast_df.ds.dt.dayofweek).last()
             values = forecast_df.loc[forecast_df.ds.isin(days), ("ds", col)]
             values = values.iloc[values.ds.dt.dayofweek.values.argsort()]  # sort by day of week order

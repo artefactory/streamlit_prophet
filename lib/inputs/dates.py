@@ -10,36 +10,32 @@ def input_train_dates(df: pd.DataFrame, use_cv: bool) -> dict:
     # TODO : Choisir les valeurs par défaut en fonction de resampling
     dates = dict()
     set_name = "CV" if use_cv else "Training"
-    dates['train_start_date'] = st.date_input(
-        f"{set_name} start date",
-        value=df.ds.min(),
-        min_value=df.ds.min(),
-        max_value=df.ds.max(),
-    )
-    dates['train_end_date'] = st.date_input(
-        f"{set_name} end date",
-        value=df.ds.max() if use_cv else df.ds.max() - timedelta(days=30),
-        min_value=dates['train_start_date'] + timedelta(days=1),
-        max_value=df.ds.max(),
-    )
+    dates['train_start_date'] = st.date_input(f"{set_name} start date",
+                                              value=df.ds.min(),
+                                              min_value=df.ds.min(),
+                                              max_value=df.ds.max()
+                                              )
+    dates['train_end_date'] = st.date_input(f"{set_name} end date",
+                                            value=df.ds.max() if use_cv else df.ds.max() - timedelta(days=30),
+                                            min_value=dates['train_start_date'] + timedelta(days=1),
+                                            max_value=df.ds.max()
+                                            )
     return dates
 
 
 def input_val_dates(df: pd.DataFrame, dates: dict) -> dict:
     # TODO: Gérer le edge case où la train end date entrée est df.ds.max()
     # TODO : Choisir les valeurs par défaut en fonction de resampling
-    dates['val_start_date'] = st.date_input(
-        "Validation start date",
-        value=dates['train_end_date'] + timedelta(days=1),
-        min_value=dates['train_end_date'] + timedelta(days=1),
-        max_value=df.ds.max(),
-    )
-    dates['val_end_date'] = st.date_input(
-        "Validation end date",
-        value=df.ds.max(),
-        min_value=dates['val_start_date'] + timedelta(days=1),
-        max_value=df.ds.max(),
-    )
+    dates['val_start_date'] = st.date_input("Validation start date",
+                                            value=dates['train_end_date'] + timedelta(days=1),
+                                            min_value=dates['train_end_date'] + timedelta(days=1),
+                                            max_value=df.ds.max()
+                                            )
+    dates['val_end_date'] = st.date_input("Validation end date",
+                                          value=df.ds.max(),
+                                          min_value=dates['val_start_date'] + timedelta(days=1),
+                                          max_value=df.ds.max()
+                                          )
     return dates
 
 
@@ -48,7 +44,7 @@ def input_cv(dates: dict, resampling: dict) -> dict:
     freq = resampling['freq'][-1]
     freq_name = mapping_freq_names(freq)
     max_possible_horizon = get_max_possible_cv_horizon(dates, resampling)
-    default_values = {'H': 24, 'D': 30, 'W': 10, 'M': 6, 'Y': 3}
+    default_values = {'H': 96, 'D': 30, 'W': 10, 'M': 6, 'Y': 3}
     dates['folds_horizon'] = st.number_input(f"Horizon of each fold (in {freq_name})",
                                              min_value=1,
                                              max_value=max_possible_horizon,
