@@ -4,14 +4,40 @@ import streamlit as st
 
 @st.cache(suppress_st_warning=True)
 def format_date_and_target(df_input: pd.DataFrame, date_col: str, target_col: str) -> pd.DataFrame:
+    df = df_input.copy()  # To avoid CachedObjectMutationWarning
+    df = _format_date(df, date_col)
+    df = _format_target(df, target_col)
+    df = _rename_cols(df, date_col, target_col)
+    return df
+
+
+def _format_date(df: pd.DataFrame, date_col: str) -> pd.DataFrame:
     try:
-        df = df_input.copy()  # To avoid CachedObjectMutationWarning
         df[date_col] = pd.to_datetime(df[date_col])
-        df[target_col] = df[target_col].astype('float')
-        df = df.rename(columns={date_col: 'ds', target_col: 'y'})
     except:
-        st.write('Please select the correct date and target columns.')
+        st.error('Please select the correct date column.')
         st.stop()
+    return df
+
+
+def _format_target(df: pd.DataFrame, target_col: str) -> pd.DataFrame:
+    try:
+        df[target_col] = df[target_col].astype('float')
+    except:
+        st.error('Please select the correct target column (should be of type int or float).')
+        st.stop()
+    if df[target_col].nunique() < 5:
+        st.error('Target column should be numerical, not categorical.')
+        st.stop()
+    return df
+
+
+def _rename_cols(df: pd.DataFrame, date_col: str, target_col: str) -> pd.DataFrame:
+    if (target_col != 'y') and ('y' in df.columns):
+        df = df.rename(columns={'y': 'y_2'})
+    if (date_col != 'ds') and ('ds' in df.columns):
+        df = df.rename(columns={'ds': 'ds_2'})
+    df = df.rename(columns={date_col: 'ds', target_col: 'y'})
     return df
 
 
@@ -25,7 +51,7 @@ def filter_and_aggregate_df(df: pd.DataFrame, dimensions: dict):
 
 @st.cache()
 def resample_df(df_input: pd.DataFrame, resampling: dict):
-    df = df_input.copy() # To avoid CachedObjectMutationWarning
+    df = df_input.copy()  # To avoid CachedObjectMutationWarning
     freq = resampling['freq']
     if freq[-1] in ['H', 's']:
         df['ds'] = df['ds'].map(lambda x: x.strftime('%Y-%m-%d %H:%M:%S'))
@@ -33,7 +59,7 @@ def resample_df(df_input: pd.DataFrame, resampling: dict):
     if resampling['resample']:
         cols_to_agg = set(df.columns) - set(['ds'])
         agg_dict = {col: 'mean' if df[col].nunique() > 2 else 'max' for col in cols_to_agg}
-        agg_dict['y'] = 'mean' # TODO : Variabiliser la fonction d'agrégation ?
+        agg_dict['y'] = 'mean'  # TODO : Variabiliser la fonction d'agrégation ?
         df = df.set_index('ds').resample(freq).agg(agg_dict).reset_index()
     return df
 

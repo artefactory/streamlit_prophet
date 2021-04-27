@@ -58,11 +58,9 @@ def input_prior_scale_params(config: dict) -> dict:
 def input_other_params(config: dict, params: dict) -> dict:
     default_params = config["model"]
     growth = st.selectbox("growth", default_params['growth'])
-    #seasonality_mode = st.selectbox("seasonality_mode", default_params['seasonality_mode'])
     n_changepoints = st.number_input("n_changepoints", value=default_params['n_changepoints'])
     changepoint_range = st.number_input("changepoint_range", value=default_params['changepoint_range'], format="%.2f")
     params['other'] = {'growth': growth,
-                       #'seasonality_mode': seasonality_mode,
                        'n_changepoints': n_changepoints,
                        'changepoint_range': changepoint_range
                        }
