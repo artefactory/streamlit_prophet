@@ -71,7 +71,7 @@ with st.sidebar.beta_expander("Prior scale", expanded=False):
 
 # Seasonalities
 with st.sidebar.beta_expander("Seasonalities", expanded=False):
-    params = input_seasonality_params(params)
+    params = input_seasonality_params(config, params, resampling)
 
 # Holidays
 with st.sidebar.beta_expander("Holidays"):

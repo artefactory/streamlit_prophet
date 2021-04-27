@@ -16,11 +16,11 @@ target = "temperature"
 seasonality_prior_scale = 10
 holidays_prior_scale = 10
 regressors_prior_scale = 10
-changepoint_prior_scale = 0.05
+changepoint_prior_scale = 0.050
 growth = ['linear', 'logistic']
 seasonality_mode = ['additive', 'multiplicative']
 n_changepoints = 25
-changepoint_range = 0.8
+changepoint_range = 0.80
 
 [style]
 colors = ["#002244", "#ff0066", "#66cccc", "#ff9933", "#337788", "#429e79", "#474747", "#f7d126", "#ee5eab", "#b8b8b8"]

@@ -159,19 +159,30 @@ def make_separate_components_plot(models: dict, forecast_df: pd.DataFrame, targe
             values = values.iloc[values.ds.dt.dayofweek.values.argsort()]  # sort by day of week order
             y = values[col]
             x = values.ds.dt.day_name()
+        elif col == "monthly":
+            days = forecast_df["ds"].groupby(forecast_df.ds.dt.day).last()
+            values = forecast_df.loc[forecast_df.ds.isin(days), ("ds", col)]
+            values = values.iloc[values.ds.dt.day.values.argsort()]  # sort by day of month order
+            y = values[col]
+            x = values.ds.dt.day
         elif col == "yearly":
             year = forecast_df["ds"].max().year - 1
             days = pd.date_range(start=f'{year}-01-01', end=f"{year}-12-31")
             y = forecast_df.loc[forecast_df["ds"].isin(days), col]
-            x = days
+            x = days.dayofyear
         else:
             x = components.index
             y = components[col]
         fig.append_trace(go.Scatter(x=x, y=y, fill='tozeroy', name=col,
                                     mode='lines', line=dict(color=style['colors'][i % len(style['colors'])])),
                          row=i + 1, col=1)
+
         y_label = f"log {target_col}" if cleaning['log_transform'] else target_col
         fig.update_yaxes(title_text=f"{y_label} / {resampling['freq']}", row=i + 1, col=1)
+        if col == 'yearly':
+            fig['layout'][f'xaxis{i+1}'].update(tickmode='array',
+                                                tickvals=[1, 61, 122, 183, 244, 305],
+                                                ticktext=['Jan', 'Mar', 'May', 'Jul', 'Sep', 'Nov'])
     fig.update_layout(height=200 * n_features)
     return fig
 
