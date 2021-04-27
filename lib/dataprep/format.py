@@ -42,42 +42,24 @@ def _rename_cols(df: pd.DataFrame, date_col: str, target_col: str) -> pd.DataFra
 
 
 @st.cache()
-def filter_and_aggregate_df(df: pd.DataFrame, dimensions: dict):
-    df = _filter(df, dimensions)
-    df = _format_regressors(df)
-    df = _aggregate(df)
-    return df
-
-
-@st.cache()
-def resample_df(df_input: pd.DataFrame, resampling: dict):
+def filter_and_aggregate_df(df_input: pd.DataFrame, dimensions: dict) -> pd.DataFrame:
     df = df_input.copy()  # To avoid CachedObjectMutationWarning
-    freq = resampling['freq']
-    if freq[-1] in ['H', 's']:
-        df['ds'] = df['ds'].map(lambda x: x.strftime('%Y-%m-%d %H:%M:%S'))
-        df['ds'] = pd.to_datetime(df['ds'])
-    if resampling['resample']:
-        cols_to_agg = set(df.columns) - set(['ds'])
-        agg_dict = {col: 'mean' if df[col].nunique() > 2 else 'max' for col in cols_to_agg}
-        agg_dict['y'] = 'mean'  # TODO : Variabiliser la fonction d'agrégation ?
-        df = df.set_index('ds').resample(freq).agg(agg_dict).reset_index()
+    if len(dimensions.keys()) > 0:
+        df = _filter(df, dimensions)
+        df = _format_regressors(df)
+        df = _aggregate(df, dimensions)
     return df
 
 
-def _filter(df: pd.DataFrame, dimensions: dict):
-    for col in dimensions.keys():
+def _filter(df: pd.DataFrame, dimensions: dict) -> pd.DataFrame:
+    filter_cols = list(set(dimensions.keys()) - set(['agg']))
+    for col in filter_cols:
         df = df.loc[df[col].isin(dimensions[col])]
-    return df.drop(dimensions.keys(), axis=1)
-
-
-def _aggregate(df: pd.DataFrame):
-    cols_to_agg = set(df.columns) - set(['ds'])
-    agg_dict = {col: 'mean' if df[col].nunique() > 2 else 'max' for col in cols_to_agg}
-    df = df.groupby('ds').agg(agg_dict).reset_index()
+    df = df.drop(filter_cols, axis=1)
     return df
 
 
-def _format_regressors(df: pd.DataFrame):
+def _format_regressors(df: pd.DataFrame) -> pd.DataFrame:
     for col in set(df.columns) - set(['ds', 'y']):
         if df[col].nunique() < 2:
             df = df.drop(col, axis=1)
@@ -89,3 +71,32 @@ def _format_regressors(df: pd.DataFrame):
             except:
                 df = df.drop(col, axis=1)
     return df
+
+
+def _aggregate(df: pd.DataFrame, dimensions: dict) -> pd.DataFrame:
+    cols_to_agg = set(df.columns) - set(['ds', 'y'])
+    agg_dict = {col: 'mean' if df[col].nunique() > 2 else 'max' for col in cols_to_agg}
+    agg_dict['y'] = dimensions['agg'].lower()
+    df = df.groupby('ds').agg(agg_dict).reset_index()
+    return df
+
+
+@st.cache()
+def format_datetime(df_input: pd.DataFrame, resampling: dict) -> pd.DataFrame:
+    df = df_input.copy()  # To avoid CachedObjectMutationWarning
+    if resampling['freq'][-1] in ['H', 's']:
+        df['ds'] = df['ds'].map(lambda x: x.strftime('%Y-%m-%d %H:%M:%S'))
+        df['ds'] = pd.to_datetime(df['ds'])
+    return df
+
+
+@st.cache()
+def resample_df(df_input: pd.DataFrame, resampling: dict) -> pd.DataFrame:
+    df = df_input.copy()  # To avoid CachedObjectMutationWarning
+    if resampling['resample']:
+        cols_to_agg = set(df.columns) - set(['ds', 'y'])
+        agg_dict = {col: 'mean' if df[col].nunique() > 2 else 'max' for col in cols_to_agg}
+        agg_dict['y'] = resampling['agg'].lower()
+        df = df.set_index('ds').resample(resampling['freq'][-1]).agg(agg_dict).reset_index()
+    return df
+

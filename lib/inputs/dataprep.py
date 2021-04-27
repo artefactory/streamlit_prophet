@@ -36,6 +36,8 @@ def input_dimensions(df):
                 dimensions[col] = values.copy()
             else:
                 dimensions[col] = st.multiselect(f"Values to keep for {col}", values, default=[values[0]])
+        dimensions['agg'] = st.selectbox("Select target aggregation function over dimensions",
+                                         ['Mean', 'Sum', 'Max', 'Min'])
     else:
         st.write("Date and target are the only columns in your dataset, there are no dimensions.")
     return dimensions
@@ -65,8 +67,11 @@ def input_resampling(df):
         if current_freq != 'Y':
             new_freq = st.selectbox("Select new frequency", possible_freq_names[current_freq_index+1:])
             resampling['freq'] = new_freq[0]
+            resampling['agg'] = st.selectbox("Select target aggregation function when resampling",
+                                             ['Mean', 'Sum', 'Max', 'Min'])
         else:
             st.write('Frequency is already yearly, resampling is not possible.')
+            resampling['resample'] = False
     return resampling
 
 

@@ -1,7 +1,7 @@
 import streamlit as st
 from lib.utils.load import load_config
 from lib.dataprep.clean import clean_df
-from lib.dataprep.format import format_date_and_target, filter_and_aggregate_df, resample_df
+from lib.dataprep.format import format_date_and_target, filter_and_aggregate_df, format_datetime, resample_df
 from lib.dataprep.split import get_train_val_sets, get_train_set
 from lib.inputs.dataset import input_dataset, input_columns
 from lib.inputs.dataprep import input_dimensions, input_resampling, input_cleaning
@@ -39,6 +39,7 @@ with st.sidebar.beta_expander("Filtering", expanded=False):
 # Resampling
 with st.sidebar.beta_expander("Resampling", expanded=False):
     resampling = input_resampling(df)
+    df = format_datetime(df, resampling)
     df = resample_df(df, resampling)
 
 # Cleaning
