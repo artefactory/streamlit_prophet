@@ -22,7 +22,7 @@ def input_seasonality_params(config: dict, params: dict, resampling: dict) -> di
                 'mode': st.selectbox(f"Seasonality mode for {seasonality} seasonality",
                                      default_params['seasonality_mode']),
                 'fourier_order': st.number_input(f"Fourier order for {seasonality} seasonality", value=15),
-                'prior_scale': st.number_input(f"Prior scale for {seasonality} seasonality", value=10.0),
+                'prior_scale': st.number_input(f"Prior scale for {seasonality} seasonality", value=10),
             }
     add_custom_seasonality = st.checkbox("Add a custom seasonality", value=False)
     if add_custom_seasonality:
@@ -32,7 +32,7 @@ def input_seasonality_params(config: dict, params: dict, resampling: dict) -> di
         custom_seasonality['custom_param']['period'] = st.number_input("Period (in days)", value=10)
         custom_seasonality['custom_param']['mode'] = st.selectbox(f"Mode", default_params['seasonality_mode'])
         custom_seasonality['custom_param']['fourier_order'] = st.number_input(f"Fourier order", value=15)
-        custom_seasonality['custom_param']['prior_scale'] = st.number_input(f"Prior scale", value=10.0)
+        custom_seasonality['custom_param']['prior_scale'] = st.number_input(f"Prior scale", value=10)
         seasonalities[custom_seasonality['custom_param']['name']] = custom_seasonality
     params['seasonalities'] = seasonalities
     return params
@@ -42,11 +42,12 @@ def input_prior_scale_params(config: dict) -> dict:
     params = dict()
     default_params = config["model"]
     seasonality_prior_scale = st.number_input("seasonality_prior_scale",
-                                              value=default_params['seasonality_prior_scale'], )
+                                              value=default_params['seasonality_prior_scale'])
     holidays_prior_scale = st.number_input("holidays_prior_scale",
-                                           value=default_params['holidays_prior_scale'], )
+                                           value=default_params['holidays_prior_scale'])
     changepoint_prior_scale = st.number_input("changepoint_prior_scale",
-                                              value=default_params['changepoint_prior_scale'], )
+                                              value=default_params['changepoint_prior_scale'],
+                                              format="%.3f")
     params['prior_scale'] = {'seasonality_prior_scale': seasonality_prior_scale,
                              'holidays_prior_scale': holidays_prior_scale,
                              'changepoint_prior_scale': changepoint_prior_scale
@@ -59,7 +60,7 @@ def input_other_params(config: dict, params: dict) -> dict:
     growth = st.selectbox("growth", default_params['growth'])
     #seasonality_mode = st.selectbox("seasonality_mode", default_params['seasonality_mode'])
     n_changepoints = st.number_input("n_changepoints", value=default_params['n_changepoints'])
-    changepoint_range = st.number_input("changepoint_range", value=default_params['changepoint_range'])
+    changepoint_range = st.number_input("changepoint_range", value=default_params['changepoint_range'], format="%.2f")
     params['other'] = {'growth': growth,
                        #'seasonality_mode': seasonality_mode,
                        'n_changepoints': n_changepoints,
@@ -91,9 +92,9 @@ def input_regressors(df: pd.DataFrame, config: dict, params: dict) -> dict:
                                         )
         for col in regressor_cols:
             regressors[col] = dict()
-            regressors[col]['prior_scale'] = st.number_input(f"prior_scale for {col}",
+            regressors[col]['prior_scale'] = st.number_input(f"Prior scale for {col}",
                                                              value=default_params['regressors_prior_scale'])
-            regressors[col]['mode'] = st.selectbox(f"mode for {col}", default_params['seasonality_mode'])
+            regressors[col]['mode'] = st.selectbox(f"Mode for {col}", default_params['seasonality_mode'])
     else:
         st.write("There are no regressors in your dataset.")
     params['regressors'] = regressors
