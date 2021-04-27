@@ -1,6 +1,8 @@
 import pandas as pd
 import streamlit as st
 from datetime import timedelta
+from datetime import datetime
+import re
 from lib.dataprep.clean import clean_future_df
 from lib.utils.mapping import convert_into_nb_of_days, convert_into_nb_of_seconds
 
@@ -9,16 +11,32 @@ def get_train_val_sets(df: pd.DataFrame, dates: dict) -> dict:
     datasets = dict()
     train = df.query(f'ds >= "{dates["train_start_date"]}" & ds <= "{dates["train_end_date"]}"').copy()
     val = df.query(f'ds >= "{dates["val_start_date"]}" & ds <= "{dates["val_end_date"]}"').copy()
-    datasets['train'] = train
-    datasets['val'] = val
-    datasets['full'] = df.copy()
-    st.success(
-        f"""Train: {datasets['train'].ds.min().strftime('%Y/%m/%d')} - 
-                   {datasets['train'].ds.max().strftime('%Y/%m/%d')}
-            Valid: {datasets['val'].ds.min().strftime('%Y/%m/%d')} - 
-                   {datasets['val'].ds.max().strftime('%Y/%m/%d')} 
-            ({round((len(datasets['val']) / float(len(df)) * 100))}% of data used for validation)""")
+    datasets['train'], datasets['val'], datasets['full'] = train, val, df.copy()
+    print_train_val_dates(val, train)
+    raise_error_train_val_dates(val, train)
     return datasets
+
+
+def print_train_val_dates(val: pd.DataFrame, train: pd.DataFrame):
+    st.success(f"""Train: [ {train.ds.min().strftime('%Y/%m/%d')} - 
+                           {train.ds.max().strftime('%Y/%m/%d')} ]
+                    Valid: [ {val.ds.min().strftime('%Y/%m/%d')} - 
+                           {val.ds.max().strftime('%Y/%m/%d')} ]
+                        ({round((len(val) / float(len(train) + len(val)) * 100))}% of data used for validation)""")
+
+
+def raise_error_train_val_dates(val: pd.DataFrame, train: pd.DataFrame):
+    threshold_train = 30
+    if (len(val) <= 1) | (len(train) < threshold_train):
+        if len(val) == 0:
+            st.error(f"Validation set is empty, please change training and validation dates.")
+        elif len(val) == 1:
+            st.error(f"There is only 1 data point in validation set, "
+                     f"please expand validation period or change the dataset frequency.")
+        if len(train) < 31:
+            st.error(f"There are less than {threshold_train} data points in training set, "
+                     f"please expand training period or change the dataset frequency.")
+        st.stop()
 
 
 def get_train_set(df: pd.DataFrame, dates: dict) -> dict:
@@ -49,15 +67,23 @@ def make_future_df(dates: dict, datasets: dict, cleaning: dict, include_history:
     return datasets
 
 
+def get_train_end_date_default_value(df: pd.DataFrame, dates: dict, resampling: dict, config: dict, use_cv: bool):
+    if use_cv:
+        default_end = df.ds.max()
+    else:
+        total_nb_days = (df.ds.max().date() - dates['train_start_date']).days
+        freq = resampling['freq'][-1]
+        default_horizon = convert_into_nb_of_days(freq, config['horizon'][freq])
+        default_end = df.ds.max() - timedelta(days=min(default_horizon, total_nb_days - 1))
+    return default_end
+
+
 def get_cv_cutoffs(dates: dict, freq: str) -> list:
-    horizon = dates['folds_horizon']
-    end = dates['train_end_date']
-    n_folds = dates['n_folds']
+    horizon, end, n_folds = dates['folds_horizon'], dates['train_end_date'], dates['n_folds']
     if freq in ['s', 'H']:
         multiplier = convert_into_nb_of_seconds(freq, 1)
-        rest = (60 * 60) * (horizon % 24) if freq == 'H' else horizon % (24 * 60 * 60)
-        cutoffs = [pd.to_datetime(end - timedelta(seconds=(i + 1) * multiplier * horizon + rest))
-                   for i in range(n_folds)]
+        end = datetime.combine(end, datetime.min.time())
+        cutoffs = [pd.to_datetime(end - timedelta(seconds=(i + 1) * multiplier * horizon)) for i in range(n_folds)]
     else:
         multiplier = convert_into_nb_of_days(freq, 1)
         cutoffs = [pd.to_datetime(end - timedelta(days=(i + 1) * multiplier * horizon)) for i in range(n_folds)]
@@ -77,22 +103,48 @@ def get_max_possible_cv_horizon(dates: dict, resampling: dict) -> int:
     return max_horizon
 
 
-def prettify_cv_folds_dates(dates: dict, freq: str) -> str:
-    horizon = dates['folds_horizon']
-    cutoffs_text = []
+def print_cv_folds_dates(dates: dict, freq: str):
+    horizon, cutoffs_text = dates['folds_horizon'], []
     for i, cutoff in enumerate(dates['cutoffs']):
-        cutoffs_text.append(f"Fold {i + 1}:           ")
+        cutoffs_text.append(f"""Fold {i + 1}:           """)
         if freq in ['s', 'H']:
             multiplier = convert_into_nb_of_seconds(freq, 1)
-            cutoffs_text.append(f"Train: {dates['train_start_date'].strftime('%Y/%m/%d %H:%M:%S')} - "
-                                f"{cutoff.strftime('%Y/%m/%d %H:%M:%S')}")
-            cutoffs_text.append(f"Valid: {cutoff.strftime('%Y/%m/%d %H:%M:%S')} - "
-                                f"{(cutoff + timedelta(seconds=horizon * multiplier)).strftime('%Y/%m/%d %H:%M:%S')}")
+            cutoffs_text.append(f"""Train: [ {dates['train_start_date'].strftime('%Y/%m/%d %H:%M:%S')} - """
+                                f"""{cutoff.strftime('%Y/%m/%d %H:%M:%S')} ]""")
+            cutoffs_text.append(f"""Valid: ] {cutoff.strftime('%Y/%m/%d %H:%M:%S')} - """
+                                f"""{(cutoff + timedelta(seconds=horizon * multiplier)).strftime('%Y/%m/%d %H:%M:%S')
+                                } ]""")
         else:
             multiplier = convert_into_nb_of_days(freq, 1)
-            cutoffs_text.append(f"Train: {dates['train_start_date'].strftime('%Y/%m/%d')} - "
-                                f"{cutoff.strftime('%Y/%m/%d')}")
-            cutoffs_text.append(f"Valid: {cutoff.strftime('%Y/%m/%d')} - "
-                                f"{(cutoff + timedelta(days=horizon * multiplier)).strftime('%Y/%m/%d')}")
+            cutoffs_text.append(f"""Train: [ {dates['train_start_date'].strftime('%Y/%m/%d')} - """
+                                f"""{cutoff.strftime('%Y/%m/%d')} ]""")
+            cutoffs_text.append(f"""Valid: ] {cutoff.strftime('%Y/%m/%d')} - """
+                                f"""{(cutoff + timedelta(days=horizon * multiplier)).strftime('%Y/%m/%d')} ]""")
         cutoffs_text.append("")
-    return '\n'.join(cutoffs_text)
+    st.success('\n'.join(cutoffs_text))
+
+
+def raise_error_cv_dates(dates: dict, resampling: dict):
+    threshold_train = 30
+    freq = resampling['freq']
+    regex = re.findall(r'\d+', resampling['freq'])
+    freq_int = int(regex[0]) if len(regex) > 0 else 1
+    n_data_points_val = dates['folds_horizon'] // freq_int
+    n_data_points_train = len(pd.date_range(start=dates['train_start_date'], end=min(dates['cutoffs']), freq=freq))
+    if (n_data_points_val <= 1) | (n_data_points_train < threshold_train):
+        if n_data_points_val <= 1:
+            st.error(f"Some folds' validation sets have less than 2 data points, "
+                     f"please increase folds' horizon or change the dataset frequency or expand CV period.")
+        elif n_data_points_train < threshold_train:
+            st.error(f"There are less than {threshold_train} data points in some folds' training set, "
+                     f"please decrease folds' horizon or change the dataset frequency or expand CV period.")
+        st.stop()
+
+
+def print_forecast_dates(dates: dict, resampling: dict):
+    if resampling['freq'][-1] in ['s', 'H']:
+        st.success(f"""Forecast: {dates['forecast_start_date'].strftime('%Y/%m/%d %H:%M:%S')} - 
+                                 {dates['forecast_end_date'].strftime('%Y/%m/%d %H:%M:%S')}""")
+    else:
+        st.success(f"""Forecast: {dates['forecast_start_date'].strftime('%Y/%m/%d')} - 
+                                 {dates['forecast_end_date'].strftime('%Y/%m/%d')}""")

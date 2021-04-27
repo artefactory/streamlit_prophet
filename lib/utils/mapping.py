@@ -1,20 +1,26 @@
-def convert_into_nb_of_days(forecast_freq: str, forecast_horizon: int) -> int:
-    mapping = {
-               'D': forecast_horizon,
-               'W': forecast_horizon * 7,
-               'M': forecast_horizon * 30,
-               'Q': forecast_horizon * 90,
-               'Y': forecast_horizon * 365
+def convert_into_nb_of_days(freq: str, horizon: int) -> int:
+    mapping = {'s': horizon // (24 * 60 * 60),
+               'H': horizon // 24,
+               'D': horizon,
+               'W': horizon * 7,
+               'M': horizon * 30,
+               'Q': horizon * 90,
+               'Y': horizon * 365
                }
-    return mapping[forecast_freq]
+    return mapping[freq]
 
 
-def convert_into_nb_of_seconds(forecast_freq: str, forecast_horizon: int) -> int:
+def convert_into_nb_of_seconds(freq: str, horizon: int) -> int:
     mapping = {
-               's': forecast_horizon,
-               'H': forecast_horizon * 3600
+               's': horizon,
+               'H': horizon * 60 * 60,
+               'D': horizon * 60 * 60 * 24,
+               'W': horizon * 60 * 60 * 24 * 7,
+               'M': horizon * 60 * 60 * 24 * 30,
+               'Q': horizon * 60 * 60 * 24 * 90,
+               'Y': horizon * 60 * 60 * 24 * 365,
                }
-    return mapping[forecast_freq]
+    return mapping[freq]
 
 
 def dayname_to_daynumber(days: list) -> list:

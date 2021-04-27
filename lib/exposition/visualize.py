@@ -11,16 +11,17 @@ from lib.exposition.preparation import get_forecast_components, get_cv_dates_dic
 from lib.utils.misc import reverse_list
 
 
-def plot_overview(make_future_forecast, use_cv, models, forecasts, target_col):
+def plot_overview(make_future_forecast, use_cv, models, forecasts, target_col, cleaning):
+    bool_param = False if cleaning['log_transform'] else True
     if make_future_forecast:
-        st.plotly_chart(plot_plotly(models['future'], forecasts['future'],
-                                    changepoints=True, trend=True, ylabel=target_col))
+        st.plotly_chart(plot_plotly(models['future'], forecasts['future'], ylabel=target_col,
+                                    changepoints=bool_param, trend=bool_param, uncertainty=bool_param))
     elif use_cv:
-        st.plotly_chart(plot_plotly(models['eval'], forecasts['cv_with_hist'],
-                                    changepoints=True, trend=True, ylabel=target_col))
+        st.plotly_chart(plot_plotly(models['eval'], forecasts['cv_with_hist'], ylabel=target_col,
+                                    changepoints=bool_param, trend=bool_param, uncertainty=bool_param))
     else:
-        st.plotly_chart(plot_plotly(models['eval'], forecasts['eval'],
-                                    changepoints=True, trend=True, ylabel=target_col))
+        st.plotly_chart(plot_plotly(models['eval'], forecasts['eval'], ylabel=target_col,
+                                    changepoints=bool_param, trend=bool_param, uncertainty=bool_param))
 
 
 def plot_performance(use_cv, target_col, datasets, forecasts, dates, eval, resampling, config):
@@ -49,8 +50,10 @@ def plot_components(use_cv, target_col, models, forecasts, cleaning, resampling,
     st.plotly_chart(make_separate_components_plot(models, forecast_df, target_col, cleaning, resampling, style))
 
 
-def plot_future(models, forecasts, dates, target_col):
-    fig = plot_plotly(models['future'], forecasts['future'], changepoints=True, trend=True, ylabel=target_col)
+def plot_future(models, forecasts, dates, target_col, cleaning):
+    bool_param = False if cleaning['log_transform'] else True
+    fig = plot_plotly(models['future'], forecasts['future'], ylabel=target_col,
+                      changepoints=bool_param, trend=bool_param, uncertainty=bool_param)
     fig.update_layout(xaxis_range=[dates['forecast_start_date'], dates['forecast_end_date']])
     st.plotly_chart(fig)
 
@@ -97,7 +100,10 @@ def plot_truth_vs_actual_scatter(eval_df: pd.DataFrame, use_cv: bool, style: dic
 
 def plot_residuals_distrib(eval_df: pd.DataFrame, use_cv: bool, style: dict):
     eval_df['residuals'] = eval_df["truth"] - eval_df["forecast"]
-    x_min, x_max = eval_df['residuals'].quantile(.01), eval_df['residuals'].quantile(.99)
+    if len(eval_df) >= 10:
+        x_min, x_max = eval_df['residuals'].quantile(.01), eval_df['residuals'].quantile(.99)
+    else:
+        x_min, x_max = eval_df['residuals'].min(), eval_df['residuals'].max()
     if use_cv:
         labels = sorted(eval_df['Fold'].unique(), reverse=True)
         residuals = [eval_df.loc[eval_df['Fold'] == fold, 'residuals'] for fold in labels]

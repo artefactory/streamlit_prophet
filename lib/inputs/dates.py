@@ -2,12 +2,16 @@ import streamlit as st
 import pandas as pd
 from datetime import timedelta
 from lib.utils.mapping import convert_into_nb_of_days, convert_into_nb_of_seconds, mapping_freq_names
-from lib.dataprep.split import get_max_possible_cv_horizon, get_cv_cutoffs, prettify_cv_folds_dates
+from lib.dataprep.split import (get_train_end_date_default_value,
+                                get_max_possible_cv_horizon,
+                                get_cv_cutoffs,
+                                print_cv_folds_dates,
+                                raise_error_cv_dates,
+                                print_forecast_dates
+                                )
 
 
-def input_train_dates(df: pd.DataFrame, use_cv: bool) -> dict:
-    # TODO: Gérer le edge case où le dataset fait moins de 30 jours
-    # TODO : Choisir les valeurs par défaut en fonction de resampling
+def input_train_dates(df: pd.DataFrame, use_cv: bool, config: dict, resampling: dict) -> dict:
     dates = dict()
     set_name = "CV" if use_cv else "Training"
     dates['train_start_date'] = st.date_input(f"{set_name} start date",
@@ -15,8 +19,9 @@ def input_train_dates(df: pd.DataFrame, use_cv: bool) -> dict:
                                               min_value=df.ds.min(),
                                               max_value=df.ds.max()
                                               )
+    default_end_date = get_train_end_date_default_value(df, dates, resampling, config, use_cv)
     dates['train_end_date'] = st.date_input(f"{set_name} end date",
-                                            value=df.ds.max() if use_cv else df.ds.max() - timedelta(days=30),
+                                            value=default_end_date,
                                             min_value=dates['train_start_date'] + timedelta(days=1),
                                             max_value=df.ds.max()
                                             )
@@ -24,8 +29,6 @@ def input_train_dates(df: pd.DataFrame, use_cv: bool) -> dict:
 
 
 def input_val_dates(df: pd.DataFrame, dates: dict) -> dict:
-    # TODO: Gérer le edge case où la train end date entrée est df.ds.max()
-    # TODO : Choisir les valeurs par défaut en fonction de resampling
     dates['val_start_date'] = st.date_input("Validation start date",
                                             value=dates['train_end_date'] + timedelta(days=1),
                                             min_value=dates['train_end_date'] + timedelta(days=1),
@@ -39,19 +42,18 @@ def input_val_dates(df: pd.DataFrame, dates: dict) -> dict:
     return dates
 
 
-def input_cv(dates: dict, resampling: dict) -> dict:
+def input_cv(dates: dict, resampling: dict, config: dict) -> dict:
     dates['n_folds'] = st.number_input("Number of CV folds", min_value=1, value=5)
     freq = resampling['freq'][-1]
-    freq_name = mapping_freq_names(freq)
     max_possible_horizon = get_max_possible_cv_horizon(dates, resampling)
-    default_values = {'H': 96, 'D': 30, 'W': 10, 'M': 6, 'Y': 3}
-    dates['folds_horizon'] = st.number_input(f"Horizon of each fold (in {freq_name})",
-                                             min_value=1,
+    dates['folds_horizon'] = st.number_input(f"Horizon of each fold (in {mapping_freq_names(freq)})",
+                                             min_value=3,
                                              max_value=max_possible_horizon,
-                                             value=min(default_values[freq], max_possible_horizon)
+                                             value=min(config['horizon'][freq], max_possible_horizon)
                                              )
     dates['cutoffs'] = get_cv_cutoffs(dates, freq)
-    st.success(prettify_cv_folds_dates(dates, freq))
+    print_cv_folds_dates(dates, freq)
+    raise_error_cv_dates(dates, resampling)
     return dates
 
 
@@ -70,12 +72,11 @@ def input_forecast_dates(df: pd.DataFrame, dates: dict, resampling: dict) -> dic
     if forecast_freq_name in ['seconds', 'hours']:
         timedelta_horizon = convert_into_nb_of_seconds(resampling['freq'][-1], forecast_horizon)
         dates['forecast_end_date'] = dates['forecast_start_date'] + timedelta(seconds=timedelta_horizon)
-        st.success(f"""Forecast: {dates['forecast_start_date'].strftime('%Y/%m/%d %H:%M:%S')} - 
-                                 {dates['forecast_end_date'].strftime('%Y/%m/%d %H:%M:%S')}""")
     else:
         timedelta_horizon = convert_into_nb_of_days(resampling['freq'][-1], forecast_horizon)
         dates['forecast_end_date'] = dates['forecast_start_date'] + timedelta(days=timedelta_horizon)
-        st.success(f"""Forecast: {dates['forecast_start_date'].strftime('%Y/%m/%d')} - 
-                                 {dates['forecast_end_date'].strftime('%Y/%m/%d')}""")
     dates['forecast_freq'] = str(resampling['freq'])
+    print_forecast_dates(dates, resampling)
     return dates
+
+

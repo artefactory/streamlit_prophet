@@ -50,9 +50,9 @@ with st.sidebar.beta_expander("Cleaning", expanded=False):
 # Evaluation process
 with st.sidebar.beta_expander("Evaluation process", expanded=False):
     use_cv = st.checkbox("Perform cross-validation", value=False)
-    dates = input_train_dates(df, use_cv)
+    dates = input_train_dates(df, use_cv, config, resampling)
     if use_cv:
-        dates = input_cv(dates, resampling)
+        dates = input_cv(dates, resampling, config)
         datasets = get_train_set(df, dates)
     else:
         dates = input_val_dates(df, dates)
@@ -117,7 +117,7 @@ else:
 # Visualizations
 
 st.write('# 1. Overview')
-plot_overview(make_future_forecast, use_cv, models, forecasts, target_col)
+plot_overview(make_future_forecast, use_cv, models, forecasts, target_col, cleaning)
 
 st.write(f'# 2. Evaluation on {"CV" if use_cv else ""} {eval["set"].lower()} set{"s" if use_cv else ""}')
 plot_performance(use_cv, target_col, datasets, forecasts, dates, eval, resampling, config)
@@ -127,4 +127,4 @@ plot_components(use_cv, target_col, models, forecasts, cleaning, resampling, con
 
 if make_future_forecast:
     st.write('# 4. Future forecast')
-    plot_future(models, forecasts, dates, target_col)
+    plot_future(models, forecasts, dates, target_col, cleaning)
