@@ -2,6 +2,13 @@ import pandas as pd
 import streamlit as st
 
 
+@st.cache()
+def remove_empty_cols(df: pd.DataFrame) -> pd.DataFrame:
+    count_cols = df.nunique(dropna=False)
+    cols_to_drop = list(count_cols[count_cols < 2].index)
+    return df.drop(cols_to_drop, axis=1)
+
+
 @st.cache(suppress_st_warning=True)
 def format_date_and_target(df_input: pd.DataFrame, date_col: str, target_col: str) -> pd.DataFrame:
     df = df_input.copy()  # To avoid CachedObjectMutationWarning
@@ -14,8 +21,13 @@ def format_date_and_target(df_input: pd.DataFrame, date_col: str, target_col: st
 def _format_date(df: pd.DataFrame, date_col: str) -> pd.DataFrame:
     try:
         df[date_col] = pd.to_datetime(df[date_col])
+        days_range = (df[date_col].max() - df[date_col].min()).days
+        sec_range = (df[date_col].max() - df[date_col].min()).seconds
     except:
-        st.error('Please select the correct date column.')
+        st.error("Please select the correct date column (selected column can't be converted into date).")
+        st.stop()
+    if (days_range < 1) & (sec_range < 1):
+        st.error('Please select the correct date column (selected column has a time range < 1s).')
         st.stop()
     return df
 
@@ -27,7 +39,7 @@ def _format_target(df: pd.DataFrame, target_col: str) -> pd.DataFrame:
         st.error('Please select the correct target column (should be of type int or float).')
         st.stop()
     if df[target_col].nunique() < 5:
-        st.error('Target column should be numerical, not categorical.')
+        st.error('Please select the correct target column (should be numerical, not categorical).')
         st.stop()
     return df
 

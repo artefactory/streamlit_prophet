@@ -1,7 +1,12 @@
 import streamlit as st
 from lib.utils.load import load_config
 from lib.dataprep.clean import clean_df
-from lib.dataprep.format import format_date_and_target, filter_and_aggregate_df, format_datetime, resample_df
+from lib.dataprep.format import (remove_empty_cols,
+                                 format_date_and_target,
+                                 filter_and_aggregate_df,
+                                 format_datetime,
+                                 resample_df
+                                 )
 from lib.dataprep.split import get_train_val_sets, get_train_set
 from lib.inputs.dataset import input_dataset, input_columns
 from lib.inputs.dataprep import input_dimensions, input_resampling, input_cleaning
@@ -25,6 +30,7 @@ st.sidebar.title("1. Data")
 # Load data
 with st.sidebar.beta_expander("Dataset", expanded=True):
     df, load_options = input_dataset(config)
+    df = remove_empty_cols(df)
 
 # Column names
 with st.sidebar.beta_expander("Columns", expanded=True):
