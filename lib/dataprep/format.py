@@ -41,44 +41,53 @@ def _rename_cols(df: pd.DataFrame, date_col: str, target_col: str) -> pd.DataFra
     return df
 
 
-@st.cache()
-def filter_and_aggregate_df(df_input: pd.DataFrame, dimensions: dict) -> pd.DataFrame:
-    df = df_input.copy()  # To avoid CachedObjectMutationWarning
-    if len(dimensions.keys()) > 0:
-        df = _filter(df, dimensions)
-        df = _format_regressors(df)
-        df = _aggregate(df, dimensions)
+def filter_and_aggregate_df(df: pd.DataFrame, dimensions: dict) -> pd.DataFrame:
+    df = _filter(df, dimensions)
+    df, cols_to_drop = _format_regressors(df)
+    _print_removed_cols(cols_to_drop)
+    df = _aggregate(df, dimensions)
     return df
 
 
-def _filter(df: pd.DataFrame, dimensions: dict) -> pd.DataFrame:
+@st.cache()
+def _filter(df_input: pd.DataFrame, dimensions: dict) -> pd.DataFrame:
+    df = df_input.copy()  # To avoid CachedObjectMutationWarning
     filter_cols = list(set(dimensions.keys()) - set(['agg']))
     for col in filter_cols:
         df = df.loc[df[col].isin(dimensions[col])]
-    df = df.drop(filter_cols, axis=1)
-    return df
+    return df.drop(filter_cols, axis=1)
 
 
+@st.cache()
 def _format_regressors(df: pd.DataFrame) -> pd.DataFrame:
+    cols_to_drop = []
     for col in set(df.columns) - set(['ds', 'y']):
         if df[col].nunique() < 2:
-            df = df.drop(col, axis=1)
-        elif df[col].nunique() == 2:
+            cols_to_drop.append(col)
+        elif df[col].nunique() == 2: # TODO : One hot encoding si cardinalité > 2 et < à un seuil ?
             df[col] = df[col].map(dict(zip(df[col].unique(), [0, 1])))
         else:
             try:
                 df[col] = df[col].astype('float')
             except:
-                df = df.drop(col, axis=1)
-    return df
+                cols_to_drop.append(col)
+    return df.drop(cols_to_drop, axis=1), cols_to_drop
 
 
+def _print_removed_cols(cols_to_drop):
+    L = len(cols_to_drop)
+    if L > 0:
+        st.error(f'The following column{"s" if L>1 else ""} ha{"ve" if L>1 else "s"} been removed because '
+                 f'{"they are" if L>1 else "it is"} neither the target, '
+                 f'nor a dimension, nor a potential regressor: {", ".join(cols_to_drop)}')
+
+
+@st.cache()
 def _aggregate(df: pd.DataFrame, dimensions: dict) -> pd.DataFrame:
     cols_to_agg = set(df.columns) - set(['ds', 'y'])
     agg_dict = {col: 'mean' if df[col].nunique() > 2 else 'max' for col in cols_to_agg}
     agg_dict['y'] = dimensions['agg'].lower()
-    df = df.groupby('ds').agg(agg_dict).reset_index()
-    return df
+    return df.groupby('ds').agg(agg_dict).reset_index()
 
 
 @st.cache()
@@ -99,4 +108,3 @@ def resample_df(df_input: pd.DataFrame, resampling: dict) -> pd.DataFrame:
         agg_dict['y'] = resampling['agg'].lower()
         df = df.set_index('ds').resample(resampling['freq'][-1]).agg(agg_dict).reset_index()
     return df
-

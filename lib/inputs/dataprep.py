@@ -49,8 +49,9 @@ def _autodetect_dimensions(df):
     for col in eligible_cols:
         values = df[col].value_counts()
         values = values.loc[values > 0].to_list()
-        if max(values) / min(values) <= 20:
-            detected_cols.append(col)
+        if (len(values) > 1) & (len(values) < 0.2 * len(df)):
+            if max(values) / min(values) <= 20:
+                detected_cols.append(col)
     return detected_cols
 
 
