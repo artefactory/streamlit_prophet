@@ -82,14 +82,21 @@ def _format_regressors(df: pd.DataFrame) -> pd.DataFrame:
     for col in set(df.columns) - set(['ds', 'y']):
         if df[col].nunique(dropna=False) < 2:
             cols_to_drop.append(col)
-        elif df[col].nunique(dropna=False) == 2: # TODO : One hot encoding si cardinalité > 2 et < à un seuil ?
+        elif df[col].nunique(dropna=False) == 2:
             df[col] = df[col].map(dict(zip(df[col].unique(), [0, 1])))
+        elif df[col].nunique() <= 5:
+            df = __one_hot_encoding(df, col)
         else:
             try:
                 df[col] = df[col].astype('float')
             except:
                 cols_to_drop.append(col)
     return df.drop(cols_to_drop, axis=1), cols_to_drop
+
+
+def __one_hot_encoding(df: pd.DataFrame, col: str) -> pd.DataFrame:
+    df = pd.concat([df, pd.get_dummies(df[col], prefix=col)], axis=1)
+    return df.drop(col, axis=1)
 
 
 def print_removed_cols(cols_to_drop: list):
