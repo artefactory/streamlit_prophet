@@ -137,13 +137,13 @@ def __format_metrics_df_cv(metrics_df: pd.DataFrame, dates: dict, eval: dict, re
     freq = resampling['freq'][-1]
     horizon = dates['folds_horizon']
     if freq in ['s', 'H']:
-        multiplier = convert_into_nb_of_seconds(freq, 1)
-        metrics_df['Valid End'] = metrics_df['Valid Start'].map(lambda x: x + timedelta(seconds=horizon * multiplier))\
-                                                           .astype(str)
+        metrics_df['Valid End'] = metrics_df['Valid Start']\
+            .map(lambda x: x + timedelta(seconds=convert_into_nb_of_seconds(freq, horizon)))\
+            .astype(str)
     else:
-        multiplier = convert_into_nb_of_days(freq, 1)
-        metrics_df['Valid End'] = metrics_df['Valid Start'].map(lambda x: x + timedelta(days=horizon*multiplier))\
-                                                           .astype(str)
+        metrics_df['Valid End'] = metrics_df['Valid Start']\
+            .map(lambda x: x + timedelta(days=convert_into_nb_of_days(freq, horizon)))\
+            .astype(str)
     metrics_df['Valid Start'] = metrics_df['Valid Start'].astype(str)
     metrics_df = metrics_df.sort_values('Valid Start', ascending=False).reset_index(drop=True)
     metrics_df[eval['granularity']] = [f"Fold {i}" for i in range(1, len(metrics_df)+1)]

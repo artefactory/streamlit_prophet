@@ -48,11 +48,9 @@ def get_cv_dates_dict(dates: dict, resampling: dict) -> dict:
         cv_dates[f"Fold {i + 1}"]['val_start'] = cutoff
         cv_dates[f"Fold {i + 1}"]['train_end'] = cutoff
         if freq in ['s', 'H']:
-            multiplier = convert_into_nb_of_seconds(freq, 1)
-            cv_dates[f"Fold {i + 1}"]['val_end'] = cutoff + timedelta(seconds=horizon * multiplier)
+            cv_dates[f"Fold {i + 1}"]['val_end'] = cutoff + timedelta(seconds=convert_into_nb_of_seconds(freq, horizon))
         else:
-            multiplier = convert_into_nb_of_days(freq, 1)
-            cv_dates[f"Fold {i + 1}"]['val_end'] = cutoff + timedelta(days=horizon * multiplier)
+            cv_dates[f"Fold {i + 1}"]['val_end'] = cutoff + timedelta(days=convert_into_nb_of_days(freq, horizon))
     return cv_dates
 
 
