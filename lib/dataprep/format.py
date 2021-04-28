@@ -5,8 +5,15 @@ import streamlit as st
 @st.cache()
 def remove_empty_cols(df: pd.DataFrame) -> pd.DataFrame:
     count_cols = df.nunique(dropna=False)
-    cols_to_drop = list(count_cols[count_cols < 2].index)
-    return df.drop(cols_to_drop, axis=1)
+    empty_cols = list(count_cols[count_cols < 2].index)
+    return df.drop(empty_cols, axis=1), empty_cols
+
+
+def print_empty_cols(empty_cols: list):
+    L = len(empty_cols)
+    if L > 0:
+        st.error(f'The following column{"s" if L > 1 else ""} ha{"ve" if L > 1 else "s"} been removed because '
+                 f'{"they have" if L > 1 else "it has"} <= 1 distinct values: {", ".join(empty_cols)}')
 
 
 @st.cache(suppress_st_warning=True)
@@ -53,30 +60,29 @@ def _rename_cols(df: pd.DataFrame, date_col: str, target_col: str) -> pd.DataFra
     return df
 
 
-def filter_and_aggregate_df(df: pd.DataFrame, dimensions: dict) -> pd.DataFrame:
+# NB: date_col and target_col not used, only added to avoid unexpected caching when their values change
+@st.cache()
+def filter_and_aggregate_df(df_input: pd.DataFrame, dimensions: dict, date_col: str, target_col: str) -> pd.DataFrame:
+    df = df_input.copy()  # To avoid CachedObjectMutationWarning
     df = _filter(df, dimensions)
     df, cols_to_drop = _format_regressors(df)
-    _print_removed_cols(cols_to_drop)
     df = _aggregate(df, dimensions)
-    return df
+    return df, cols_to_drop
 
 
-@st.cache()
-def _filter(df_input: pd.DataFrame, dimensions: dict) -> pd.DataFrame:
-    df = df_input.copy()  # To avoid CachedObjectMutationWarning
+def _filter(df: pd.DataFrame, dimensions: dict) -> pd.DataFrame:
     filter_cols = list(set(dimensions.keys()) - set(['agg']))
     for col in filter_cols:
         df = df.loc[df[col].isin(dimensions[col])]
     return df.drop(filter_cols, axis=1)
 
 
-@st.cache()
 def _format_regressors(df: pd.DataFrame) -> pd.DataFrame:
     cols_to_drop = []
     for col in set(df.columns) - set(['ds', 'y']):
-        if df[col].nunique() < 2:
+        if df[col].nunique(dropna=False) < 2:
             cols_to_drop.append(col)
-        elif df[col].nunique() == 2: # TODO : One hot encoding si cardinalité > 2 et < à un seuil ?
+        elif df[col].nunique(dropna=False) == 2: # TODO : One hot encoding si cardinalité > 2 et < à un seuil ?
             df[col] = df[col].map(dict(zip(df[col].unique(), [0, 1])))
         else:
             try:
@@ -86,7 +92,7 @@ def _format_regressors(df: pd.DataFrame) -> pd.DataFrame:
     return df.drop(cols_to_drop, axis=1), cols_to_drop
 
 
-def _print_removed_cols(cols_to_drop):
+def print_removed_cols(cols_to_drop: list):
     L = len(cols_to_drop)
     if L > 0:
         st.error(f'The following column{"s" if L>1 else ""} ha{"ve" if L>1 else "s"} been removed because '
@@ -94,7 +100,6 @@ def _print_removed_cols(cols_to_drop):
                  f'nor a dimension, nor a potential regressor: {", ".join(cols_to_drop)}')
 
 
-@st.cache()
 def _aggregate(df: pd.DataFrame, dimensions: dict) -> pd.DataFrame:
     cols_to_agg = set(df.columns) - set(['ds', 'y'])
     agg_dict = {col: 'mean' if df[col].nunique() > 2 else 'max' for col in cols_to_agg}

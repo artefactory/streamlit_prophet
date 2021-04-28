@@ -2,8 +2,10 @@ import streamlit as st
 from lib.utils.load import load_config
 from lib.dataprep.clean import clean_df
 from lib.dataprep.format import (remove_empty_cols,
+                                 print_empty_cols,
                                  format_date_and_target,
                                  filter_and_aggregate_df,
+                                 print_removed_cols,
                                  format_datetime,
                                  resample_df
                                  )
@@ -30,7 +32,8 @@ st.sidebar.title("1. Data")
 # Load data
 with st.sidebar.beta_expander("Dataset", expanded=True):
     df, load_options = input_dataset(config)
-    df = remove_empty_cols(df)
+    df, empty_cols = remove_empty_cols(df)
+    print_empty_cols(empty_cols)
 
 # Column names
 with st.sidebar.beta_expander("Columns", expanded=True):
@@ -40,7 +43,8 @@ with st.sidebar.beta_expander("Columns", expanded=True):
 # Filtering
 with st.sidebar.beta_expander("Filtering", expanded=False):
     dimensions = input_dimensions(df)
-    df = filter_and_aggregate_df(df, dimensions)
+    df, cols_to_drop = filter_and_aggregate_df(df, dimensions, date_col, target_col)
+    print_removed_cols(cols_to_drop)
 
 # Resampling
 with st.sidebar.beta_expander("Resampling", expanded=False):
@@ -103,7 +107,7 @@ with st.sidebar.beta_expander("Scope", expanded=False):
     eval = input_scope_eval(eval, use_cv)
 
 # Info
-with st.beta_expander("What is this app ?", expanded=False):
+with st.beta_expander("What is this app?", expanded=False):
     st.write(readme['app']['app_intro'])
 with st.beta_expander("More info on model parameters", expanded=False):
     st.write(readme['params']['prophet_params'])
