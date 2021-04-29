@@ -1,4 +1,5 @@
 import pandas as pd
+import numpy as np
 import streamlit as st
 
 
@@ -30,25 +31,25 @@ def _format_date(df: pd.DataFrame, date_col: str) -> pd.DataFrame:
         df[date_col] = pd.to_datetime(df[date_col])
         days_range = (df[date_col].max() - df[date_col].min()).days
         sec_range = (df[date_col].max() - df[date_col].min()).seconds
+        if ((days_range < 1) & (sec_range < 1)) | (np.isnan(days_range) & np.isnan(sec_range)):
+            st.error('Please select the correct date column (selected column has a time range < 1s).')
+            st.stop()
+        return df
     except:
         st.error("Please select the correct date column (selected column can't be converted into date).")
         st.stop()
-    if (days_range < 1) & (sec_range < 1):
-        st.error('Please select the correct date column (selected column has a time range < 1s).')
-        st.stop()
-    return df
 
 
 def _format_target(df: pd.DataFrame, target_col: str) -> pd.DataFrame:
     try:
         df[target_col] = df[target_col].astype('float')
+        if df[target_col].nunique() < 5:
+            st.error('Please select the correct target column (should be numerical, not categorical).')
+            st.stop()
+        return df
     except:
         st.error('Please select the correct target column (should be of type int or float).')
         st.stop()
-    if df[target_col].nunique() < 5:
-        st.error('Please select the correct target column (should be numerical, not categorical).')
-        st.stop()
-    return df
 
 
 def _rename_cols(df: pd.DataFrame, date_col: str, target_col: str) -> pd.DataFrame:
@@ -102,8 +103,8 @@ def __one_hot_encoding(df: pd.DataFrame, col: str) -> pd.DataFrame:
 def print_removed_cols(cols_to_drop: list):
     L = len(cols_to_drop)
     if L > 0:
-        st.error(f'The following column{"s" if L>1 else ""} ha{"ve" if L>1 else "s"} been removed because '
-                 f'{"they are" if L>1 else "it is"} neither the target, '
+        st.error(f'The following column{"s" if L > 1 else ""} ha{"ve" if L > 1 else "s"} been removed because '
+                 f'{"they are" if L > 1 else "it is"} neither the target, '
                  f'nor a dimension, nor a potential regressor: {", ".join(cols_to_drop)}')
 
 
