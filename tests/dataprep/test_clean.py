@@ -20,7 +20,7 @@ from tests.samples.dict import make_cleaning_test
                            ))
 )
 def test_remove_rows(df, cleaning):
-    output = _remove_rows(df, cleaning)
+    output = _remove_rows(df.copy(), cleaning)
     assert output.shape[1] == df.shape[1]
     assert output.ds.dt.dayofweek.nunique() + len(cleaning['del_days']) == df.ds.dt.dayofweek.nunique()
     if cleaning['del_negative']:
@@ -38,7 +38,7 @@ def test_remove_rows(df, cleaning):
     ],
 )
 def test_log_transform(df, cleaning, expected_min, expected_max):
-    output = _log_transform(df, cleaning)
+    output = _log_transform(df.copy(), cleaning)
     assert output.y.mean() > expected_min
     assert output.y.mean() < expected_max
     assert output.shape == df.shape
@@ -58,7 +58,7 @@ def test_log_transform(df, cleaning, expected_min, expected_max):
                            ))
 )
 def test_clean_future_df(df, cleaning):
-    output = clean_future_df(df, cleaning)
+    output = clean_future_df(df.copy(), cleaning)
     assert output.shape[1] == df.shape[1]
     assert output.ds.dt.dayofweek.nunique() + len(cleaning['del_days']) == df.ds.dt.dayofweek.nunique()
 

@@ -3,15 +3,15 @@ import numpy as np
 import streamlit as st
 
 
-@st.cache()
 def clean_df(df: pd.DataFrame, cleaning: dict) -> pd.DataFrame:
     df = _remove_rows(df, cleaning)
     df = _log_transform(df, cleaning)
     return df
 
 
+@st.cache()
 def clean_future_df(df: pd.DataFrame, cleaning: dict) -> pd.DataFrame:
-    df_clean = df.copy()
+    df_clean = df.copy()  # To avoid CachedObjectMutationWarning
     df_clean['__to_remove'] = 0
     if cleaning['del_days'] is not None:
         df_clean['__to_remove'] = np.where(
@@ -21,19 +21,22 @@ def clean_future_df(df: pd.DataFrame, cleaning: dict) -> pd.DataFrame:
     return df_clean
 
 
+@st.cache(suppress_st_warning=True)
 def _log_transform(df: pd.DataFrame, cleaning: dict) -> pd.DataFrame:
+    df_clean = df.copy()  # To avoid CachedObjectMutationWarning
     if cleaning['log_transform']:
-        if df.y.min() <= 0:
+        if df_clean.y.min() <= 0:
             st.error('The target has values <= 0. Please remove negative and 0 values when applying log transform.')
             st.stop()
         else:
-            df['y'] = np.log(df['y'])
-    return df
+            df_clean['y'] = np.log(df_clean['y'])
+    return df_clean
 
 
+@st.cache()
 def _remove_rows(df: pd.DataFrame, cleaning: dict) -> pd.DataFrame:
     # first, let's flag values that needs to be processed
-    df_clean = df.copy()
+    df_clean = df.copy()  # To avoid CachedObjectMutationWarning
     df_clean['__to_remove'] = 0
     if cleaning['del_negative']:
         df_clean['__to_remove'] = np.where(df_clean['y'] < 0, 1, df_clean['__to_remove'])
