@@ -30,8 +30,6 @@ def make_test_df(ds=None, cols=None, start='2010-01-01', end='2020-01-01', freq=
     return df
 
 
-df_test = dict()
-
 # Synthetic categorical variables
 int_long_target = list(range(1, config['validity']['min_target_cardinality'] + 2))
 int_short_target = list(range(1, config['validity']['min_target_cardinality'] - 1))
@@ -43,10 +41,12 @@ str_long_cat = [chr(ord('@') + i) for i in range(1, config['validity']['max_cat_
 str_short_cat = [chr(ord('@') + i) for i in range(1, config['validity']['max_cat_reg_cardinality'] - 1)]
 
 # Synthetic dataframes
+df_test = dict()
 df_test[0] = pd.DataFrame()
 df_test[1] = make_test_df(cols={0: {'cat': ['A', 'B', 'C']},
                                 1: {'cat': ['A', 'B']},
-                                2: {'cat': ['A']}
+                                2: {'cat': ['A']},
+                                3: {}
                                 }
                           )
 df_test[2] = make_test_df(cols={0: {'cat': ['A'], 'frac_nan': 1},
@@ -103,7 +103,3 @@ df_test[14] = lambda x: make_test_df(ds={'freq': x},
                                      )
 df_test[15] = make_test_df(cols={'y': {'cat': [2]}})
 df_test[16] = make_test_df(cols={'y': {'cat': [3]}})
-
-# Toy dataframes
-for dataset in config['datasets'].keys():
-    df_test[dataset] = download_toy_dataset(config['datasets'][dataset]['url'])

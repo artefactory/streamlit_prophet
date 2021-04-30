@@ -19,12 +19,11 @@ config, _ = load_config('config_streamlit.toml', 'config_readme.toml')
     "df, expected0, expected1",
     [
         (df_test[0], df_test[0], []),
-        (df_test[1], df_test[1][[0, 1]], [2]),
+        (df_test[1], df_test[1][[0, 1, 3]], [2]),
         (df_test[2], df_test[2][[1]], [0, 2]),
-        (df_test['M5'], df_test['M5'], []),
     ],
 )
-def test_log_transform(df, expected0, expected1):
+def test_remove_empty_cols(df, expected0, expected1):
     assert remove_empty_cols(df.copy())[0].equals(expected0)
     assert remove_empty_cols(df.copy())[1] == expected1
 
@@ -32,10 +31,9 @@ def test_log_transform(df, expected0, expected1):
 @pytest.mark.parametrize(
     "df, date_col",
     [
-        (df_test['M5'], 'abc'),
-        (df_test['M5'], 'sales'),
         (df_test[0], ''),
         (df_test[1], 0),
+        (df_test[1], 3),
         (df_test[2], 0),
         (df_test[2], 1),
     ],
@@ -47,9 +45,10 @@ def test_format_date(df, date_col):
 
 @pytest.mark.parametrize(
     "df, target_col",
-    list(itertools.product([df_test['M5'], df_test[3], df_test[4], df_test[5], df_test[6], df_test[7]],
-                           ['y', 'date']
-                           ))
+    list(itertools.product([df_test[3], df_test[4], df_test[5], df_test[6], df_test[7]],
+                           ['y', 'abc']
+                           )
+         )
 )
 def test_format_target(df, target_col):
     with pytest.raises(st.script_runner.StopException):
@@ -58,15 +57,11 @@ def test_format_target(df, target_col):
 
 @pytest.mark.parametrize(
     "df, date_col, target_col",
-    [
-        (df_test['M5'], config['datasets']['M5']['date'], config['datasets']['M5']['target']),
-        (df_test['SAV'], config['datasets']['SAV']['date'], config['datasets']['SAV']['target']),
-        (df_test['Weather'], config['datasets']['Weather']['date'], config['datasets']['Weather']['target'])
-    ]
-    + list(itertools.product([df_test[8], df_test[9], df_test[10], df_test[11], df_test[12]],
-                             ['ds'],
-                             ['y']
-                             ))
+    list(itertools.product([df_test[8], df_test[9], df_test[10], df_test[11], df_test[12]],
+                           ['ds'],
+                           ['y']
+                           )
+         )
 )
 def test_format_date_and_target(df, date_col, target_col):
     output = format_date_and_target(df.copy(), date_col, target_col, config)
