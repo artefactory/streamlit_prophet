@@ -9,7 +9,6 @@ def clean_df(df: pd.DataFrame, cleaning: dict) -> pd.DataFrame:
     return df
 
 
-@st.cache()
 def clean_future_df(df: pd.DataFrame, cleaning: dict) -> pd.DataFrame:
     df_clean = df.copy()  # To avoid CachedObjectMutationWarning
     df_clean['__to_remove'] = 0

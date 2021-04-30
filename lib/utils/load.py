@@ -14,9 +14,9 @@ def get_project_root() -> str:
 def load_dataset(file) -> pd.DataFrame:
     try:
         return pd.read_csv(file)
-    except ValueError as e:
-        print(f"{e}, File not found.")
-        return None
+    except:
+        st.error("This file can't be converted into a dataframe. Please import a csv file with ',' as a separator.")
+        st.stop()
 
 
 @st.cache()
