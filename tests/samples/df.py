@@ -32,51 +32,75 @@ def make_test_df(ds=None, cols=None, start='2010-01-01', end='2020-01-01', freq=
 
 df_test = dict()
 
+# Synthetic categorical variables
+int_long_target = list(range(1, config['validity']['min_target_cardinality'] + 2))
+int_short_target = list(range(1, config['validity']['min_target_cardinality'] - 1))
+int_long_cat = list(range(1, config['validity']['max_cat_reg_cardinality'] + 2))
+int_short_cat = list(range(1, config['validity']['max_cat_reg_cardinality'] - 1))
+str_long_target = [chr(ord('@') + i) for i in range(1, config['validity']['min_target_cardinality'] + 2)]
+str_short_target = [chr(ord('@') + i) for i in range(1, config['validity']['min_target_cardinality'] - 1)]
+str_long_cat = [chr(ord('@') + i) for i in range(1, config['validity']['max_cat_reg_cardinality'] + 2)]
+str_short_cat = [chr(ord('@') + i) for i in range(1, config['validity']['max_cat_reg_cardinality'] - 1)]
+
 # Synthetic dataframes
 df_test[0] = pd.DataFrame()
 df_test[1] = make_test_df(cols={0: {'cat': ['A', 'B', 'C']},
                                 1: {'cat': ['A', 'B']},
-                                2: {'cat': ['A']}})
+                                2: {'cat': ['A']}
+                                }
+                          )
 df_test[2] = make_test_df(cols={0: {'cat': ['A'], 'frac_nan': 1},
                                 1: {'cat': ['A'], 'frac_nan': 0.1},
-                                2: {'cat': ['A']}})
-df_test[3] = make_test_df(cols={'y': {'cat': [1, 2, 3]}})
-df_test[4] = make_test_df(cols={'y': {'cat': [1, 2, 3], 'frac_nan': 0.1}})
-df_test[5] = make_test_df(cols={'y': {'cat': [1, 2, 3], 'frac_nan': 1}})
-df_test[6] = make_test_df(cols={'y': {'cat': ['A', 'B', 'C', 'D', 'E', 'F']}})
-df_test[7] = make_test_df(cols={'y': {'cat': ['A', 'B', 'C', 'D', 'E', 'F'], 'frac_nan': 0.1}})
+                                2: {'cat': ['A']}
+                                }
+                          )
+df_test[3] = make_test_df(cols={'y': {'cat': int_short_target}})
+df_test[4] = make_test_df(cols={'y': {'cat': int_short_target, 'frac_nan': 0.1}})
+df_test[5] = make_test_df(cols={'y': {'cat': int_short_target, 'frac_nan': 1}})
+df_test[6] = make_test_df(cols={'y': {'cat': str_long_target}})
+df_test[7] = make_test_df(cols={'y': {'cat': str_long_target, 'frac_nan': 0.1}})
 df_test[8] = make_test_df(ds={},
-                          cols={'y': {'cat': [1, 2, 3, 4, 5, 6, 7, 8, 9, 10]}})
+                          cols={'y': {'cat': int_long_target}}
+                          )
 df_test[9] = make_test_df(ds={'str': '%Y-%m-%d'},
-                          cols={'y': {'cat': [1, 2, 3, 4, 5, 6, 7, 8, 9, 10], 'frac_nan': 0.1}})
+                          cols={'y': {'cat': int_long_target, 'frac_nan': 0.1}}
+                          )
 df_test[10] = make_test_df(ds={'freq': 'Y'},
-                           cols={'y': {'range': 100}})
+                           cols={'y': {'range': 100}}
+                           )
 df_test[11] = make_test_df(ds={'freq': 'H'},
-                           cols={'y': {'range': 1, 'abs': True}})
+                           cols={'y': {'range': 1, 'abs': True}}
+                           )
 df_test[12] = make_test_df(ds={'frac_nan': 0.1},
-                           cols={'y': {'range': 1, 'frac_nan': 0.1}})
+                           cols={'y': {'range': 1, 'frac_nan': 0.1}}
+                           )
 df_test[13] = make_test_df(cols={0: {},
                                  1: {'frac_nan': 0.1},
                                  2: {'frac_nan': 1},
                                  3: {'abs': True},
-                                 4: {'cat': [1, 2, 3]},
-                                 5: {'cat': [1, 2, 3], 'frac_nan': 0.1},
-                                 6: {'cat': ['A', 'B', 'C'], 'frac_nan': 0.1}})
+                                 4: {'cat': int_short_cat},
+                                 5: {'cat': int_short_cat, 'frac_nan': 0.1},
+                                 6: {'cat': str_short_cat, 'frac_nan': 0.1}
+                                 }
+                           )
 df_test[14] = lambda x: make_test_df(ds={'freq': x},
                                      cols={'y': {},
                                            0: {},
                                            1: {'frac_nan': 0.1},
                                            2: {'frac_nan': 1},
                                            3: {'abs': True},
-                                           4: {'cat': [1, 2, 3]},
-                                           5: {'cat': [1, 2, 3], 'frac_nan': 0.1},
-                                           6: {'cat': ['A', 'B', 'C'], 'frac_nan': 0.1},
-                                           7: {'cat': ['A', 'B', 'C', 'D', 'E', 'F']},
-                                           8: {'cat': [1, 2, 3, 4, 5, 6, 7, 8, 9, 10]},
-                                           9: {'cat': ['A', 'B', 'C', 'D', 'E', 'F'], 'frac_nan': 0.1},
-                                           10: {'cat': [1, 2, 3, 4, 5, 6, 7, 8, 9, 10], 'frac_nan': 0.1},
+                                           4: {'cat': int_short_cat},
+                                           5: {'cat': int_short_cat, 'frac_nan': 0.1},
+                                           6: {'cat': str_short_cat, 'frac_nan': 0.1},
+                                           7: {'cat': str_long_cat},
+                                           8: {'cat': int_long_cat},
+                                           9: {'cat': str_long_cat,
+                                               'frac_nan': 0.1},
+                                           10: {'cat': int_long_cat,'frac_nan': 0.1},
                                            11: {'cat': ['A']},
-                                           12: {'cat': ['A'], 'frac_nan': 0.1}})
+                                           12: {'cat': ['A'], 'frac_nan': 0.1}
+                                           }
+                                     )
 df_test[15] = make_test_df(cols={'y': {'cat': [2]}})
 df_test[16] = make_test_df(cols={'y': {'cat': [3]}})
 

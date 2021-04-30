@@ -1,19 +1,18 @@
 import pandas as pd
 import streamlit as st
-from datetime import timedelta
-from datetime import datetime
+from datetime import timedelta, datetime
 import re
 from lib.dataprep.clean import clean_future_df
 from lib.utils.mapping import convert_into_nb_of_days, convert_into_nb_of_seconds
 
 
-def get_train_val_sets(df: pd.DataFrame, dates: dict) -> dict:
+def get_train_val_sets(df: pd.DataFrame, dates: dict, config: dict) -> dict:
     datasets = dict()
     train = df.query(f'ds >= "{dates["train_start_date"]}" & ds <= "{dates["train_end_date"]}"').copy()
     val = df.query(f'ds >= "{dates["val_start_date"]}" & ds <= "{dates["val_end_date"]}"').copy()
     datasets['train'], datasets['val'], datasets['full'] = train, val, df.copy()
     print_train_val_dates(val, train)
-    raise_error_train_val_dates(val, train)
+    raise_error_train_val_dates(val, train, config)
     return datasets
 
 
@@ -25,17 +24,16 @@ def print_train_val_dates(val: pd.DataFrame, train: pd.DataFrame):
                         ({round((len(val) / float(len(train) + len(val)) * 100))}% of data used for validation)""")
 
 
-def raise_error_train_val_dates(val: pd.DataFrame, train: pd.DataFrame):
-    threshold_train = 30
-    if (len(val) <= 1) | (len(train) < threshold_train):
-        if len(val) == 0:
-            st.error(f"Validation set is empty, please change training and validation dates.")
-        elif len(val) == 1:
-            st.error(f"There is only 1 data point in validation set, "
-                     f"please expand validation period or change the dataset frequency.")
-        if len(train) < 31:
-            st.error(f"There are less than {threshold_train} data points in training set, "
-                     f"please expand training period or change the dataset frequency.")
+def raise_error_train_val_dates(val: pd.DataFrame, train: pd.DataFrame, config: dict):
+    threshold_train = config['validity']['min_data_points_train']
+    threshold_val = config['validity']['min_data_points_val']
+    if len(val) <= threshold_val:
+        st.error(f"There are less than {threshold_val + 1} data points in validation set ({len(val)}), "
+                 f"please expand validation period or change the dataset frequency.")
+        st.stop()
+    if len(train) <= threshold_train:
+        st.error(f"There are less than {threshold_train + 1} data points in training set ({len(train)}), "
+                 f"please expand training period or change the dataset frequency.")
         st.stop()
 
 
@@ -121,20 +119,21 @@ def print_cv_folds_dates(dates: dict, freq: str):
     st.success('\n'.join(cutoffs_text))
 
 
-def raise_error_cv_dates(dates: dict, resampling: dict):
-    threshold_train = 30
+def raise_error_cv_dates(dates: dict, resampling: dict, config: dict):
+    threshold_train = config['validity']['min_data_points_train']
+    threshold_val = config['validity']['min_data_points_val']
     freq = resampling['freq']
     regex = re.findall(r'\d+', resampling['freq'])
     freq_int = int(regex[0]) if len(regex) > 0 else 1
     n_data_points_val = dates['folds_horizon'] // freq_int
     n_data_points_train = len(pd.date_range(start=dates['train_start_date'], end=min(dates['cutoffs']), freq=freq))
-    if (n_data_points_val <= 1) | (n_data_points_train < threshold_train):
-        if n_data_points_val <= 1:
-            st.error(f"Some folds' validation sets have less than 2 data points, "
-                     f"please increase folds' horizon or change the dataset frequency or expand CV period.")
-        elif n_data_points_train < threshold_train:
-            st.error(f"There are less than {threshold_train} data points in some folds' training set, "
-                     f"please decrease folds' horizon or change the dataset frequency or expand CV period.")
+    if n_data_points_val <= threshold_val:
+        st.error(f"Some folds' valid sets have less than {threshold_val + 1} data points ({n_data_points_val}), "
+                 f"please increase folds' horizon or change the dataset frequency or expand CV period.")
+        st.stop()
+    elif n_data_points_train <= threshold_train:
+        st.error(f"Some folds' train sets have less than {threshold_train + 1} data points ({n_data_points_train}), "
+                 f"please increase folds' horizon or change the dataset frequency or expand CV period.")
         st.stop()
 
 

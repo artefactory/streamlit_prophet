@@ -40,7 +40,7 @@ def test_log_transform(df, expected0, expected1):
         (df_test[2], 1),
     ],
 )
-def test_format_date_stop(df, date_col):
+def test_format_date(df, date_col):
     with pytest.raises(st.script_runner.StopException):
         _format_date(df.copy(), date_col)
 
@@ -51,9 +51,9 @@ def test_format_date_stop(df, date_col):
                            ['y', 'date']
                            ))
 )
-def test_format_target_stop(df, target_col):
+def test_format_target(df, target_col):
     with pytest.raises(st.script_runner.StopException):
-        _format_target(df.copy(), target_col)
+        _format_target(df.copy(), target_col, config)
 
 
 @pytest.mark.parametrize(
@@ -69,7 +69,7 @@ def test_format_target_stop(df, target_col):
                              ))
 )
 def test_format_date_and_target(df, date_col, target_col):
-    output = format_date_and_target(df.copy(), date_col, target_col)
+    output = format_date_and_target(df.copy(), date_col, target_col, config)
     assert output['ds'].nunique() == df[date_col].nunique()
     assert output['y'].nunique() == df[target_col].nunique()
     assert output['y'].max() == df[target_col].max()
@@ -89,7 +89,8 @@ def test_format_date_and_target(df, date_col, target_col):
 )
 def test_filter_and_aggregate_df(df, expected_dim, expected_drop):
     dimensions = make_dimensions_test(df, frac=1)
-    output1, output2 = filter_and_aggregate_df(df.copy(), dimensions=dimensions, date_col='', target_col='')
+    output1, output2 = filter_and_aggregate_df(df.copy(), dimensions=dimensions, config=config,
+                                               date_col='', target_col='')
     assert sorted(set(dimensions.keys()) - set(['agg'])) == expected_dim
     assert output2 == expected_drop
     assert len(output1) <= len(df)

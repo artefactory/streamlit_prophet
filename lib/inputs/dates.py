@@ -53,7 +53,7 @@ def input_cv(dates: dict, resampling: dict, config: dict) -> dict:
                                              )
     dates['cutoffs'] = get_cv_cutoffs(dates, freq)
     print_cv_folds_dates(dates, freq)
-    raise_error_cv_dates(dates, resampling)
+    raise_error_cv_dates(dates, resampling, config)
     return dates
 
 

@@ -18,10 +18,10 @@ def print_empty_cols(empty_cols: list):
 
 
 @st.cache(suppress_st_warning=True)
-def format_date_and_target(df_input: pd.DataFrame, date_col: str, target_col: str) -> pd.DataFrame:
+def format_date_and_target(df_input: pd.DataFrame, date_col: str, target_col: str, config: dict) -> pd.DataFrame:
     df = df_input.copy()  # To avoid CachedObjectMutationWarning
     df = _format_date(df, date_col)
-    df = _format_target(df, target_col)
+    df = _format_target(df, target_col, config)
     df = _rename_cols(df, date_col, target_col)
     return df
 
@@ -40,10 +40,10 @@ def _format_date(df: pd.DataFrame, date_col: str) -> pd.DataFrame:
         st.stop()
 
 
-def _format_target(df: pd.DataFrame, target_col: str) -> pd.DataFrame:
+def _format_target(df: pd.DataFrame, target_col: str, config: dict) -> pd.DataFrame:
     try:
         df[target_col] = df[target_col].astype('float')
-        if df[target_col].nunique() < 5:
+        if df[target_col].nunique() < config['validity']['min_target_cardinality']:
             st.error('Please select the correct target column (should be numerical, not categorical).')
             st.stop()
         return df
@@ -63,10 +63,11 @@ def _rename_cols(df: pd.DataFrame, date_col: str, target_col: str) -> pd.DataFra
 
 # NB: date_col and target_col not used, only added to avoid unexpected caching when their values change
 @st.cache()
-def filter_and_aggregate_df(df_input: pd.DataFrame, dimensions: dict, date_col: str, target_col: str) -> pd.DataFrame:
+def filter_and_aggregate_df(df_input: pd.DataFrame, dimensions: dict, config: dict,
+                            date_col: str, target_col: str) -> pd.DataFrame:
     df = df_input.copy()  # To avoid CachedObjectMutationWarning
     df = _filter(df, dimensions)
-    df, cols_to_drop = _format_regressors(df)
+    df, cols_to_drop = _format_regressors(df, config)
     df = _aggregate(df, dimensions)
     return df, cols_to_drop
 
@@ -78,14 +79,14 @@ def _filter(df: pd.DataFrame, dimensions: dict) -> pd.DataFrame:
     return df.drop(filter_cols, axis=1)
 
 
-def _format_regressors(df: pd.DataFrame) -> pd.DataFrame:
+def _format_regressors(df: pd.DataFrame, config: dict) -> pd.DataFrame:
     cols_to_drop = []
     for col in set(df.columns) - set(['ds', 'y']):
         if df[col].nunique(dropna=False) < 2:
             cols_to_drop.append(col)
         elif df[col].nunique(dropna=False) == 2:
             df[col] = df[col].map(dict(zip(df[col].unique(), [0, 1])))
-        elif df[col].nunique() <= 5:
+        elif df[col].nunique() <= config['validity']['max_cat_reg_cardinality']:
             df = __one_hot_encoding(df, col)
         else:
             try:
@@ -133,3 +134,10 @@ def resample_df(df_input: pd.DataFrame, resampling: dict) -> pd.DataFrame:
         agg_dict['y'] = resampling['agg'].lower()
         df = df.set_index('ds').resample(resampling['freq'][-1]).agg(agg_dict).reset_index()
     return df
+
+
+def check_dataset_size(df: pd.DataFrame, config: dict):
+    if len(df) <= config['split']['min_data_points_train'] + config['split']['min_data_points_val']:
+        st.error(f'The dataset has not enough data points ({len(df)} data points only) to make a forecast. '
+                 f'Please resample with a higher frequency or change cleaning options.')
+        st.stop()

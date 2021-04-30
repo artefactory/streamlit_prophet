@@ -7,7 +7,8 @@ from lib.dataprep.format import (remove_empty_cols,
                                  filter_and_aggregate_df,
                                  print_removed_cols,
                                  format_datetime,
-                                 resample_df
+                                 resample_df,
+                                 check_dataset_size
                                  )
 from lib.dataprep.split import get_train_val_sets, get_train_set
 from lib.inputs.dataset import input_dataset, input_columns
@@ -38,12 +39,12 @@ with st.sidebar.beta_expander("Dataset", expanded=True):
 # Column names
 with st.sidebar.beta_expander("Columns", expanded=True):
     date_col, target_col = input_columns(config, df, load_options)
-    df = format_date_and_target(df, date_col, target_col)
+    df = format_date_and_target(df, date_col, target_col, config)
 
 # Filtering
 with st.sidebar.beta_expander("Filtering", expanded=False):
     dimensions = input_dimensions(df)
-    df, cols_to_drop = filter_and_aggregate_df(df, dimensions, date_col, target_col)
+    df, cols_to_drop = filter_and_aggregate_df(df, dimensions, config, date_col, target_col)
     print_removed_cols(cols_to_drop)
 
 # Resampling
@@ -51,11 +52,13 @@ with st.sidebar.beta_expander("Resampling", expanded=False):
     resampling = input_resampling(df)
     df = format_datetime(df, resampling)
     df = resample_df(df, resampling)
+    check_dataset_size(df, config)
 
 # Cleaning
 with st.sidebar.beta_expander("Cleaning", expanded=False):
     cleaning = input_cleaning(resampling)
     df = clean_df(df, cleaning)
+    check_dataset_size(df, config)
 
 # Evaluation process
 with st.sidebar.beta_expander("Evaluation process", expanded=False):
@@ -66,7 +69,7 @@ with st.sidebar.beta_expander("Evaluation process", expanded=False):
         datasets = get_train_set(df, dates)
     else:
         dates = input_val_dates(df, dates)
-        datasets = get_train_val_sets(df, dates)
+        datasets = get_train_val_sets(df, dates, config)
 
 # Forecast
 with st.sidebar.beta_expander("Forecast", expanded=False):
