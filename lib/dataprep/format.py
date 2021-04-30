@@ -137,7 +137,7 @@ def resample_df(df_input: pd.DataFrame, resampling: dict) -> pd.DataFrame:
 
 
 def check_dataset_size(df: pd.DataFrame, config: dict):
-    if len(df) <= config['split']['min_data_points_train'] + config['split']['min_data_points_val']:
+    if len(df) <= config['validity']['min_data_points_train'] + config['validity']['min_data_points_val']:
         st.error(f'The dataset has not enough data points ({len(df)} data points only) to make a forecast. '
                  f'Please resample with a higher frequency or change cleaning options.')
         st.stop()
