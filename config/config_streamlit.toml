@@ -37,6 +37,13 @@ min_data_points_val = 1 # Minimum number of datapoints (-1) to have in validatio
 min_target_cardinality = 5 # Minimum number of distinct values that the target should have
 max_cat_reg_cardinality = 5 # Maximum number of distinct values that a categorical regressor should have
 
+[metrics] # Number of decimals to use when displaying metrics
+MAPE = 4
+SMAPE = 4
+MSE = 1
+RMSE = 2
+MAE = 2
+
 [style]
 colors = ["#002244", "#ff0066", "#66cccc", "#ff9933", "#337788", "#429e79", "#474747", "#f7d126", "#ee5eab", "#b8b8b8"]
 color_axis = '#d62728'

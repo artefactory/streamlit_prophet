@@ -32,7 +32,7 @@ def plot_performance(use_cv, target_col, datasets, forecasts, dates, eval, resam
             st.plotly_chart(plot_cv_dates(cv_dates, resampling, style))
         st.write('')
     evaluation_df = get_evaluation_df(datasets, forecasts, dates, eval, use_cv)
-    metrics_df, metrics_dict = get_perf_metrics(evaluation_df, eval, dates, resampling, use_cv)
+    metrics_df, metrics_dict = get_perf_metrics(evaluation_df, eval, dates, resampling, use_cv, config)
     st.dataframe(metrics_df)
     plot_perf_metrics(metrics_dict, eval, use_cv, style)
     st.plotly_chart(plot_forecasts_vs_truth(evaluation_df, target_col, use_cv, style))
