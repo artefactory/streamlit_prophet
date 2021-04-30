@@ -77,6 +77,8 @@ df_test[14] = lambda x: make_test_df(ds={'freq': x},
                                            10: {'cat': [1, 2, 3, 4, 5, 6, 7, 8, 9, 10], 'frac_nan': 0.1},
                                            11: {'cat': ['A']},
                                            12: {'cat': ['A'], 'frac_nan': 0.1}})
+df_test[15] = make_test_df(cols={'y': {'cat': [2]}})
+df_test[16] = make_test_df(cols={'y': {'cat': [3]}})
 
 # Toy dataframes
 for dataset in config['datasets'].keys():

@@ -10,7 +10,6 @@ def clean_df(df: pd.DataFrame, cleaning: dict) -> pd.DataFrame:
     return df
 
 
-@st.cache()
 def clean_future_df(df: pd.DataFrame, cleaning: dict) -> pd.DataFrame:
     df_clean = df.copy()
     df_clean['__to_remove'] = 0
@@ -19,12 +18,16 @@ def clean_future_df(df: pd.DataFrame, cleaning: dict) -> pd.DataFrame:
             df_clean.ds.dt.dayofweek.isin(cleaning['del_days']), 1, df_clean['__to_remove'])
     df_clean = df_clean.query("__to_remove != 1")
     del df_clean["__to_remove"]
-    return df
+    return df_clean
 
 
 def _log_transform(df: pd.DataFrame, cleaning: dict) -> pd.DataFrame:
     if cleaning['log_transform']:
-        df['y'] = np.log(df['y'])
+        if df.y.min() <= 0:
+            st.error('The target has values <= 0. Please remove negative and 0 values when applying log transform.')
+            st.stop()
+        else:
+            df['y'] = np.log(df['y'])
     return df
 
 

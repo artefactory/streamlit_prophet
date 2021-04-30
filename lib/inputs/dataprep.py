@@ -15,10 +15,7 @@ def input_cleaning(resampling: dict):
         cleaning['del_days'] = []
     cleaning['del_zeros'] = st.checkbox('Delete rows where target = 0', True)
     cleaning['del_negative'] = st.checkbox('Delete rows where target < 0', True)
-    if cleaning['del_zeros'] & cleaning['del_negative']:
-        cleaning['log_transform'] = st.checkbox('Target log transform', False)
-    else:
-        cleaning['log_transform'] = False
+    cleaning['log_transform'] = st.checkbox('Target log transform', False)
     return cleaning
 
 

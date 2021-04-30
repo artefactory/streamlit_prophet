@@ -1,5 +1,6 @@
 import pytest
 import streamlit as st
+import itertools
 from lib.utils.load import load_config
 from lib.dataprep.format import (remove_empty_cols,
                                  _format_date,
@@ -23,7 +24,7 @@ config, _ = load_config('config_streamlit.toml', 'config_readme.toml')
         (df_test['M5'], df_test['M5'], []),
     ],
 )
-def test_remove_empty_cols(df, expected0, expected1):
+def test_log_transform(df, expected0, expected1):
     assert remove_empty_cols(df.copy())[0].equals(expected0)
     assert remove_empty_cols(df.copy())[1] == expected1
 
@@ -46,15 +47,9 @@ def test_format_date_stop(df, date_col):
 
 @pytest.mark.parametrize(
     "df, target_col",
-    [
-        (df_test['M5'], 'abc'),
-        (df_test['M5'], 'date'),
-        (df_test[3], 'y'),
-        (df_test[4], 'y'),
-        (df_test[5], 'y'),
-        (df_test[6], 'y'),
-        (df_test[7], 'y'),
-    ],
+    list(itertools.product([df_test['M5'], df_test[3], df_test[4], df_test[5], df_test[6], df_test[7]],
+                           ['y', 'date']
+                           ))
 )
 def test_format_target_stop(df, target_col):
     with pytest.raises(st.script_runner.StopException):
@@ -66,18 +61,20 @@ def test_format_target_stop(df, target_col):
     [
         (df_test['M5'], config['datasets']['M5']['date'], config['datasets']['M5']['target']),
         (df_test['SAV'], config['datasets']['SAV']['date'], config['datasets']['SAV']['target']),
-        (df_test['Weather'], config['datasets']['Weather']['date'], config['datasets']['Weather']['target']),
-        (df_test[8], 'ds', 'y'),
-        (df_test[9], 'ds', 'y'),
-        (df_test[10], 'ds', 'y'),
-        (df_test[11], 'ds', 'y'),
-        (df_test[12], 'ds', 'y'),
-    ],
+        (df_test['Weather'], config['datasets']['Weather']['date'], config['datasets']['Weather']['target'])
+    ]
+    + list(itertools.product([df_test[8], df_test[9], df_test[10], df_test[11], df_test[12]],
+                             ['ds'],
+                             ['y']
+                             ))
 )
 def test_format_date_and_target(df, date_col, target_col):
     output = format_date_and_target(df.copy(), date_col, target_col)
     assert output['ds'].nunique() == df[date_col].nunique()
     assert output['y'].nunique() == df[target_col].nunique()
+    assert output['y'].max() == df[target_col].max()
+    assert output['y'].min() == df[target_col].min()
+    assert output['y'].mean() == df[target_col].mean()
     assert output.dtypes['ds'].name == 'datetime64[ns]'
     assert output.dtypes['y'].name == 'float64'
     assert output.shape == df.shape
@@ -85,11 +82,10 @@ def test_format_date_and_target(df, date_col, target_col):
 
 @pytest.mark.parametrize(
     "df, expected_dim, expected_drop",
-    [
-        (df_test[14]('D'), [4, 5, 6, 7, 8, 9, 10], [2, 11]),
-        (df_test[14]('W'), [4, 5, 6, 7, 8, 9, 10], [2, 11]),
-        (df_test[14]('H'), [4, 5, 6, 7, 8, 9, 10], [2, 11]),
-    ],
+    list(itertools.product([df_test[14]('D'), df_test[14]('W'), df_test[14]('H')],
+                           [[4, 5, 6, 7, 8, 9, 10]],
+                           [[2, 11]]
+                           ))
 )
 def test_filter_and_aggregate_df(df, expected_dim, expected_drop):
     dimensions = make_dimensions_test(df, frac=1)
