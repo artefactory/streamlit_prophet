@@ -103,3 +103,18 @@ df_test[14] = lambda x: make_test_df(ds={'freq': x},
                                      )
 df_test[15] = make_test_df(cols={'y': {'cat': [2]}})
 df_test[16] = make_test_df(cols={'y': {'cat': [3]}})
+df_test[17] = make_test_df(ds={},
+                           cols={'truth': {},
+                                 'forecast': {}
+                                 }
+                           )
+df_test[18] = make_test_df(ds={},
+                           cols={'truth': {'frac_nan': 1},
+                                 'forecast': {'frac_nan': 1}
+                                 }
+                           )
+df_test[19] = make_test_df(ds={'freq': 'W'},
+                           cols={'truth': {'frac_nan': 0.1},
+                                 'forecast': {}
+                                 }
+                           )

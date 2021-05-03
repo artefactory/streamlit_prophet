@@ -40,7 +40,7 @@ def make_dates_test(train_start='2010-01-01',
                     n_folds=5,
                     folds_horizon=0,
                     freq='D',
-                    ):
+                    ) -> dict:
     dates = {'train_start_date': datetime.date(datetime.strptime(train_start, '%Y-%m-%d')),
              'train_end_date': datetime.date(datetime.strptime(train_end, '%Y-%m-%d')),
              'val_start': datetime.date(datetime.strptime(val_start, '%Y-%m-%d')),
@@ -53,3 +53,11 @@ def make_dates_test(train_start='2010-01-01',
              'folds_horizon': config['horizon'][freq[-1]] if folds_horizon == 0 else folds_horizon}
     dates['cutoffs'] = get_cv_cutoffs(dates, freq[-1])
     return dates
+
+
+# Eval
+def make_eval_test(granularity='Daily', get_perf_on_agg_forecast=False) -> dict:
+    return {'granularity': granularity,
+            'get_perf_on_agg_forecast': get_perf_on_agg_forecast,
+            'metrics': ['MAPE', 'RMSE', 'SMAPE', 'MSE', 'MAE']
+            }

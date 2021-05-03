@@ -15,10 +15,10 @@ def MAPE(y_true: pd.Series, y_pred: pd.Series) -> float:
     """
     try:
         y_true, y_pred = np.array(y_true).ravel(), np.array(y_pred).ravel()
-        mask = np.where(y_true != 0)[0]
-        y_true, y_pred = y_true[mask], y_pred[mask]
-        mape = np.mean(np.abs((y_true - y_pred) / y_true))
-        return mape
+        mask = (y_true != 0) & (~np.isnan(y_true)) & (~np.isnan(y_pred))
+        y_true, y_pred = y_true, y_pred
+        mape = np.mean(np.abs((y_true - y_pred) / y_true)[mask])
+        return 0 if np.isnan(mape) else mape
     except:
         return 0
 
@@ -34,12 +34,12 @@ def SMAPE(y_true, y_pred):
     """
     try:
         y_true, y_pred = np.array(y_true).ravel(), np.array(y_pred).ravel()
-        mask = np.where(abs(y_true) + abs(y_pred) != 0)[0]
-        y_true, y_pred = y_true[mask], y_pred[mask]
+        mask = (abs(y_true) + abs(y_pred) != 0) & (~np.isnan(y_true)) & (~np.isnan(y_pred))
+        y_true, y_pred = y_true, y_pred
         nominator = np.abs(y_true - y_pred)
         denominator = np.abs(y_true) + np.abs(y_pred)
-        smape = np.mean(2.0 * nominator / denominator)
-        return smape
+        smape = np.mean((2.0 * nominator / denominator)[mask])
+        return 0 if np.isnan(smape) else smape
     except:
         return 0
 
@@ -52,9 +52,13 @@ def MSE(y_true: pd.Series, y_pred: pd.Series) -> float:
     Returns:
         float: MSE
     """
-    y_true, y_pred = np.array(y_true).ravel(), np.array(y_pred).ravel()
-    mse = ((y_true - y_pred) ** 2).mean()
-    return mse
+    try:
+        y_true, y_pred = np.array(y_true).ravel(), np.array(y_pred).ravel()
+        mask = (~np.isnan(y_true)) & (~np.isnan(y_pred))
+        mse = ((y_true - y_pred) ** 2)[mask].mean()
+        return 0 if np.isnan(mse) else mse
+    except:
+        return 0
 
 
 def RMSE(y_true: pd.Series, y_pred: pd.Series) -> float:
@@ -78,16 +82,19 @@ def MAE(y_true: pd.Series, y_pred: pd.Series) -> float:
     Returns:
         float: MAE
     """
-    y_true, y_pred = np.array(y_true).ravel(), np.array(y_pred).ravel()
-    mae = abs(y_true - y_pred).mean()
-    return mae
+    try:
+        y_true, y_pred = np.array(y_true).ravel(), np.array(y_pred).ravel()
+        mask = (~np.isnan(y_true)) & (~np.isnan(y_pred))
+        mae = abs(y_true - y_pred)[mask].mean()
+        return 0 if np.isnan(mae) else mae
+    except:
+        return 0
 
 
 def get_perf_metrics(evaluation_df: pd.DataFrame, eval: dict, dates: dict, resampling: dict,
                      use_cv: bool, config: dict):
-    metrics = {'MAPE': MAPE, 'SMAPE': SMAPE, 'MSE': MSE, 'RMSE': RMSE, 'MAE': MAE}
     df = _preprocess_eval_df(evaluation_df, use_cv)
-    metrics_df = _compute_metrics(df, metrics, eval)
+    metrics_df = _compute_metrics(df, eval)
     metrics_df, metrics_dict = _format_eval_results(metrics_df, dates, eval, resampling, use_cv, config)
     return metrics_df, metrics_dict
 
@@ -100,7 +107,8 @@ def _preprocess_eval_df(evaluation_df: pd.DataFrame, use_cv: bool) -> pd.DataFra
     return df
 
 
-def _compute_metrics(df: pd.DataFrame, metrics: dict, eval: dict) -> pd.DataFrame:
+def _compute_metrics(df: pd.DataFrame, eval: dict) -> pd.DataFrame:
+    metrics = {'MAPE': MAPE, 'SMAPE': SMAPE, 'MSE': MSE, 'RMSE': RMSE, 'MAE': MAE}
     if eval['get_perf_on_agg_forecast']:
         metrics_df = df.groupby(eval['granularity']).agg({'truth': 'sum', 'forecast': 'sum'}).reset_index()
         for m in eval['metrics']:
@@ -108,9 +116,9 @@ def _compute_metrics(df: pd.DataFrame, metrics: dict, eval: dict) -> pd.DataFram
     else:
         metrics_df = pd.DataFrame({eval['granularity']: sorted(df[eval['granularity']].unique())})
         for m in eval['metrics']:
-            metrics_df[m] = df.groupby(eval['granularity'])[['truth', 'forecast']]\
-                              .apply(lambda x: metrics[m](x.truth, x.forecast))\
-                              .sort_index().to_list()
+            metrics_df[m] = df.groupby(eval['granularity'])[['truth', 'forecast']] \
+                .apply(lambda x: metrics[m](x.truth, x.forecast)) \
+                .sort_index().to_list()
     return metrics_df
 
 
@@ -140,16 +148,16 @@ def __format_metrics_df_cv(metrics_df: pd.DataFrame, dates: dict, eval: dict, re
     freq = resampling['freq'][-1]
     horizon = dates['folds_horizon']
     if freq in ['s', 'H']:
-        metrics_df['Valid End'] = metrics_df['Valid Start']\
-            .map(lambda x: x + timedelta(seconds=convert_into_nb_of_seconds(freq, horizon)))\
+        metrics_df['Valid End'] = metrics_df['Valid Start'] \
+            .map(lambda x: x + timedelta(seconds=convert_into_nb_of_seconds(freq, horizon))) \
             .astype(str)
     else:
-        metrics_df['Valid End'] = metrics_df['Valid Start']\
-            .map(lambda x: x + timedelta(days=convert_into_nb_of_days(freq, horizon)))\
+        metrics_df['Valid End'] = metrics_df['Valid Start'] \
+            .map(lambda x: x + timedelta(days=convert_into_nb_of_days(freq, horizon))) \
             .astype(str)
     metrics_df['Valid Start'] = metrics_df['Valid Start'].astype(str)
     metrics_df = metrics_df.sort_values('Valid Start', ascending=False).reset_index(drop=True)
-    metrics_df[eval['granularity']] = [f"Fold {i}" for i in range(1, len(metrics_df)+1)]
+    metrics_df[eval['granularity']] = [f"Fold {i}" for i in range(1, len(metrics_df) + 1)]
     return metrics_df
 
 
