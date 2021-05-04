@@ -1,0 +1,28 @@
+FROM python:3.7-slim-buster
+
+ENV LANG=C.UTF-8 \
+  LC_ALL=C.UTF-8
+
+RUN apt-get update && \
+  apt-get install -y --no-install-recommends \
+  curl \
+  && rm -rf /var/lib/apt/lists/*
+
+RUN useradd -d /home/docker_user -m -s /bin/bash docker_user
+USER docker_user
+
+RUN mkdir -p /home/docker_user/workspace
+WORKDIR /home/docker_user/workspace
+
+COPY pyproject.toml ./
+
+# Install Poetry
+RUN curl -sSL https://raw.githubusercontent.com/python-poetry/poetry/master/get-poetry.py | POETRY_HOME=/home/docker_user/poetry python
+
+ENV PATH="${PATH}:/home/docker_user/.poetry/bin:/home/docker_user/poetry/bin"
+
+RUN poetry install --no-root --no-dev
+
+COPY . /home/docker_user/workspace/
+
+ENTRYPOINT ["poetry", "run", "streamlit_prophet"]

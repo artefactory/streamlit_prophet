@@ -1,0 +1,55 @@
+default_language_version:
+  python: python3.7
+
+
+repos:
+  - repo: https://github.com/pre-commit/pre-commit-hooks
+    rev: v2.5.0
+    hooks:
+      - id: check-yaml
+        stages: [commit, push]
+      - id: end-of-file-fixer
+        stages: [commit, push]
+        exclude: ".ipynb"
+
+  - repo: local
+    hooks:
+      - id: isort
+        name: isort
+        entry: poetry run isort --settings-path pyproject.toml
+        types: [python]
+        language: system
+        stages: [commit, push]
+      - id: pyupgrade
+        name: pyupgrade
+        entry: poetry run pyupgrade --py37-plus
+        types: [python]
+        language: system
+        stages: [commit, push]
+      - id: black
+        name: black
+        entry: poetry run black --config pyproject.toml
+        types: [python]
+        language: system
+        stages: [commit, push]
+      - id: mypy
+        name: mypy
+        entry: poetry run mypy
+        require_serial: true
+        types: [python]
+        language: system
+        stages: [push]
+      - id: darglint
+        name: darglint
+        entry: poetry run darglint -v 2
+        types: [python]
+        language: system
+        stages: [push]
+      - id: gitleaks
+        name: gitleaks
+        entry: make gitleaks
+        require_serial: true
+        types: [file]
+        language: system
+        pass_filenames: false
+        stages: [push]
