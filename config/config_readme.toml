@@ -1,0 +1,29 @@
+[params]
+prophet_params = """
+**Holidays** \n
+* `holidays_prior_scale`: This parameter determines how much of an effect holidays should \
+    have on your predictions. Default: 10. [20,40] works well. \n
+**Changepoints** \n
+Changepoints are the points in your data where there are sudden and abrupt changes in the\
+     trend. eg. Marketing campaign. \n
+* `changepoints`: supply the changepoint dates instead of having Prophet determine them.\
+     Not useful. \n
+* `n_changepoints`: number of changepoints. To adjust. \n
+* `changepoint_range`: usually does not have that much of an effect on the performance. \
+    -> keep default \n
+* `changepoint_prior_scale`: how flexible the changepoints are allowed to be. If you make \
+    it high it will be more flexible, but you can end up overfitting. values between 10 and 30 \
+         work for me, depending on how volatile the data is. \n
+**Seasonalities** \n
+These parameters are where Prophet shines as you can make big improvements and gain great\
+     insights by changing only a few values. \n
+* `seasonality_mode`: how your seasonality components should be integrated with the predictions.\
+     You will use additive when your seasonality trend should be “constant” over the entire period.\
+    You can use multiplicative to increase the importance of the seasonalities over time. \n
+* `seasonality_prior_scale`: This parameter will again allow your seasonalities to be more\
+     flexible. I have found values between 10 and 25 to work well here, depending on how much \
+         seasonality you notice in the components plot.
+"""
+
+[app]
+app_intro = """App intro TBD."""

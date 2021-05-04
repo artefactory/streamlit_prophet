@@ -1,0 +1,52 @@
+[datasets] # Toy datasets
+[datasets.M5]
+url = "https://raw.githubusercontent.com/MaximeLutel/streamlit_prophet_datasets/main/M5.csv"
+date = "date"
+target = "sales"
+[datasets.SAV]
+url = "https://raw.githubusercontent.com/MaximeLutel/streamlit_prophet_datasets/main/SAV.csv"
+date = "ds"
+target = "target"
+[datasets.Weather]
+url = "https://raw.githubusercontent.com/MaximeLutel/streamlit_prophet_datasets/main/weather.csv"
+date = "datetime"
+target = "temperature"
+
+[model] # Default model parameters
+seasonality_prior_scale = 10
+holidays_prior_scale = 10
+regressors_prior_scale = 10
+changepoint_prior_scale = 0.05
+growth = ['linear'] # ['linear', 'logistic']
+seasonality_mode = ['additive', 'multiplicative']
+n_changepoints = 15
+changepoint_range = 0.8
+
+[horizon]
+s = 86400 # Default number of seconds in validation set if dataset frequency is in seconds
+H = 96 # Default number of hours in validation set if dataset frequency is in hours
+D = 30 # Default number of days in validation set if dataset frequency is in days
+W = 10 # Default number of weeks in validation set if dataset frequency is in weeks
+M = 6 # Default number of months in validation set if dataset frequency is in months
+Q = 4 # Default number of quarters in validation set if dataset frequency is in quarters
+Y = 3 # Default number of years in validation set if dataset frequency is in years
+
+[validity]
+min_data_points_train = 30 # Minimum number of datapoints (-1) to have in training set to train a model
+min_data_points_val = 1 # Minimum number of datapoints (-1) to have in validation set to evaluate model
+min_target_cardinality = 5 # Minimum number of distinct values that the target should have
+max_cat_reg_cardinality = 5 # Maximum number of distinct values that a categorical regressor should have
+
+[metrics] # Number of decimals to use when displaying metrics
+MAPE = 4
+SMAPE = 4
+MSE = 1
+RMSE = 2
+MAE = 2
+
+[style]
+colors = ["#002244", "#ff0066", "#66cccc", "#ff9933", "#337788", "#429e79", "#474747", "#f7d126", "#ee5eab", "#b8b8b8"]
+color_axis = '#d62728'
+
+[global]
+seed = 42
