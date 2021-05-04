@@ -12,8 +12,10 @@ def input_seasonality_params(config: dict, params: dict, resampling: dict) -> di
     if resampling['freq'][-1] in ['s', 'H']:
         seasonalities['daily'] = {'period': 1, 'prophet_param': None}
     for seasonality, values in seasonalities.items():
-        values['prophet_param'] = st.selectbox(
-            f"{seasonality.capitalize()} seasonality", ['auto', False, 'custom'])
+        values['prophet_param'] = st.selectbox(f"{seasonality.capitalize()} seasonality",
+                                               ['auto', False, 'custom'] if seasonality[0] in ['y', 'w', 'd']
+                                               else [False, 'custom']
+                                               )
         if values['prophet_param'] == 'custom':
             values['prophet_param'] = False
             values['custom_param'] = {
@@ -78,7 +80,10 @@ def input_holidays_params(params: dict) -> dict:
 def input_regressors(df: pd.DataFrame, config: dict, params: dict) -> dict:
     regressors = dict()
     default_params = config["model"]
-    eligible_cols = set(df.columns) - set(['ds', 'y'])
+    all_cols = set(df.columns) - set(['ds', 'y'])
+    mask = df[all_cols].isnull().sum() == 0
+    eligible_cols = list(mask[mask].index)
+    _print_removed_regressors(list(set(all_cols) - set(eligible_cols)))
     if len(eligible_cols) > 0:
         if st.checkbox('Add all detected regressors', value=False):
             default_regressors = list(eligible_cols)
@@ -97,3 +102,10 @@ def input_regressors(df: pd.DataFrame, config: dict, params: dict) -> dict:
         st.write("There are no regressors in your dataset.")
     params['regressors'] = regressors
     return params
+
+
+def _print_removed_regressors(nan_cols: list):
+    L = len(nan_cols)
+    if L > 0:
+        st.error(f'The following column{"s" if L > 1 else ""} cannot be taken as regressor because '
+                 f'{"they contain" if L > 1 else "it contains"} null values: {", ".join(nan_cols)}')

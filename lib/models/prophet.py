@@ -8,8 +8,9 @@ from lib.utils.mapping import convert_into_nb_of_days, convert_into_nb_of_second
 
 
 def instantiate_prophet_model(params, use_regressors=True):
-    seasonality_params = {'yearly_seasonality': params['seasonalities']['yearly']['prophet_param'],
-                          'weekly_seasonality': params['seasonalities']['weekly']['prophet_param']}
+    seasonality_params = {f"{k}_seasonality": params['seasonalities'][k]['prophet_param']
+                          for k in set(['yearly', 'weekly', 'daily']).intersection(set(params['seasonalities'].keys()))
+                          }
     model = Prophet(**{**params['prior_scale'], **seasonality_params, **params['other']})
     for _, values in params['seasonalities'].items():
         if 'custom_param' in values:

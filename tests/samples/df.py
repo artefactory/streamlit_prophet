@@ -1,6 +1,6 @@
 import pandas as pd
 import numpy as np
-from lib.utils.load import load_config, download_toy_dataset
+from lib.utils.load import load_config
 
 config, _ = load_config('config_streamlit.toml', 'config_readme.toml')
 
@@ -96,7 +96,7 @@ df_test[14] = lambda x: make_test_df(ds={'freq': x},
                                            8: {'cat': int_long_cat},
                                            9: {'cat': str_long_cat,
                                                'frac_nan': 0.1},
-                                           10: {'cat': int_long_cat,'frac_nan': 0.1},
+                                           10: {'cat': int_long_cat, 'frac_nan': 0.1},
                                            11: {'cat': ['A']},
                                            12: {'cat': ['A'], 'frac_nan': 0.1}
                                            }
@@ -116,5 +116,11 @@ df_test[18] = make_test_df(ds={},
 df_test[19] = make_test_df(ds={'freq': 'W'},
                            cols={'truth': {'frac_nan': 0.1},
                                  'forecast': {}
+                                 }
+                           )
+df_test[20] = make_test_df(ds={},
+                           cols={'y': {},
+                                 'regressor1': {},
+                                 'regressor2': {'cat': [0, 1]},
                                  }
                            )

@@ -43,8 +43,8 @@ def make_dates_test(train_start='2010-01-01',
                     ) -> dict:
     dates = {'train_start_date': datetime.date(datetime.strptime(train_start, '%Y-%m-%d')),
              'train_end_date': datetime.date(datetime.strptime(train_end, '%Y-%m-%d')),
-             'val_start': datetime.date(datetime.strptime(val_start, '%Y-%m-%d')),
-             'val_end': datetime.date(datetime.strptime(val_end, '%Y-%m-%d')),
+             'val_start_date': datetime.date(datetime.strptime(val_start, '%Y-%m-%d')),
+             'val_end_date': datetime.date(datetime.strptime(val_end, '%Y-%m-%d')),
              'forecast_start_date': datetime.date(datetime.strptime(forecast_start, '%Y-%m-%d')),
              'forecast_end_date': datetime.date(datetime.strptime(forecast_end, '%Y-%m-%d')),
              'forecast_freq': freq,
@@ -60,4 +60,23 @@ def make_eval_test(granularity='Daily', get_perf_on_agg_forecast=False) -> dict:
     return {'granularity': granularity,
             'get_perf_on_agg_forecast': get_perf_on_agg_forecast,
             'metrics': ['MAPE', 'RMSE', 'SMAPE', 'MSE', 'MAE']
+            }
+
+
+# Params
+def make_params_test(regressors=dict()):
+    default_params = config["model"]
+    return {'seasonalities': {'yearly': {'prophet_param': 'auto'},
+                              'weekly': {'prophet_param': 'auto'}
+                              },
+            'prior_scale': {'changepoint_prior_scale': default_params['changepoint_prior_scale'],
+                            'seasonality_prior_scale': default_params['seasonality_prior_scale'],
+                            'holidays_prior_scale': default_params['holidays_prior_scale']
+                            },
+            'other': {'n_changepoints': default_params['n_changepoints'],
+                      'changepoint_range': default_params['changepoint_range'],
+                      'growth': default_params['growth'][0]
+                      },
+            'holidays': ['US'],
+            'regressors': regressors
             }
