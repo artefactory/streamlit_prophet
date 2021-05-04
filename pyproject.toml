@@ -38,6 +38,7 @@ typer = {extras = ["all"], version = "^0.3.2"}
 rich = "^10.1.0"
 
 [tool.poetry.dev-dependencies]
+# From ppt
 darglint = "^1.8.0"
 isort = "^5.8.0"
 pyupgrade = "^2.12.0"
@@ -50,7 +51,381 @@ pylint = "^2.6.0"
 pydocstyle = "^6.0.0"
 pre-commit = "^2.12.0"
 mypy-extensions = "^0.4.3"
-
+# From this project
+aiohttp = "3.7.4.post0"
+    # via
+    #   httpstan
+    #   pystan
+altair = "4.1.0"
+    # via streamlit
+appdirs = "1.4.4"
+    # via httpstan
+appnope = "0.1.2"
+    # via
+    #   ipykernel
+    #   ipython
+argon2-cffi = "20.1.0"
+    # via notebook
+astor = "0.8.1"
+    # via streamlit
+async-generator = "1.10"
+    # via nbclient
+async-timeout = "3.0.1"
+    # via aiohttp
+attrs = "20.3.0"
+    # via
+    #   aiohttp
+    #   jsonschema
+    #   pytest
+backcall = "0.2.0"
+    # via ipython
+base58 = "2.1.0"
+    # via streamlit
+bleach = "3.3.0"
+    # via nbconvert
+blinker = "1.4"
+    # via streamlit
+cachetools = "4.2.1"
+    # via streamlit
+certifi = "2020.12.5"
+    # via requests
+cffi = "1.14.5"
+    # via argon2-cffi
+chardet = "4.0.0"
+    # via
+    #   aiohttp
+    #   requests
+click = "7.1.2"
+    # via streamlit
+clikit = "0.6.2"
+    # via pystan
+cmdstanpy = "0.4"
+    # via fbprophet
+convertdate = "2.3.2"
+    # via
+    #   fbprophet
+    #   holidays
+coverage = "5.4"
+    # via pytest-cov
+crashtest = "0.3.1"
+    # via clikit
+cycler = "0.10.0"
+    # via matplotlib
+cython = "0.29.22"
+    # via fbprophet
+decorator = "5.0.7"
+    # via
+    #   ipython
+    #   validators
+defusedxml = "0.7.1"
+    # via nbconvert
+entrypoints = "0.3"
+    # via
+    #   altair
+    #   nbconvert
+ephem = "3.7.7.1"
+    # via lunarcalendar
+fbprophet = "0.6"
+    # via -r requirements.in
+flake8 = "3.8.3"
+    # via -r requirements.in
+gitdb = "4.0.7"
+    # via gitpython
+gitpython = "3.1.14"
+    # via streamlit
+hijri-converter = "2.1.1"
+    # via holidays
+holidays = "0.11.1"
+    # via fbprophet
+httpstan = "4.4.2"
+    # via pystan
+idna = "2.10"
+    # via
+    #   requests
+    #   yarl
+importlib-metadata = "3.4.0"
+    # via
+    #   flake8
+    #   jsonschema
+    #   pluggy
+    #   pytest
+iniconfig = "1.1.1"
+    # via pytest
+ipykernel = "5.5.3"
+    # via
+    #   ipywidgets
+    #   notebook
+    #   pydeck
+ipython-genutils = "0.2.0"
+    # via
+    #   nbformat
+    #   notebook
+    #   traitlets
+ipython = "7.22.0"
+    # via
+    #   ipykernel
+    #   ipywidgets
+ipywidgets = "7.6.3"
+    # via pydeck
+jedi = "0.18.0"
+    # via ipython
+jinja2 = "2.11.3"
+    # via
+    #   altair
+    #   nbconvert
+    #   notebook
+    #   pydeck
+jsonschema = "3.2.0"
+    # via
+    #   altair
+    #   nbformat
+jupyter-client = "6.1.12"
+    # via
+    #   ipykernel
+    #   nbclient
+    #   notebook
+jupyter-core = "4.7.1"
+    # via
+    #   jupyter-client
+    #   nbconvert
+    #   nbformat
+    #   notebook
+jupyterlab-pygments = "0.1.2"
+    # via nbconvert
+jupyterlab-widgets = "1.0.0"
+    # via ipywidgets
+kiwisolver = "1.3.1"
+    # via matplotlib
+korean-lunar-calendar = "0.2.1"
+    # via holidays
+loguru = "0.5.3"
+    # via -r requirements.in
+lunarcalendar = "0.0.9"
+    # via fbprophet
+lz4 = "3.1.3"
+    # via httpstan
+markupsafe = "1.1.1"
+    # via jinja2
+marshmallow = "3.11.1"
+    # via
+    #   httpstan
+    #   webargs
+matplotlib = "3.4.1"
+    # via fbprophet
+mccabe = "0.6.1"
+    # via flake8
+mistune = "0.8.4"
+    # via nbconvert
+more-itertools = "8.7.0"
+    # via pytest
+multidict = "5.1.0"
+    # via
+    #   aiohttp
+    #   yarl
+nbclient = "0.5.3"
+    # via nbconvert
+nbconvert = "6.0.7"
+    # via notebook
+nbformat = "5.1.3"
+    # via
+    #   ipywidgets
+    #   nbclient
+    #   nbconvert
+    #   notebook
+nest-asyncio = "1.5.1"
+    # via nbclient
+notebook = "6.3.0"
+    # via widgetsnbextension
+numpy = "1.20.2"
+    # via
+    #   -r requirements.in
+    #   altair
+    #   cmdstanpy
+    #   fbprophet
+    #   httpstan
+    #   matplotlib
+    #   pandas
+    #   pyarrow
+    #   pydeck
+    #   pystan
+    #   streamlit
+packaging = "20.9"
+    # via
+    #   bleach
+    #   pytest
+    #   streamlit
+pandas = "1.0.5"
+    # via
+    #   -r requirements.in
+    #   altair
+    #   cmdstanpy
+    #   fbprophet
+    #   streamlit
+pandocfilters = "1.4.3"
+    # via nbconvert
+parso = "0.8.2"
+    # via jedi
+pastel = "0.2.1"
+    # via clikit
+pexpect = "4.8.0"
+    # via ipython
+pickleshare = "0.7.5"
+    # via ipython
+pillow = "8.2.0"
+    # via
+    #   matplotlib
+    #   streamlit
+plotly = "4.11.0"
+    # via -r requirements.in
+pluggy = "0.13.1"
+    # via pytest
+prometheus-client = "0.10.1"
+    # via notebook
+prompt-toolkit = "3.0.18"
+    # via ipython
+protobuf = "3.15.8"
+    # via streamlit
+ptyprocess = "0.7.0"
+    # via
+    #   pexpect
+    #   terminado
+py = "1.10.0"
+    # via pytest
+pyarrow = "3.0.0"
+    # via streamlit
+pycodestyle = "2.6.0"
+    # via flake8
+pycparser = "2.20"
+    # via cffi
+pydeck = "0.6.2"
+    # via streamlit
+pyflakes = "2.2.0"
+    # via flake8
+pygments = "2.8.1"
+    # via
+    #   ipython
+    #   jupyterlab-pygments
+    #   nbconvert
+pylev = "1.3.0"
+    # via clikit
+pymeeus = "0.5.11"
+    # via convertdate
+pyparsing = "2.4.7"
+    # via
+    #   matplotlib
+    #   packaging
+pyrsistent = "0.17.3"
+    # via jsonschema
+pysimdjson = "3.2.0"
+    # via pystan
+pystan = "3.0.2"
+    # via fbprophet
+pytest-cov = "2.10.1"
+    # via -r requirements.in
+pytest-mock = "3.3.1"
+    # via -r requirements.in
+pytest = "6.0.1"
+    # via
+    #   -r requirements.in
+    #   pytest-cov
+    #   pytest-mock
+python-dateutil = "2.8.1"
+    # via
+    #   fbprophet
+    #   holidays
+    #   jupyter-client
+    #   lunarcalendar
+    #   matplotlib
+    #   pandas
+    #   streamlit
+pytz = "2021.1"
+    # via
+    #   convertdate
+    #   lunarcalendar
+    #   pandas
+    #   tzlocal
+pyzmq = "22.0.3"
+    # via
+    #   jupyter-client
+    #   notebook
+requests = "2.25.1"
+    # via streamlit
+retrying = "1.3.3"
+    # via plotly
+send2trash = "1.5.0"
+    # via notebook
+setuptools-git = "1.2"
+    # via fbprophet
+six = "1.15.0"
+    # via
+    #   argon2-cffi
+    #   bleach
+    #   cycler
+    #   holidays
+    #   jsonschema
+    #   plotly
+    #   protobuf
+    #   python-dateutil
+    #   retrying
+    #   validators
+smmap = "4.0.0"
+    # via gitdb
+streamlit = "0.80.0"
+    # via -r requirements.in
+terminado = "0.9.4"
+    # via notebook
+testpath = "0.4.4"
+    # via nbconvert
+toml = "0.10.2"
+    # via
+    #   pytest
+    #   streamlit
+toolz = "0.11.1"
+    # via altair
+tornado = "6.1"
+    # via
+    #   ipykernel
+    #   jupyter-client
+    #   notebook
+    #   streamlit
+    #   terminado
+tqdm = "4.60.0"
+    # via -r requirements.in
+traitlets = "5.0.5"
+    # via
+    #   ipykernel
+    #   ipython
+    #   ipywidgets
+    #   jupyter-client
+    #   jupyter-core
+    #   nbclient
+    #   nbconvert
+    #   nbformat
+    #   notebook
+    #   pydeck
+typing-extensions = "3.7.4.3"
+    # via
+    #   aiohttp
+    #   importlib-metadata
+    #   yarl
+tzlocal = "2.1"
+    # via streamlit
+urllib3 = "1.26.4"
+    # via requests
+validators = "0.18.2"
+    # via streamlit
+wcwidth = "0.2.5"
+    # via prompt-toolkit
+webargs = "7.0.1"
+    # via httpstan
+webencodings = "0.5.1"
+    # via bleach
+widgetsnbextension = "3.5.1"
+    # via ipywidgets
+yarl = "1.6.3"
+    # via aiohttp
+zipp = "3.4.0"
+    # via importlib-metadata
 
 [tool.black]
 # https://github.com/psf/black
