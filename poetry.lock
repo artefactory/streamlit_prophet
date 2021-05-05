@@ -423,27 +423,6 @@ optional = false
 python-versions = "*"
 
 [[package]]
-name = "fbprophet"
-version = "0.6"
-description = "Automatic Forecasting Procedure"
-category = "dev"
-optional = false
-python-versions = "*"
-
-[package.dependencies]
-cmdstanpy = "0.4"
-convertdate = ">=2.1.2"
-Cython = ">=0.22"
-holidays = ">=0.9.5"
-LunarCalendar = ">=0.0.9"
-matplotlib = ">=2.0.0"
-numpy = ">=1.10.0"
-pandas = ">=0.23.4"
-pystan = ">=2.14"
-python-dateutil = ">=2.8.0"
-setuptools-git = ">=1.2"
-
-[[package]]
 name = "filelock"
 version = "3.0.12"
 description = "A platform independent file lock."
@@ -1944,7 +1923,7 @@ testing = ["pytest (>=3.5,!=3.7.3)", "pytest-checkdocs (>=1.2.3)", "pytest-flake
 [metadata]
 lock-version = "1.1"
 python-versions = "^3.7"
-content-hash = "325a11c617c718abef957049f0e2e4e2277a05046bb5113b4e225de4537cedf9"
+content-hash = "40465ad3d56af06daa968c72102b04f186ddbae3f9f27ed277893bb386f830ee"
 
 [metadata.files]
 aiohttp = [
@@ -2307,9 +2286,6 @@ ephem = [
     {file = "ephem-3.7.7.1-cp39-cp39-win32.whl", hash = "sha256:c3cbc973b334892972445cec3deb99aafd0c57cb4e50679d5f12fc8c51b4e65f"},
     {file = "ephem-3.7.7.1-cp39-cp39-win_amd64.whl", hash = "sha256:1af920c382980fe3566a31f36bd712973e1ca6049cbe07b4624214d5e1f144bc"},
     {file = "ephem-3.7.7.1.tar.gz", hash = "sha256:36b51a8dc7cfdeb456dd6b8ab811accab8341b2d562ee3c6f4c86f6d3dbb984e"},
-]
-fbprophet = [
-    {file = "fbprophet-0.6.tar.gz", hash = "sha256:de7eaa16500e4dba69a0706906775cbe96668a6fe48354ee2fff820d9e6a899b"},
 ]
 filelock = [
     {file = "filelock-3.0.12-py3-none-any.whl", hash = "sha256:929b7d63ec5b7d6b71b0fa5ac14e030b3f70b75747cef1b10da9b879fef15836"},

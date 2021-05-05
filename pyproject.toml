@@ -125,7 +125,7 @@ entrypoints = "0.3"
     #   nbconvert
 ephem = "3.7.7.1"
     # via lunarcalendar
-fbprophet = "0.6"
+#fbprophet = "0.6"
     # via -r requirements.in
 flake8 = "3.8.3"
     # via -r requirements.in
