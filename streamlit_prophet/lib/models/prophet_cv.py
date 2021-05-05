@@ -1,6 +1,7 @@
 """
 Functions directly taken from Facebook Prophet repo, v0.7:
 https://github.com/facebook/prophet/blob/master/python/prophet/diagnostics.py
+Necessary only if using fbprophet < 0.7
 """
 
 import concurrent.futures

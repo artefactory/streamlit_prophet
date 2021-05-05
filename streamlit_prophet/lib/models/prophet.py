@@ -1,8 +1,8 @@
 from fbprophet import Prophet
+from fbprophet.diagnostics import cross_validation
 from streamlit_prophet.lib.dataprep.clean import exp_transform
 from streamlit_prophet.lib.dataprep.split import make_eval_df, make_future_df
 from streamlit_prophet.lib.exposition.preparation import get_df_cv_with_hist
-from streamlit_prophet.lib.models.prophet_cv import cross_validation
 from streamlit_prophet.lib.utils.logging import suppress_stdout_stderr
 from streamlit_prophet.lib.utils.mapping import convert_into_nb_of_days, convert_into_nb_of_seconds
 
