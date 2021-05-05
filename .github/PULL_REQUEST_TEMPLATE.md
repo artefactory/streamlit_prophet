@@ -23,6 +23,6 @@
 
 - [ ] I've read the [`CODE_OF_CONDUCT.md`](https://github.com/artefactory/streamlit_prophet}/blob/main/CODE_OF_CONDUCT.md) document.
 - [ ] I've read the [`CONTRIBUTING.md`](https://github.com/artefactory/streamlit_prophet}/blob/main/CONTRIBUTING.md) guide.
-- [ ] I've updated the code style using `make codestyle`.
+- [ ] I've updated the code style using `make format-code`.
 - [ ] I've written tests for all new methods and classes that I created.
 - [ ] I've written the docstring in Google format for all the methods and classes that I used.

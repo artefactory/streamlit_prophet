@@ -78,11 +78,7 @@ streamlit_prophet --help
 ```
 
 ```bash
-streamlit_prophet dialogs hello --name Roman
-```
-
-```bash
-streamlit_prophet dialogs clock --color blue
+streamlit_prophet deploy dashboard
 ```
 
 or if installed with `Poetry`:
@@ -92,7 +88,7 @@ poetry run streamlit_prophet --help
 ```
 
 ```bash
-poetry run streamlit_prophet dialogs hello --name Roman
+poetry run streamlit_prophet deploy dashboard
 ```
 
 ## Local setup
