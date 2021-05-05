@@ -87,8 +87,6 @@ download-poetry:
 install:
 	poetry env use python3.7
 	poetry lock -n
-	pip install pystan==3.0.2
-	pip install fbprophet==0.6
 	poetry install -n
 ifneq ($(NO_PRE_COMMIT), 1)
 	poetry run pre-commit install -t pre-commit -t pre-push
