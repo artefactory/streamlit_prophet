@@ -1,6 +1,6 @@
 import pytest
+from streamlit_prophet.lib.evaluation.preparation import add_time_groupers
 from tests.samples.df import df_test
-from lib.evaluation.preparation import add_time_groupers
 
 
 @pytest.mark.parametrize(

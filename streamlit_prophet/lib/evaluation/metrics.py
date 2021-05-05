@@ -1,8 +1,9 @@
-import pandas as pd
-import numpy as np
 from datetime import timedelta
-from lib.evaluation.preparation import add_time_groupers
-from lib.utils.mapping import convert_into_nb_of_days, convert_into_nb_of_seconds
+
+import numpy as np
+import pandas as pd
+from streamlit_prophet.lib.evaluation.preparation import add_time_groupers
+from streamlit_prophet.lib.utils.mapping import convert_into_nb_of_days, convert_into_nb_of_seconds
 
 
 def MAPE(y_true: pd.Series, y_pred: pd.Series) -> float:
@@ -91,11 +92,19 @@ def MAE(y_true: pd.Series, y_pred: pd.Series) -> float:
         return 0
 
 
-def get_perf_metrics(evaluation_df: pd.DataFrame, eval: dict, dates: dict, resampling: dict,
-                     use_cv: bool, config: dict):
+def get_perf_metrics(
+    evaluation_df: pd.DataFrame,
+    eval: dict,
+    dates: dict,
+    resampling: dict,
+    use_cv: bool,
+    config: dict,
+):
     df = _preprocess_eval_df(evaluation_df, use_cv)
     metrics_df = _compute_metrics(df, eval)
-    metrics_df, metrics_dict = _format_eval_results(metrics_df, dates, eval, resampling, use_cv, config)
+    metrics_df, metrics_dict = _format_eval_results(
+        metrics_df, dates, eval, resampling, use_cv, config
+    )
     return metrics_df, metrics_dict
 
 
@@ -108,63 +117,81 @@ def _preprocess_eval_df(evaluation_df: pd.DataFrame, use_cv: bool) -> pd.DataFra
 
 
 def _compute_metrics(df: pd.DataFrame, eval: dict) -> pd.DataFrame:
-    metrics = {'MAPE': MAPE, 'SMAPE': SMAPE, 'MSE': MSE, 'RMSE': RMSE, 'MAE': MAE}
-    if eval['get_perf_on_agg_forecast']:
-        metrics_df = df.groupby(eval['granularity']).agg({'truth': 'sum', 'forecast': 'sum'}).reset_index()
-        for m in eval['metrics']:
-            metrics_df[m] = metrics_df[['truth', 'forecast']].apply(lambda x: metrics[m](x.truth, x.forecast), axis=1)
+    metrics = {"MAPE": MAPE, "SMAPE": SMAPE, "MSE": MSE, "RMSE": RMSE, "MAE": MAE}
+    if eval["get_perf_on_agg_forecast"]:
+        metrics_df = (
+            df.groupby(eval["granularity"]).agg({"truth": "sum", "forecast": "sum"}).reset_index()
+        )
+        for m in eval["metrics"]:
+            metrics_df[m] = metrics_df[["truth", "forecast"]].apply(
+                lambda x: metrics[m](x.truth, x.forecast), axis=1
+            )
     else:
-        metrics_df = pd.DataFrame({eval['granularity']: sorted(df[eval['granularity']].unique())})
-        for m in eval['metrics']:
-            metrics_df[m] = df.groupby(eval['granularity'])[['truth', 'forecast']] \
-                .apply(lambda x: metrics[m](x.truth, x.forecast)) \
-                .sort_index().to_list()
+        metrics_df = pd.DataFrame({eval["granularity"]: sorted(df[eval["granularity"]].unique())})
+        for m in eval["metrics"]:
+            metrics_df[m] = (
+                df.groupby(eval["granularity"])[["truth", "forecast"]]
+                .apply(lambda x: metrics[m](x.truth, x.forecast))
+                .sort_index()
+                .to_list()
+            )
     return metrics_df
 
 
-def _format_eval_results(metrics_df: pd.DataFrame, dates: dict, eval: dict, resampling: dict,
-                         use_cv: bool, config: dict):
+def _format_eval_results(
+    metrics_df: pd.DataFrame, dates: dict, eval: dict, resampling: dict, use_cv: bool, config: dict
+):
     if use_cv:
         metrics_df = __format_metrics_df_cv(metrics_df, dates, eval, resampling)
-        metrics_dict = {m: metrics_df[[eval['granularity'], m]] for m in eval['metrics']}
+        metrics_dict = {m: metrics_df[[eval["granularity"], m]] for m in eval["metrics"]}
         metrics_df = __add_avg_std_metrics(metrics_df, eval)
     else:
-        metrics_dict = {m: metrics_df[[eval['granularity'], m]] for m in eval['metrics']}
-        metrics_df = metrics_df[[eval['granularity']] + eval['metrics']].set_index([eval['granularity']])
+        metrics_dict = {m: metrics_df[[eval["granularity"], m]] for m in eval["metrics"]}
+        metrics_df = metrics_df[[eval["granularity"]] + eval["metrics"]].set_index(
+            [eval["granularity"]]
+        )
     metrics_df = __format_metrics_values(metrics_df, eval, config)
     return metrics_df, metrics_dict
 
 
 def __format_metrics_values(metrics_df: pd.DataFrame, eval: dict, config: dict) -> pd.DataFrame:
-    mapping_format = {k: '{:,.' + str(v) + 'f}' for k, v in config['metrics'].items()}
-    mapping_round = config['metrics'].copy()
-    for col in eval['metrics']:
-        metrics_df[col] = metrics_df[col].map(lambda x: mapping_format[col].format(round(x, mapping_round[col])))
+    mapping_format = {k: "{:,." + str(v) + "f}" for k, v in config["metrics"].items()}
+    mapping_round = config["metrics"].copy()
+    for col in eval["metrics"]:
+        metrics_df[col] = metrics_df[col].map(
+            lambda x: mapping_format[col].format(round(x, mapping_round[col]))
+        )
     return metrics_df
 
 
-def __format_metrics_df_cv(metrics_df: pd.DataFrame, dates: dict, eval: dict, resampling: dict) -> pd.DataFrame:
-    metrics_df = metrics_df.rename(columns={'cutoff': 'Valid Start'})
-    freq = resampling['freq'][-1]
-    horizon = dates['folds_horizon']
-    if freq in ['s', 'H']:
-        metrics_df['Valid End'] = metrics_df['Valid Start'] \
-            .map(lambda x: x + timedelta(seconds=convert_into_nb_of_seconds(freq, horizon))) \
+def __format_metrics_df_cv(
+    metrics_df: pd.DataFrame, dates: dict, eval: dict, resampling: dict
+) -> pd.DataFrame:
+    metrics_df = metrics_df.rename(columns={"cutoff": "Valid Start"})
+    freq = resampling["freq"][-1]
+    horizon = dates["folds_horizon"]
+    if freq in ["s", "H"]:
+        metrics_df["Valid End"] = (
+            metrics_df["Valid Start"]
+            .map(lambda x: x + timedelta(seconds=convert_into_nb_of_seconds(freq, horizon)))
             .astype(str)
+        )
     else:
-        metrics_df['Valid End'] = metrics_df['Valid Start'] \
-            .map(lambda x: x + timedelta(days=convert_into_nb_of_days(freq, horizon))) \
+        metrics_df["Valid End"] = (
+            metrics_df["Valid Start"]
+            .map(lambda x: x + timedelta(days=convert_into_nb_of_days(freq, horizon)))
             .astype(str)
-    metrics_df['Valid Start'] = metrics_df['Valid Start'].astype(str)
-    metrics_df = metrics_df.sort_values('Valid Start', ascending=False).reset_index(drop=True)
-    metrics_df[eval['granularity']] = [f"Fold {i}" for i in range(1, len(metrics_df) + 1)]
+        )
+    metrics_df["Valid Start"] = metrics_df["Valid Start"].astype(str)
+    metrics_df = metrics_df.sort_values("Valid Start", ascending=False).reset_index(drop=True)
+    metrics_df[eval["granularity"]] = [f"Fold {i}" for i in range(1, len(metrics_df) + 1)]
     return metrics_df
 
 
 def __add_avg_std_metrics(metrics_df: pd.DataFrame, eval: dict) -> pd.DataFrame:
-    cols_index = [eval['granularity'], 'Valid Start', 'Valid End']
-    metrics_df = metrics_df[cols_index + eval['metrics']].set_index(cols_index)
-    metrics_df.loc[('Avg', '', 'Average')] = metrics_df.mean(axis=0)
-    metrics_df.loc[('Std', '', '+/-')] = metrics_df.std(axis=0)
-    metrics_df = metrics_df.reset_index().set_index(eval['granularity'])
+    cols_index = [eval["granularity"], "Valid Start", "Valid End"]
+    metrics_df = metrics_df[cols_index + eval["metrics"]].set_index(cols_index)
+    metrics_df.loc[("Avg", "", "Average")] = metrics_df.mean(axis=0)
+    metrics_df.loc[("Std", "", "+/-")] = metrics_df.std(axis=0)
+    metrics_df = metrics_df.reset_index().set_index(eval["granularity"])
     return metrics_df

@@ -1,5 +1,5 @@
 import pytest
-from lib.utils.misc import reverse_list
+from streamlit_prophet.lib.utils.misc import reverse_list
 
 
 @pytest.mark.parametrize(

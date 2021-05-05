@@ -4,12 +4,15 @@ https://github.com/facebook/prophet/blob/master/python/prophet/diagnostics.py
 """
 
 import concurrent.futures
-from tqdm.auto import tqdm
+
 import pandas as pd
-from fbprophet.diagnostics import logger, prophet_copy, generate_cutoffs
+from fbprophet.diagnostics import generate_cutoffs, logger, prophet_copy
+from tqdm.auto import tqdm
 
 
-def cross_validation(model, horizon, period=None, initial=None, parallel=None, cutoffs=None, disable_tqdm=False):
+def cross_validation(
+    model, horizon, period=None, initial=None, parallel=None, cutoffs=None, disable_tqdm=False
+):
     """Cross-Validation for time series.
     Computes forecasts from historical cutoff points, which user can input.
     If not provided, begins from (end - horizon) and works backwards, making
@@ -61,46 +64,46 @@ def cross_validation(model, horizon, period=None, initial=None, parallel=None, c
     df = model.history.copy().reset_index(drop=True)
     horizon = pd.Timedelta(horizon)
 
-    predict_columns = ['ds', 'yhat']
+    predict_columns = ["ds", "yhat"]
     if model.uncertainty_samples:
-        predict_columns.extend(['yhat_lower', 'yhat_upper'])
+        predict_columns.extend(["yhat_lower", "yhat_upper"])
 
     # Identify largest seasonality period
-    period_max = 0.
+    period_max = 0.0
     for s in model.seasonalities.values():
-        period_max = max(period_max, s['period'])
-    seasonality_dt = pd.Timedelta(str(period_max) + ' days')
+        period_max = max(period_max, s["period"])
+    seasonality_dt = pd.Timedelta(str(period_max) + " days")
 
     if cutoffs is None:
         # Set period
         period = 0.5 * horizon if period is None else pd.Timedelta(period)
 
         # Set initial
-        initial = (
-            max(3 * horizon, seasonality_dt) if initial is None
-            else pd.Timedelta(initial)
-        )
+        initial = max(3 * horizon, seasonality_dt) if initial is None else pd.Timedelta(initial)
 
         # Compute Cutoffs
         cutoffs = generate_cutoffs(df, horizon, initial, period)
     else:
         # add validation of the cutoff to make sure that the min cutoff is strictly greater than the min date in the history
-        if min(cutoffs) <= df['ds'].min():
-            raise ValueError("Minimum cutoff value is not strictly greater than min date in history")
+        if min(cutoffs) <= df["ds"].min():
+            raise ValueError(
+                "Minimum cutoff value is not strictly greater than min date in history"
+            )
         # max value of cutoffs is <= (end date minus horizon)
-        end_date_minus_horizon = df['ds'].max() - horizon
+        end_date_minus_horizon = df["ds"].max() - horizon
         if max(cutoffs) > end_date_minus_horizon:
             raise ValueError(
-                "Maximum cutoff value is greater than end date minus horizon, no value for cross-validation remaining")
-        initial = cutoffs[0] - df['ds'].min()
+                "Maximum cutoff value is greater than end date minus horizon, no value for cross-validation remaining"
+            )
+        initial = cutoffs[0] - df["ds"].min()
 
     # Check if the initial window
     # (that is, the amount of time between the start of the history and the first cutoff)
     # is less than the maximum seasonality period
     if initial < seasonality_dt:
-        msg = 'Seasonality has period of {} days '.format(period_max)
-        msg += 'which is larger than initial window. '
-        msg += 'Consider increasing initial.'
+        msg = f"Seasonality has period of {period_max} days "
+        msg += "which is larger than initial window. "
+        msg += "Consider increasing initial."
         logger.warning(msg)
 
     if parallel:
@@ -114,20 +117,19 @@ def cross_validation(model, horizon, period=None, initial=None, parallel=None, c
             try:
                 from dask.distributed import get_client
             except ImportError as e:
-                raise ImportError("parallel='dask' requies the optional "
-                                  "dependency dask.") from e
+                raise ImportError("parallel='dask' requies the optional " "dependency dask.") from e
             pool = get_client()
             # delay df and model to avoid large objects in task graph.
             df, model = pool.scatter([df, model])
         elif hasattr(parallel, "map"):
             pool = parallel
         else:
-            msg = ("'parallel' should be one of {} for an instance with a "
-                   "'map' method".format(', '.join(valid)))
+            msg = "'parallel' should be one of {} for an instance with a " "'map' method".format(
+                ", ".join(valid)
+            )
             raise ValueError(msg)
 
-        iterables = ((df, model, cutoff, horizon, predict_columns)
-                     for cutoff in cutoffs)
+        iterables = ((df, model, cutoff, horizon, predict_columns) for cutoff in cutoffs)
         iterables = zip(*iterables)
 
         logger.info("Applying in parallel with %s", pool)
@@ -168,31 +170,34 @@ def single_cutoff_forecast(df, model, cutoff, horizon, predict_columns):
     # Generate new object with copying fitting options
     m = prophet_copy(model, cutoff)
     # Train model
-    history_c = df[df['ds'] <= cutoff]
+    history_c = df[df["ds"] <= cutoff]
     if history_c.shape[0] < 2:
-        raise Exception(
-            'Less than two datapoints before cutoff. '
-            'Increase initial window.'
-        )
+        raise Exception("Less than two datapoints before cutoff. " "Increase initial window.")
     m.fit(history_c, **model.fit_kwargs)
     # Calculate yhat
-    index_predicted = (df['ds'] > cutoff) & (df['ds'] <= cutoff + horizon)
+    index_predicted = (df["ds"] > cutoff) & (df["ds"] <= cutoff + horizon)
     # Get the columns for the future dataframe
-    columns = ['ds']
-    if m.growth == 'logistic':
-        columns.append('cap')
+    columns = ["ds"]
+    if m.growth == "logistic":
+        columns.append("cap")
         if m.logistic_floor:
-            columns.append('floor')
+            columns.append("floor")
     columns.extend(m.extra_regressors.keys())
-    columns.extend([
-        props['condition_name']
-        for props in m.seasonalities.values()
-        if props['condition_name'] is not None])
+    columns.extend(
+        [
+            props["condition_name"]
+            for props in m.seasonalities.values()
+            if props["condition_name"] is not None
+        ]
+    )
     yhat = m.predict(df[index_predicted][columns])
     # Merge yhat(predicts), y(df, original data) and cutoff
 
-    return pd.concat([
-        yhat[predict_columns],
-        df[index_predicted][['y']].reset_index(drop=True),
-        pd.DataFrame({'cutoff': [cutoff] * len(yhat)})
-    ], axis=1)
+    return pd.concat(
+        [
+            yhat[predict_columns],
+            df[index_predicted][["y"]].reset_index(drop=True),
+            pd.DataFrame({"cutoff": [cutoff] * len(yhat)}),
+        ],
+        axis=1,
+    )
