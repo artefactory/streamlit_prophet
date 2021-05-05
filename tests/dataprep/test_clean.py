@@ -1,7 +1,7 @@
 import itertools
 
 import pytest
-from streamlit_prophet.lib.dataprep import _log_transform, _remove_rows, clean_future_df
+from streamlit_prophet.lib.dataprep.clean import _log_transform, _remove_rows, clean_future_df
 from tests.samples.df import df_test
 from tests.samples.dict import make_cleaning_test
 

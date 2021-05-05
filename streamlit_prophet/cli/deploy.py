@@ -5,7 +5,7 @@ from enum import Enum
 
 import typer
 from rich.console import Console
-from streamlit_prophet.bin.app import deploy_streamlit
+from streamlit_prophet.app import deploy_streamlit
 
 app = typer.Typer()
 console = Console()
