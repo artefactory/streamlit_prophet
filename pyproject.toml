@@ -63,7 +63,6 @@ pydocstyle = "^6.0.0"
 pre-commit = "^2.12.0"
 mypy-extensions = "^0.4.3"
 
-
 [tool.black]
 # https://github.com/psf/black
 line-length = 100
