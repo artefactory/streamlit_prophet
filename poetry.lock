@@ -1351,21 +1351,6 @@ release = ["m2r", "sphinx", "ghp-import", "bumpversion"]
 test = ["pytest"]
 
 [[package]]
-name = "pystan"
-version = "3.0.2"
-description = "Python interface to Stan, a package for Bayesian inference"
-category = "dev"
-optional = false
-python-versions = ">=3.7,<4.0"
-
-[package.dependencies]
-aiohttp = ">=3.6,<4.0"
-clikit = ">=0.6,<0.7"
-httpstan = ">=4.4,<4.5"
-numpy = ">=1.7,<2.0"
-pysimdjson = ">=3.2,<4.0"
-
-[[package]]
 name = "pytest"
 version = "6.2.4"
 description = "pytest: simple powerful testing with Python"
@@ -1923,7 +1908,7 @@ testing = ["pytest (>=3.5,!=3.7.3)", "pytest-checkdocs (>=1.2.3)", "pytest-flake
 [metadata]
 lock-version = "1.1"
 python-versions = "^3.7"
-content-hash = "40465ad3d56af06daa968c72102b04f186ddbae3f9f27ed277893bb386f830ee"
+content-hash = "94c8973aaa6d3d0acc76925275890681e4917e3340a10af98b8632c07cf96b6d"
 
 [metadata.files]
 aiohttp = [
@@ -2918,10 +2903,6 @@ pysimdjson = [
     {file = "pysimdjson-3.2.0-cp39-cp39-win_amd64.whl", hash = "sha256:f05420a9f4e6c1466ab3c5cc045c30a1d40bce3fdab1c98886ccc42de28ea0da"},
     {file = "pysimdjson-3.2.0-pp36-pypy36_pp73-macosx_10_9_x86_64.whl", hash = "sha256:6ded4a5d0758d3bf917283bccf5774b6ad1306f71303f54be036d6c1547356f9"},
     {file = "pysimdjson-3.2.0.tar.gz", hash = "sha256:643baa0941752367761dbc091bf552bf4ca196cf67bf41ef89c90c2db2ec1477"},
-]
-pystan = [
-    {file = "pystan-3.0.2-py3-none-any.whl", hash = "sha256:89cf1a6ab2b29a27a75a790b1876f5f383490bc231e8b9da3824a386e88d5821"},
-    {file = "pystan-3.0.2.tar.gz", hash = "sha256:1a8e05914b0efb001a2faa2863316e64146f0e5bcfb5844a7e27e08d1adebbac"},
 ]
 pytest = [
     {file = "pytest-6.2.4-py3-none-any.whl", hash = "sha256:91ef2131a9bd6be8f76f1f08eac5c5317221d6ad1e143ae03894b862e8976890"},
