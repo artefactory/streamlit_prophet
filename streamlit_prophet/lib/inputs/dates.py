@@ -49,8 +49,10 @@ def input_val_dates(df: pd.DataFrame, dates: dict) -> dict:
     return dates
 
 
-def input_cv(dates: dict, resampling: dict, config: dict) -> dict:
-    dates["n_folds"] = st.number_input("Number of CV folds", min_value=1, value=5)
+def input_cv(dates: dict, resampling: dict, config: dict, readme: dict) -> dict:
+    dates["n_folds"] = st.number_input(
+        "Number of CV folds", min_value=1, value=5, help=readme["tooltips"]["cv_n_folds"]
+    )
     freq = resampling["freq"][-1]
     max_possible_horizon = get_max_possible_cv_horizon(dates, resampling)
     dates["folds_horizon"] = st.number_input(
@@ -58,6 +60,7 @@ def input_cv(dates: dict, resampling: dict, config: dict) -> dict:
         min_value=3,
         max_value=max_possible_horizon,
         value=min(config["horizon"][freq], max_possible_horizon),
+        help=readme["tooltips"]["cv_horizon"],
     )
     dates["cutoffs"] = get_cv_cutoffs(dates, freq)
     print_cv_folds_dates(dates, freq)
@@ -65,14 +68,20 @@ def input_cv(dates: dict, resampling: dict, config: dict) -> dict:
     return dates
 
 
-def input_forecast_dates(df: pd.DataFrame, dates: dict, resampling: dict) -> dict:
-    # TODO : Tester avec un dataset à la granularité heure et minute
+def input_forecast_dates(
+    df: pd.DataFrame, dates: dict, resampling: dict, config: dict, readme: dict
+) -> dict:
     forecast_freq_name = mapping_freq_names(resampling["freq"][-1])
     forecast_horizon = st.number_input(
-        f"Forecast horizon in {forecast_freq_name}", min_value=1, value=10
+        f"Forecast horizon in {forecast_freq_name}",
+        min_value=1,
+        value=config["horizon"][resampling["freq"][-1]],
+        help=readme["tooltips"]["forecast_horizon"],
     )
     right_after = st.checkbox(
-        "Start forecasting right after the most recent date in dataset", value=True
+        "Start forecasting right after the most recent date in dataset",
+        value=True,
+        help=readme["tooltips"]["forecast_start"],
     )
     if right_after:
         if forecast_freq_name in ["seconds", "hours"]:

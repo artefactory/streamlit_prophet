@@ -3,7 +3,7 @@ import streamlit as st
 from streamlit_prophet.lib.utils.mapping import dayname_to_daynumber
 
 
-def input_cleaning(resampling: dict):
+def input_cleaning(resampling: dict, readme: dict) -> dict:
     # TODO : Ajouter une option "Remove holidays"
     cleaning = dict()
     if resampling["freq"][-1] in ["s", "H", "D"]:
@@ -11,17 +11,24 @@ def input_cleaning(resampling: dict):
             "Remove days",
             ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"],
             default=[],
+            help=readme["tooltips"]["remove_days"],
         )
         cleaning["del_days"] = dayname_to_daynumber(del_days)
     else:
         cleaning["del_days"] = []
-    cleaning["del_zeros"] = st.checkbox("Delete rows where target = 0", True)
-    cleaning["del_negative"] = st.checkbox("Delete rows where target < 0", True)
-    cleaning["log_transform"] = st.checkbox("Target log transform", False)
+    cleaning["del_zeros"] = st.checkbox(
+        "Delete rows where target = 0", True, help=readme["tooltips"]["del_zeros"]
+    )
+    cleaning["del_negative"] = st.checkbox(
+        "Delete rows where target < 0", True, help=readme["tooltips"]["del_negative"]
+    )
+    cleaning["log_transform"] = st.checkbox(
+        "Target log transform", False, help=readme["tooltips"]["log_transform"]
+    )
     return cleaning
 
 
-def input_dimensions(df):
+def input_dimensions(df: pd.DataFrame, readme: dict) -> dict:
     dimensions = dict()
     eligible_cols = set(df.columns) - {"ds", "y"}
     if len(eligible_cols) > 0:
@@ -29,17 +36,25 @@ def input_dimensions(df):
             "Select dataset dimensions if any",
             list(eligible_cols),
             default=_autodetect_dimensions(df),
+            help=readme["tooltips"]["dimensions"],
         )
         for col in dimensions_cols:
             values = list(df[col].unique())
-            if st.checkbox(f"Keep all values for {col}", True):
+            if st.checkbox(
+                f"Keep all values for {col}", True, help=readme["tooltips"]["dimensions_filter"]
+            ):
                 dimensions[col] = values.copy()
             else:
                 dimensions[col] = st.multiselect(
-                    f"Values to keep for {col}", values, default=[values[0]]
+                    f"Values to keep for {col}",
+                    values,
+                    default=[values[0]],
+                    help=readme["tooltips"]["dimensions_filter"],
                 )
         dimensions["agg"] = st.selectbox(
-            "Select target aggregation function over dimensions", ["Mean", "Sum", "Max", "Min"]
+            "Target aggregation function over dimensions",
+            ["Mean", "Sum", "Max", "Min"],
+            help=readme["tooltips"]["dimensions_agg"],
         )
     else:
         st.write("Date and target are the only columns in your dataset, there are no dimensions.")
@@ -47,7 +62,7 @@ def input_dimensions(df):
     return dimensions
 
 
-def _autodetect_dimensions(df):
+def _autodetect_dimensions(df: pd.DataFrame) -> list:
     eligible_cols = set(df.columns) - {"ds", "y"}
     detected_cols = []
     for col in eligible_cols:
@@ -59,11 +74,13 @@ def _autodetect_dimensions(df):
     return detected_cols
 
 
-def input_resampling(df):
+def input_resampling(df: pd.DataFrame, readme: dict) -> dict:
     resampling = dict()
     resampling["freq"] = _autodetect_freq(df)
-    st.write(f"Frequency of dataset: {resampling['freq']}")
-    resampling["resample"] = st.checkbox("Resample my dataset", False)
+    st.write(f"Frequency detected in dataset: {resampling['freq']}")
+    resampling["resample"] = st.checkbox(
+        "Resample my dataset", False, help=readme["tooltips"]["resample_choice"]
+    )
     if resampling["resample"]:
         current_freq = resampling["freq"][-1]
         possible_freq_names = ["Hourly", "Daily", "Weekly", "Monthly", "Quarterly", "Yearly"]
@@ -71,11 +88,15 @@ def input_resampling(df):
         current_freq_index = possible_freq.index(current_freq)
         if current_freq != "Y":
             new_freq = st.selectbox(
-                "Select new frequency", possible_freq_names[current_freq_index + 1 :]
+                "Select new frequency",
+                possible_freq_names[current_freq_index + 1 :],
+                help=readme["tooltips"]["resample_new_freq"],
             )
             resampling["freq"] = new_freq[0]
             resampling["agg"] = st.selectbox(
-                "Select target aggregation function when resampling", ["Mean", "Sum", "Max", "Min"]
+                "Target aggregation function when resampling",
+                ["Mean", "Sum", "Max", "Min"],
+                help=readme["tooltips"]["resample_agg"],
             )
         else:
             st.write("Frequency is already yearly, resampling is not possible.")
@@ -83,7 +104,7 @@ def input_resampling(df):
     return resampling
 
 
-def _autodetect_freq(df):
+def _autodetect_freq(df: pd.DataFrame) -> str:
     min_delta = pd.Series(df["ds"]).diff().min()
     days = min_delta.days
     seconds = min_delta.seconds

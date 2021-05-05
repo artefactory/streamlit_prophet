@@ -43,40 +43,42 @@ st.sidebar.title("1. Data")
 
 # Load data
 with st.sidebar.beta_expander("Dataset", expanded=True):
-    df, load_options = input_dataset(config)
+    df, load_options = input_dataset(config, readme)
     df, empty_cols = remove_empty_cols(df)
     print_empty_cols(empty_cols)
 
 # Column names
 with st.sidebar.beta_expander("Columns", expanded=True):
-    date_col, target_col = input_columns(config, df, load_options)
+    date_col, target_col = input_columns(config, readme, df, load_options)
     df = format_date_and_target(df, date_col, target_col, config)
 
 # Filtering
 with st.sidebar.beta_expander("Filtering", expanded=False):
-    dimensions = input_dimensions(df)
+    dimensions = input_dimensions(df, readme)
     df, cols_to_drop = filter_and_aggregate_df(df, dimensions, config, date_col, target_col)
     print_removed_cols(cols_to_drop)
 
 # Resampling
 with st.sidebar.beta_expander("Resampling", expanded=False):
-    resampling = input_resampling(df)
+    resampling = input_resampling(df, readme)
     df = format_datetime(df, resampling)
     df = resample_df(df, resampling)
     check_dataset_size(df, config)
 
 # Cleaning
 with st.sidebar.beta_expander("Cleaning", expanded=False):
-    cleaning = input_cleaning(resampling)
+    cleaning = input_cleaning(resampling, readme)
     df = clean_df(df, cleaning)
     check_dataset_size(df, config)
 
 # Evaluation process
 with st.sidebar.beta_expander("Evaluation process", expanded=False):
-    use_cv = st.checkbox("Perform cross-validation", value=False)
+    use_cv = st.checkbox(
+        "Perform cross-validation", value=False, help=readme["tooltips"]["choice_cv"]
+    )
     dates = input_train_dates(df, use_cv, config, resampling)
     if use_cv:
-        dates = input_cv(dates, resampling, config)
+        dates = input_cv(dates, resampling, config, readme)
         datasets = get_train_set(df, dates)
     else:
         dates = input_val_dates(df, dates)
@@ -84,41 +86,43 @@ with st.sidebar.beta_expander("Evaluation process", expanded=False):
 
 # Forecast
 with st.sidebar.beta_expander("Forecast", expanded=False):
-    make_future_forecast = st.checkbox("Make forecast on future dates", value=False)
+    make_future_forecast = st.checkbox(
+        "Make forecast on future dates", value=False, help=readme["tooltips"]["choice_forecast"]
+    )
     if make_future_forecast:
-        dates = input_forecast_dates(df, dates, resampling)
+        dates = input_forecast_dates(df, dates, resampling, config, readme)
 
 st.sidebar.title("2. Modelling")
 
 # Prior scale
 with st.sidebar.beta_expander("Prior scale", expanded=False):
-    params = input_prior_scale_params(config)
+    params = input_prior_scale_params(config, readme)
 
 # Seasonalities
 with st.sidebar.beta_expander("Seasonalities", expanded=False):
-    params = input_seasonality_params(config, params, resampling)
+    params = input_seasonality_params(config, params, resampling, readme)
 
 # Holidays
 with st.sidebar.beta_expander("Holidays"):
-    params = input_holidays_params(params)
+    params = input_holidays_params(params, readme)
 
 # External regressors
 with st.sidebar.beta_expander("External regressors"):
-    params = input_regressors(df, config, params)
+    params = input_regressors(df, config, params, readme)
 
 # Other parameters
 with st.sidebar.beta_expander("Other parameters", expanded=False):
-    params = input_other_params(config, params)
+    params = input_other_params(config, params, readme)
 
 st.sidebar.title("3. Evaluation")
 
 # Performance metrics
 with st.sidebar.beta_expander("Metrics", expanded=False):
-    eval = input_metrics()
+    eval = input_metrics(readme)
 
 # Scope of evaluation
 with st.sidebar.beta_expander("Scope", expanded=False):
-    eval = input_scope_eval(eval, use_cv)
+    eval = input_scope_eval(eval, use_cv, readme)
 
 # Info
 with st.beta_expander("What is this app?", expanded=False):

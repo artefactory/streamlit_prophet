@@ -1,29 +1,189 @@
 [params]
 prophet_params = """
 **Holidays** \n
-* `holidays_prior_scale`: This parameter determines how much of an effect holidays should \
+* `holidays_prior_scale`: This parameter determines how much of an effect holidays should
     have on your predictions. Default: 10. [20,40] works well. \n
+
 **Changepoints** \n
-Changepoints are the points in your data where there are sudden and abrupt changes in the\
+Changepoints are the points in your data where there are sudden and abrupt changes in the
      trend. eg. Marketing campaign. \n
-* `changepoints`: supply the changepoint dates instead of having Prophet determine them.\
+* `changepoints`: supply the changepoint dates instead of having Prophet determine them.
      Not useful. \n
 * `n_changepoints`: number of changepoints. To adjust. \n
-* `changepoint_range`: usually does not have that much of an effect on the performance. \
+* `changepoint_range`: usually does not have that much of an effect on the performance.
     -> keep default \n
-* `changepoint_prior_scale`: how flexible the changepoints are allowed to be. If you make \
-    it high it will be more flexible, but you can end up overfitting. values between 10 and 30 \
-         work for me, depending on how volatile the data is. \n
+* `changepoint_prior_scale`: how flexible the changepoints are allowed to be. If you make
+    it high it will be more flexible, but you can end up overfitting. values between 10 and 30
+    work for me, depending on how volatile the data is. \n
+
 **Seasonalities** \n
-These parameters are where Prophet shines as you can make big improvements and gain great\
+These parameters are where Prophet shines as you can make big improvements and gain great
      insights by changing only a few values. \n
-* `seasonality_mode`: how your seasonality components should be integrated with the predictions.\
-     You will use additive when your seasonality trend should be “constant” over the entire period.\
+* `seasonality_mode`: how your seasonality components should be integrated with the predictions.
+     You will use additive when your seasonality trend should be “constant” over the entire period.
     You can use multiplicative to increase the importance of the seasonalities over time. \n
-* `seasonality_prior_scale`: This parameter will again allow your seasonalities to be more\
-     flexible. I have found values between 10 and 25 to work well here, depending on how much \
+* `seasonality_prior_scale`: This parameter will again allow your seasonalities to be more
+     flexible. I have found values between 10 and 25 to work well here, depending on how much
          seasonality you notice in the components plot.
 """
 
 [app]
 app_intro = """App intro TBD."""
+
+[tooltips]
+upload_choice = """
+Check to upload your own dataset, or uncheck to use a toy dataset and see what can be done with this app.
+"""
+dataset_upload = """
+Your csv file should have at least a column with dates and a column with numeric values to forecast.
+"""
+toy_dataset = """
+Three toy datasets are available: \n
+* M5: Sales from Walmart stores.
+* SAV: Volumes of calls in call centers.
+* Weather: Temperature in Madrid.
+"""
+date_column = """
+Select the date column.
+"""
+target_column = """
+Select the column to be forecasted.
+"""
+dimensions = """
+Prophet can only forecast one series at a time.
+In case your dataset contains several time series, you might want to filter or aggregate these different series.
+Dimensions are the columns on which the dataset can be filtered and aggregated on. \n
+You don't have to select dimensions. In case no dimensions are selected,
+all target values at the same date will be aggregated in order to get one target value per date.\n
+Example: For a dataset containing sales from 3 countries A, B and C, you could select countries B and C, and
+forecast the sum of their sales.
+"""
+dimensions_filter = """
+Uncheck to filter values on that dimension, or check to keep all values.
+"""
+dimensions_agg = """
+Function to use to aggregate the different time series into one.
+"""
+resample_choice = """
+Check to resample your dataset at a lower time frequency.
+"""
+resample_new_freq = """
+Both training and forecasting will be done at this new frequency.
+"""
+resample_agg = """
+Original values have to be aggregated because the new frequency is lower than the original one.  \n
+Example: For a dataset with a daily frequency resampled at a weekly frequency, the 7 values of each week could be
+averaged or summed.
+"""
+remove_days = """
+Days selected will be removed from both training and forecasting periods.
+"""
+del_zeros = """
+Check if the quantity to forecast should never be 0.
+"""
+del_negative = """
+Check if the quantity to forecast should never be striclty negative.
+"""
+log_transform = """
+Sometimes applying a log transformation to the quantity to forecast before modelling leads to a better performance.
+"""
+choice_cv = """
+Check to evaluate performance through a cross-validation, or uncheck to use a simple training/validation split.
+"""
+cv_n_folds = """
+Number of distinct training/validation pairs to include in the cross-validation.
+"""
+cv_horizon = """
+Length of validation period for each fold.
+"""
+choice_forecast = """
+Check to make a forecast for a period that is not included in the dataset,
+or uncheck if you just want to evaluate your model performance on known data.
+"""
+forecast_horizon = """
+Length of the period to forecast.
+"""
+forecast_start = """
+By default, forecasting will start just after the most recent date in your dataset.
+Uncheck if you want to select another forecasting start date.
+"""
+holidays_prior_scale = """
+Determines how much of an effect holidays should have on your predictions.
+"""
+changepoint_prior_scale = """
+How flexible the changepoints are allowed to be.
+If you make it high it will be more flexible, but you can end up overfitting
+and include seasonality patterns in the trend, which is something to avoid.
+"""
+seasonality = """
+Choose whether or not to include this seasonality in the model.
+In 'auto' mode, Prophet will include a seasonality only if there are at least 2 full periods of historical data
+(for example 2 years of data for yearly seasonality).
+"""
+seasonality_prior_scale = """
+How flexible the seasonality is allowed to be.
+"""
+seasonality_mode = """
+Determines how seasonality components should be integrated with the predictions:
+* Use 'additive' when seasonality trend should be “constant” over the entire period.
+* Use 'multiplicative' to increase the importance of the seasonality over time.
+"""
+seasonality_fourier = """
+TBD
+"""
+seasonality_name = """
+Choose a name for your custom seasonality.
+"""
+seasonality_period = """
+Number of days of each cycle.
+"""
+add_custom_seasonality = """
+Check if you want to include a specific seasonality in the model (other than the ones above).
+"""
+holidays = """
+Prophet will try to model the impact of each selected countries' holidays on the target variable.
+"""
+add_all_regressors = """
+Regressors are numerical variables that will help Prophet to forecast the target.
+Check to include all regressors detected in your dataset, or uncheck if you want to select them yourself.
+"""
+select_regressors = """
+You don't have to select regressors. Only select those that improve model performance.
+"""
+regressor_mode = """
+TBD
+"""
+regressor_prior_scale = """
+TBD
+"""
+growth = """
+TBD
+"""
+n_changepoints = """
+Number of changepoints for the trend. You shouldn't need to adjust this parameter,
+the same effect can be achieved by playing with the `changepoint_prior_scale` parameter.
+"""
+changepoint_range = """
+Proportion of training data that will be used to adjust the trend.
+"""
+metrics = """
+Metrics that will be used to compare model predictions to the ground truth. Several metrics are available: \n
+* TBD
+* TBD
+* TBD
+* TBD
+* TBD
+"""
+eval_set = """
+Choose whether to evaluate model on traning data or validation data.
+You should look at validation data to assess model performance,
+but evaluation on training data can also be useful to detect overfitting.
+"""
+eval_granularity = """
+Granularity at which predictions on evaluation set will be averaged.
+Select 'Global' if you want to compute performance on the whole evaluation set.
+"""
+choice_agg_perf = """
+Check to aggregate all predictions at the selected granularity before computing performance metrics.
+Be careful, this method can be misleading as under-prediction errors could be compensated by over-prediction errors.
+"""
