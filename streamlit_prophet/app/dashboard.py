@@ -1,32 +1,43 @@
 import streamlit as st
-from lib.utils.load import load_config
-from lib.dataprep.clean import clean_df
-from lib.dataprep.format import (remove_empty_cols,
-                                 print_empty_cols,
-                                 format_date_and_target,
-                                 filter_and_aggregate_df,
-                                 print_removed_cols,
-                                 format_datetime,
-                                 resample_df,
-                                 check_dataset_size
-                                 )
-from lib.dataprep.split import get_train_val_sets, get_train_set
-from lib.inputs.dataset import input_dataset, input_columns
-from lib.inputs.dataprep import input_dimensions, input_resampling, input_cleaning
-from lib.inputs.dates import input_train_dates, input_val_dates, input_cv, input_forecast_dates
-from lib.inputs.params import (input_prior_scale_params,
-                               input_seasonality_params,
-                               input_holidays_params,
-                               input_other_params,
-                               input_regressors
-                               )
-from lib.inputs.eval import input_metrics, input_scope_eval
-from lib.models.prophet import forecast_workflow
-from lib.exposition.visualize import plot_overview, plot_performance, plot_components, plot_future
-
+from streamlit_prophet.lib.dataprep.clean import clean_df
+from streamlit_prophet.lib.dataprep.format import (
+    check_dataset_size,
+    filter_and_aggregate_df,
+    format_date_and_target,
+    format_datetime,
+    print_empty_cols,
+    print_removed_cols,
+    remove_empty_cols,
+    resample_df,
+)
+from streamlit_prophet.lib.dataprep.split import get_train_set, get_train_val_sets
+from streamlit_prophet.lib.exposition.visualize import (
+    plot_components,
+    plot_future,
+    plot_overview,
+    plot_performance,
+)
+from streamlit_prophet.lib.inputs.dataprep import input_cleaning, input_dimensions, input_resampling
+from streamlit_prophet.lib.inputs.dataset import input_columns, input_dataset
+from streamlit_prophet.lib.inputs.dates import (
+    input_cv,
+    input_forecast_dates,
+    input_train_dates,
+    input_val_dates,
+)
+from streamlit_prophet.lib.inputs.eval import input_metrics, input_scope_eval
+from streamlit_prophet.lib.inputs.params import (
+    input_holidays_params,
+    input_other_params,
+    input_prior_scale_params,
+    input_regressors,
+    input_seasonality_params,
+)
+from streamlit_prophet.lib.models.prophet import forecast_workflow
+from streamlit_prophet.lib.utils.load import load_config
 
 # Load config
-config, readme = load_config('config_streamlit.toml', 'config_readme.toml')
+config, readme = load_config("config_streamlit.toml", "config_readme.toml")
 
 st.sidebar.title("1. Data")
 
@@ -111,33 +122,36 @@ with st.sidebar.beta_expander("Scope", expanded=False):
 
 # Info
 with st.beta_expander("What is this app?", expanded=False):
-    st.write(readme['app']['app_intro'])
+    st.write(readme["app"]["app_intro"])
 with st.beta_expander("More info on model parameters", expanded=False):
-    st.write(readme['params']['prophet_params'])
-st.write('')
+    st.write(readme["params"]["prophet_params"])
+st.write("")
 
 # Launch training & forecast
-if st.checkbox('Relaunch forecast automatically when parameters change', value=True):
+if st.checkbox("Relaunch forecast automatically when parameters change", value=True):
     launch_forecast = True
 else:
-    launch_forecast = st.button('Launch forecast')
+    launch_forecast = st.button("Launch forecast")
 if launch_forecast:
-    datasets, models, forecasts = forecast_workflow(config, use_cv, make_future_forecast,
-                                                    cleaning, resampling, params, dates, datasets)
+    datasets, models, forecasts = forecast_workflow(
+        config, use_cv, make_future_forecast, cleaning, resampling, params, dates, datasets
+    )
 else:
     st.stop()
 
 # Visualizations
 
-st.write('# 1. Overview')
+st.write("# 1. Overview")
 plot_overview(make_future_forecast, use_cv, models, forecasts, target_col, cleaning)
 
-st.write(f'# 2. Evaluation on {"CV" if use_cv else ""} {eval["set"].lower()} set{"s" if use_cv else ""}')
+st.write(
+    f'# 2. Evaluation on {"CV" if use_cv else ""} {eval["set"].lower()} set{"s" if use_cv else ""}'
+)
 plot_performance(use_cv, target_col, datasets, forecasts, dates, eval, resampling, config)
 
-st.write('# 3. Impact of components and regressors')
+st.write("# 3. Impact of components and regressors")
 plot_components(use_cv, target_col, models, forecasts, cleaning, resampling, config)
 
 if make_future_forecast:
-    st.write('# 4. Future forecast')
+    st.write("# 4. Future forecast")
     plot_future(models, forecasts, dates, target_col, cleaning)

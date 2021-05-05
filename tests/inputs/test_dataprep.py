@@ -1,5 +1,5 @@
 import pytest
-from lib.inputs.dataprep import _autodetect_dimensions, _autodetect_freq
+from streamlit_prophet.lib.inputs.dataprep import _autodetect_dimensions, _autodetect_freq
 from tests.samples.df import df_test
 
 
@@ -19,9 +19,9 @@ def test_autodetect_dimensions(df, expected):
 @pytest.mark.parametrize(
     "df, expected",
     [
-        (df_test[8], 'D'),
-        (df_test[10], '1Y'),
-        (df_test[11], '1H'),
+        (df_test[8], "D"),
+        (df_test[10], "1Y"),
+        (df_test[11], "1H"),
     ],
 )
 def test_autodetect_freq(df, expected):
