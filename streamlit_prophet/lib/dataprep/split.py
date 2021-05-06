@@ -8,6 +8,22 @@ from streamlit_prophet.lib.utils.mapping import convert_into_nb_of_days, convert
 
 
 def get_train_val_sets(df: pd.DataFrame, dates: dict, config: dict) -> dict:
+    """Adds training and validation dataframes in datasets dictionary's values.
+
+    Parameters
+    ----------
+    df : pd.DataFrame
+        Input dataframe containing both training and validation samples.
+    dates : dict
+        Dictionary containing training and validation dates information.
+    config : dict
+        Lib configuration dictionary.
+
+    Returns
+    -------
+    dict
+        The datasets dictionary containing training and validation dataframes.
+    """
     datasets = dict()
     train = df.query(
         f'ds >= "{dates["train_start_date"]}" & ds <= "{dates["train_end_date"]}"'
@@ -19,7 +35,16 @@ def get_train_val_sets(df: pd.DataFrame, dates: dict, config: dict) -> dict:
     return datasets
 
 
-def print_train_val_dates(val: pd.DataFrame, train: pd.DataFrame):
+def print_train_val_dates(val: pd.DataFrame, train: pd.DataFrame) -> None:
+    """Displays a message in streamlit dashboard with training and validation dates.
+
+    Parameters
+    ----------
+    val : pd.DataFrame
+        Dataframe containing validation data.
+    train : pd.DataFrame
+        Dataframe containing training data.
+    """
     st.success(
         f"""Train: [ {train.ds.min().strftime('%Y/%m/%d')} -
                            {train.ds.max().strftime('%Y/%m/%d')} ]
@@ -29,7 +54,18 @@ def print_train_val_dates(val: pd.DataFrame, train: pd.DataFrame):
     )
 
 
-def raise_error_train_val_dates(val: pd.DataFrame, train: pd.DataFrame, config: dict):
+def raise_error_train_val_dates(val: pd.DataFrame, train: pd.DataFrame, config: dict) -> None:
+    """Displays a message in streamlit dashboard and stops it if training and/or validation dates are incorrect.
+
+    Parameters
+    ----------
+    val : pd.DataFrame
+        Dataframe containing validation data.
+    train : pd.DataFrame
+        Dataframe containing training data.
+    config : dict
+        Lib configuration dictionary where rules for training and validation dates are given.
+    """
     threshold_train = config["validity"]["min_data_points_train"]
     threshold_val = config["validity"]["min_data_points_val"]
     if len(val) <= threshold_val:
@@ -47,6 +83,20 @@ def raise_error_train_val_dates(val: pd.DataFrame, train: pd.DataFrame, config: 
 
 
 def get_train_set(df: pd.DataFrame, dates: dict) -> dict:
+    """Adds training dataframe in datasets dictionary's values.
+
+    Parameters
+    ----------
+    df : pd.DataFrame
+        Input dataframe containing both training and validation samples.
+    dates : dict
+        Dictionary containing training dates information.
+
+    Returns
+    -------
+    dict
+        The datasets dictionary containing training dataframe.
+    """
     datasets = dict()
     train = df.query(
         f'ds >= "{dates["train_start_date"]}" & ds <= "{dates["train_end_date"]}"'
@@ -57,6 +107,18 @@ def get_train_set(df: pd.DataFrame, dates: dict) -> dict:
 
 
 def make_eval_df(datasets: dict) -> dict:
+    """Adds evaluation dataframe in datasets dictionary's values.
+
+    Parameters
+    ----------
+    datasets : dict
+        Dictionary containing training and validation dataframes.
+
+    Returns
+    -------
+    dict
+        The datasets dictionary containing evaluation dataframe.
+    """
     eval = pd.concat([datasets["train"], datasets["val"]], axis=0)
     eval = eval.drop("y", axis=1)
     datasets["eval"] = eval
@@ -66,6 +128,24 @@ def make_eval_df(datasets: dict) -> dict:
 def make_future_df(
     dates: dict, datasets: dict, cleaning: dict, include_history: bool = True
 ) -> dict:
+    """Adds future dataframe in datasets dictionary's values.
+
+    Parameters
+    ----------
+    dates : dict
+        Dictionary containing future forecasting dates information.
+    datasets : dict
+        Dictionary storing all dataframes.
+    cleaning : dict
+        Cleaning specifications to apply to future dataframe.
+    include_history : bool
+        Whether or not to include historical data in future dataframe.
+
+    Returns
+    -------
+    dict
+        The datasets dictionary containing future dataframe.
+    """
     # TODO: Inclure les valeurs futures de régresseurs ? Pour l'instant, use_regressors = False pour le forecast
     if include_history:
         start_date = datasets["full"].ds.min()
@@ -82,7 +162,27 @@ def make_future_df(
 
 def get_train_end_date_default_value(
     df: pd.DataFrame, dates: dict, resampling: dict, config: dict, use_cv: bool
-):
+) -> pd.Timestamp:
+    """Calculates training end date default value in streamlit dashboard.
+
+    Parameters
+    ----------
+    df : pd.DataFrame
+        Input dataframe containing all observations.
+    dates : dict
+        Dictionary containing training start date information.
+    resampling : dict
+        Dictionary containing dataset frequency information.
+    config : dict
+        Lib configuration dictionary containing validation period length information.
+    use_cv : bool
+        Whether or not cross-validation is used.
+
+    Returns
+    -------
+    pd.Timestamp
+        Training end date default value in streamlit dashboard.
+    """
     if use_cv:
         default_end = df.ds.max()
     else:
@@ -94,6 +194,20 @@ def get_train_end_date_default_value(
 
 
 def get_cv_cutoffs(dates: dict, freq: str) -> list:
+    """Generates the list of cross-validation cutoff dates.
+
+    Parameters
+    ----------
+    dates : dict
+        Dictionary containing cross-validation dates information (number of folds, horizon, end date).
+    freq : str
+        Dataset frequency.
+
+    Returns
+    -------
+    list
+        List of all cross-validation cutoff dates.
+    """
     horizon, end, n_folds = dates["folds_horizon"], dates["train_end_date"], dates["n_folds"]
     if freq in ["s", "H"]:
         end = datetime.combine(end, datetime.min.time())
@@ -112,6 +226,20 @@ def get_cv_cutoffs(dates: dict, freq: str) -> list:
 
 
 def get_max_possible_cv_horizon(dates: dict, resampling: dict) -> int:
+    """Calculates maximum possible cross-validation horizon value in streamlit dashboard.
+
+    Parameters
+    ----------
+    dates : dict
+        Dictionary containing training date information and number of cross-validation folds.
+    resampling : dict
+        Dictionary containing dataset frequency information.
+
+    Returns
+    -------
+    int
+        Maximum possible cross-validation horizon value in streamlit dashboard.
+    """
     freq = resampling["freq"][-1]
     if freq in ["s", "H"]:
         nb_seconds_training = (dates["train_end_date"] - dates["train_start_date"]).days * (
@@ -126,7 +254,16 @@ def get_max_possible_cv_horizon(dates: dict, resampling: dict) -> int:
     return max_horizon
 
 
-def print_cv_folds_dates(dates: dict, freq: str):
+def print_cv_folds_dates(dates: dict, freq: str) -> None:
+    """Displays a message in streamlit dashboard with cross-validation folds' dates.
+
+    Parameters
+    ----------
+    dates : dict
+        Dictionary containing cross-validation dates information.
+    freq : str
+        Dataset frequency.
+    """
     horizon, cutoffs_text = dates["folds_horizon"], []
     for i, cutoff in enumerate(dates["cutoffs"]):
         cutoffs_text.append(f"""Fold {i + 1}:           """)
@@ -154,7 +291,18 @@ def print_cv_folds_dates(dates: dict, freq: str):
     st.success("\n".join(cutoffs_text))
 
 
-def raise_error_cv_dates(dates: dict, resampling: dict, config: dict):
+def raise_error_cv_dates(dates: dict, resampling: dict, config: dict) -> None:
+    """Displays a message in streamlit dashboard and stops it if cross-validation dates are incorrect.
+
+    Parameters
+    ----------
+    dates : dict
+        Dictionary containing cross-validation dates information.
+    resampling : dict
+        Dictionary containing dataset frequency information.
+    config : dict
+        Lib configuration dictionary where rules for cross-validation dates are given.
+    """
     threshold_train = config["validity"]["min_data_points_train"]
     threshold_val = config["validity"]["min_data_points_val"]
     freq = resampling["freq"]
@@ -178,7 +326,16 @@ def raise_error_cv_dates(dates: dict, resampling: dict, config: dict):
         st.stop()
 
 
-def print_forecast_dates(dates: dict, resampling: dict):
+def print_forecast_dates(dates: dict, resampling: dict) -> None:
+    """Displays a message in streamlit dashboard with future forecast dates.
+
+    Parameters
+    ----------
+    dates : dict
+        Dictionary containing future forecast dates information.
+    resampling : str
+        Dictionary containing dataset frequency information.
+    """
     if resampling["freq"][-1] in ["s", "H"]:
         st.success(
             f"""Forecast: {dates['forecast_start_date'].strftime('%Y/%m/%d %H:%M:%S')} -

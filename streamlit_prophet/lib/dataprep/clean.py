@@ -1,3 +1,5 @@
+from typing import Tuple
+
 import numpy as np
 import pandas as pd
 import streamlit as st
@@ -9,14 +11,14 @@ def clean_df(df: pd.DataFrame, cleaning: dict) -> pd.DataFrame:
     Parameters
     ----------
     df : pd.DataFrame
-        A dataframe that has to be cleaned.
+        Input dataframe that has to be cleaned.
     cleaning : dict
         Cleaning specifications.
 
     Returns
     -------
     pd.DataFrame
-        A cleaned dataframe.
+        Cleaned dataframe.
     """
     df = _remove_rows(df, cleaning)
     df = _log_transform(df, cleaning)
@@ -24,6 +26,20 @@ def clean_df(df: pd.DataFrame, cleaning: dict) -> pd.DataFrame:
 
 
 def clean_future_df(df: pd.DataFrame, cleaning: dict) -> pd.DataFrame:
+    """Cleans the input dataframe according to cleaning dict specifications.
+
+    Parameters
+    ----------
+    df : pd.DataFrame
+        Input dataframe that has to be cleaned.
+    cleaning : dict
+        Cleaning specifications.
+
+    Returns
+    -------
+    pd.DataFrame
+        Cleaned dataframe.
+    """
     df_clean = df.copy()  # To avoid CachedObjectMutationWarning
     df_clean["__to_remove"] = 0
     if cleaning["del_days"] is not None:
@@ -37,6 +53,21 @@ def clean_future_df(df: pd.DataFrame, cleaning: dict) -> pd.DataFrame:
 
 @st.cache(suppress_st_warning=True)
 def _log_transform(df: pd.DataFrame, cleaning: dict) -> pd.DataFrame:
+    """Applies a log transform to the y column of input dataframe, if possible.
+    Raises an error in streamlit dashboard if not possible.
+
+    Parameters
+    ----------
+    df : pd.DataFrame
+        Input dataframe that has to be cleaned.
+    cleaning : dict
+        Cleaning specifications.
+
+    Returns
+    -------
+    pd.DataFrame
+        Cleaned dataframe.
+    """
     df_clean = df.copy()  # To avoid CachedObjectMutationWarning
     if cleaning["log_transform"]:
         if df_clean.y.min() <= 0:
@@ -51,7 +82,20 @@ def _log_transform(df: pd.DataFrame, cleaning: dict) -> pd.DataFrame:
 
 @st.cache()
 def _remove_rows(df: pd.DataFrame, cleaning: dict) -> pd.DataFrame:
-    # first, let's flag values that needs to be processed
+    """Removes some rows of the input dataframe according to cleaning dict specifications.
+
+    Parameters
+    ----------
+    df : pd.DataFrame
+        Input dataframe that has to be cleaned.
+    cleaning : dict
+        Cleaning specifications.
+
+    Returns
+    -------
+    pd.DataFrame
+        Cleaned dataframe.
+    """
     df_clean = df.copy()  # To avoid CachedObjectMutationWarning
     df_clean["__to_remove"] = 0
     if cleaning["del_negative"]:
@@ -62,13 +106,28 @@ def _remove_rows(df: pd.DataFrame, cleaning: dict) -> pd.DataFrame:
         )
     if cleaning["del_zeros"]:
         df_clean["__to_remove"] = np.where(df_clean["y"] == 0, 1, df_clean["__to_remove"])
-    # then, process the data and delete the flag
     df_clean = df_clean.query("__to_remove != 1")
     del df_clean["__to_remove"]
     return df_clean
 
 
-def exp_transform(datasets: dict, forecasts: dict):
+def exp_transform(datasets: dict, forecasts: dict) -> Tuple[dict, dict]:
+    """Applies an exp transform to the y column of dataframes which are values of input dictionaries.
+
+    Parameters
+    ----------
+    datasets : dict
+        A dictionary whose values are dataframes used as an input to fit a Prophet model.
+    forecasts : dict
+        A dictionary whose values are dataframes which are the output of a Prophet prediction.
+
+    Returns
+    -------
+    dict
+        The datasets dictionary with transformed values.
+    dict
+        The forecasts dictionary with transformed values.
+    """
     for data in set(datasets.keys()):
         if "y" in datasets[data].columns:
             df_exp = datasets[data].copy()
