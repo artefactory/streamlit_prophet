@@ -1,3 +1,5 @@
+# type: ignore
+
 import pandas as pd
 import streamlit as st
 from streamlit_prophet.lib.utils.mapping import mapping_country_names
