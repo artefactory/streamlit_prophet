@@ -4,6 +4,20 @@ import streamlit as st
 
 
 def clean_df(df: pd.DataFrame, cleaning: dict) -> pd.DataFrame:
+    """Cleans the input dataframe according to cleaning dict specifications.
+
+    Parameters
+    ----------
+    df : pd.DataFrame
+        A dataframe that has to be cleaned.
+    cleaning : dict
+        Cleaning specifications.
+
+    Returns
+    -------
+    pd.DataFrame
+        A cleaned dataframe.
+    """
     df = _remove_rows(df, cleaning)
     df = _log_transform(df, cleaning)
     return df
