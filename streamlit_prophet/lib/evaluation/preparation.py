@@ -1,7 +1,29 @@
 import pandas as pd
 
 
-def get_evaluation_df(datasets, forecasts, dates, eval, use_cv) -> pd.DataFrame:
+def get_evaluation_df(
+    datasets: dict, forecasts: dict, dates: dict, eval: dict, use_cv: bool
+) -> pd.DataFrame:
+    """Generates a dataframe that will be used for evaluation.
+
+    Parameters
+    ----------
+    datasets : dict
+        Dictionary containing evaluation dataframe.
+    forecasts : dict
+        Dictionary where all forecasts are stored.
+    dates : dict
+        Dictionary containing all dates information.
+    eval : dict
+        Evaluation specifications.
+    use_cv : bool
+        Whether or not cross-validation is used.
+
+    Returns
+    -------
+    pd.DataFrame
+        Evaluation dataframe.
+    """
     if use_cv:
         evaluation_df = forecasts["cv"].rename(columns={"y": "truth", "yhat": "forecast"})
         mapping = {
@@ -33,7 +55,19 @@ def get_evaluation_df(datasets, forecasts, dates, eval, use_cv) -> pd.DataFrame:
     return evaluation_df
 
 
-def add_time_groupers(evaluation_df):
+def add_time_groupers(evaluation_df: pd.DataFrame) -> pd.DataFrame:
+    """Adds columns with time information (day, week, quarter, year) to evaluation dataframe.
+
+    Parameters
+    ----------
+    evaluation_df : pd.DataFrame
+        Dictionary containing evaluation dataframe.
+
+    Returns
+    -------
+    pd.DataFrame
+        Evaluation dataframe with additional time information columns.
+    """
     df = evaluation_df.copy()
     df["Global"] = "Global"
     df["Daily"] = df["ds"].astype(str).map(lambda x: x[0:10])

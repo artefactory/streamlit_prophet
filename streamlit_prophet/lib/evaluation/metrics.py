@@ -1,3 +1,5 @@
+from typing import Tuple
+
 from datetime import timedelta
 
 import numpy as np
@@ -7,12 +9,19 @@ from streamlit_prophet.lib.utils.mapping import convert_into_nb_of_days, convert
 
 
 def MAPE(y_true: pd.Series, y_pred: pd.Series) -> float:
-    """Mean Absolute Percentage Error (MAPE). Must be multiplied by 100 to get percentage.
-    Args:
-        y_true (pd.Series): ground truth Y series
-        y_pred (pd.Series): prediction Y series
-    Returns:
-        float: MAPE
+    """Computes Mean Absolute Percentage Error (MAPE). Must be multiplied by 100 to get percentage.
+
+    Parameters
+    ----------
+    y_true : pd.Series
+        Ground truth target series.
+    y_pred : pd.Series
+        Prediction series.
+
+    Returns
+    -------
+    float
+        Mean Absolute Percentage Error (MAPE).
     """
     try:
         y_true, y_pred = np.array(y_true).ravel(), np.array(y_pred).ravel()
@@ -24,14 +33,20 @@ def MAPE(y_true: pd.Series, y_pred: pd.Series) -> float:
         return 0
 
 
-def SMAPE(y_true, y_pred):
-    """
-    Symmetric mean absolute percentage error
-    Args:
-        y_true (pd.Series): ground truth Y series
-        y_pred (pd.Series): prediction Y series
-    Returns:
-        float: SMAPE
+def SMAPE(y_true: pd.Series, y_pred: pd.Series) -> float:
+    """Computes Symmetric Mean Absolute Percentage Error (SMAPE).
+
+    Parameters
+    ----------
+    y_true : pd.Series
+        Ground truth target series.
+    y_pred : pd.Series
+        Prediction series.
+
+    Returns
+    -------
+    float
+        Symmetric Mean Absolute Percentage Error (SMAPE).
     """
     try:
         y_true, y_pred = np.array(y_true).ravel(), np.array(y_pred).ravel()
@@ -46,12 +61,19 @@ def SMAPE(y_true, y_pred):
 
 
 def MSE(y_true: pd.Series, y_pred: pd.Series) -> float:
-    """Mean Square Error (MSE).
-    Args:
-        y_true (pd.Series): ground truth Y series
-        y_pred (pd.Series): prediction Y series
-    Returns:
-        float: MSE
+    """Computes Mean Squared Error (MSE).
+
+    Parameters
+    ----------
+    y_true : pd.Series
+        Ground truth target series.
+    y_pred : pd.Series
+        Prediction series.
+
+    Returns
+    -------
+    float
+        Mean Squared Error (MSE).
     """
     try:
         y_true, y_pred = np.array(y_true).ravel(), np.array(y_pred).ravel()
@@ -63,12 +85,19 @@ def MSE(y_true: pd.Series, y_pred: pd.Series) -> float:
 
 
 def RMSE(y_true: pd.Series, y_pred: pd.Series) -> float:
-    """Root Mean Square Error (RMSE).
-    Args:
-        y_true (pd.Series): ground truth Y series
-        y_pred (pd.Series): prediction Y series
-    Returns:
-        float: RMSE
+    """Computes Root Mean Squared Error (RMSE).
+
+    Parameters
+    ----------
+    y_true : pd.Series
+        Ground truth target series.
+    y_pred : pd.Series
+        Prediction series.
+
+    Returns
+    -------
+    float
+        Root Mean Squared Error (RMSE).
     """
     y_true, y_pred = np.array(y_true).ravel(), np.array(y_pred).ravel()
     rmse = np.sqrt(MSE(y_true, y_pred))
@@ -76,12 +105,19 @@ def RMSE(y_true: pd.Series, y_pred: pd.Series) -> float:
 
 
 def MAE(y_true: pd.Series, y_pred: pd.Series) -> float:
-    """Mean Absolute Error (MAE).
-    Args:
-        y_true (pd.Series): ground truth Y series
-        y_pred (pd.Series): prediction Y series
-    Returns:
-        float: MAE
+    """Computes Mean Absolute Error (MAE).
+
+    Parameters
+    ----------
+    y_true : pd.Series
+        Ground truth target series.
+    y_pred : pd.Series
+        Prediction series.
+
+    Returns
+    -------
+    float
+        Mean Absolute Error (MAE).
     """
     try:
         y_true, y_pred = np.array(y_true).ravel(), np.array(y_pred).ravel()
@@ -99,7 +135,31 @@ def get_perf_metrics(
     resampling: dict,
     use_cv: bool,
     config: dict,
-):
+) -> Tuple[pd.DataFrame, dict]:
+    """Computes all metrics to gather them in a dataframe and a dictionary.
+
+    Parameters
+    ----------
+    evaluation_df : pd.DataFrame
+        Evaluation dataframe.
+    eval : dict
+        Evaluation specifications.
+    dates : dict
+        Dictionary containing all dates information.
+    resampling : dict
+        Resampling specifications.
+    use_cv : bool
+        Whether or note cross-validation is used.
+    config : dict
+        Lib configuration dictionary.
+
+    Returns
+    -------
+    pd.DataFrame
+        Dataframe with all metrics at the desired granularity.
+    dict
+        Dictionary with all metrics at the desired granularity.
+    """
     df = _preprocess_eval_df(evaluation_df, use_cv)
     metrics_df = _compute_metrics(df, eval)
     metrics_df, metrics_dict = _format_eval_results(
@@ -109,6 +169,20 @@ def get_perf_metrics(
 
 
 def _preprocess_eval_df(evaluation_df: pd.DataFrame, use_cv: bool) -> pd.DataFrame:
+    """Preprocesses evaluation dataframe.
+
+    Parameters
+    ----------
+    evaluation_df : pd.DataFrame
+        Evaluation dataframe.
+    use_cv : bool
+        Whether or note cross-validation is used.
+
+    Returns
+    -------
+    pd.DataFrame
+        Preprocessed evaluation dataframe.
+    """
     if use_cv:
         df = evaluation_df.copy()
     else:
@@ -117,6 +191,20 @@ def _preprocess_eval_df(evaluation_df: pd.DataFrame, use_cv: bool) -> pd.DataFra
 
 
 def _compute_metrics(df: pd.DataFrame, eval: dict) -> pd.DataFrame:
+    """Computes all metrics and gather them in a dataframe.
+
+    Parameters
+    ----------
+    df : pd.DataFrame
+        Evaluation dataframe.
+    eval : dict
+        Evaluation specifications.
+
+    Returns
+    -------
+    pd.DataFrame
+        Dataframe with all metrics at the desired granularity.
+    """
     metrics = {"MAPE": MAPE, "SMAPE": SMAPE, "MSE": MSE, "RMSE": RMSE, "MAE": MAE}
     if eval["get_perf_on_agg_forecast"]:
         metrics_df = (
@@ -140,7 +228,31 @@ def _compute_metrics(df: pd.DataFrame, eval: dict) -> pd.DataFrame:
 
 def _format_eval_results(
     metrics_df: pd.DataFrame, dates: dict, eval: dict, resampling: dict, use_cv: bool, config: dict
-):
+) -> Tuple[pd.DataFrame, dict]:
+    """Formats dataframe containing evaluation results and creates a dictionary containing the same information.
+
+    Parameters
+    ----------
+    metrics_df : pd.DataFrame
+        Dataframe with all metrics at the desired granularity.
+    dates : dict
+        Dictionary containing all dates information.
+    eval : dict
+        Evaluation specifications.
+    resampling : dict
+        Resampling specifications.
+    use_cv : bool
+        Whether or note cross-validation is used.
+    config : dict
+        Lib configuration dictionary.
+
+    Returns
+    -------
+    pd.DataFrame
+        Formatted dataframe with all metrics at the desired granularity.
+    dict
+        Dictionary with all metrics at the desired granularity.
+    """
     if use_cv:
         metrics_df = __format_metrics_df_cv(metrics_df, dates, eval, resampling)
         metrics_dict = {m: metrics_df[[eval["granularity"], m]] for m in eval["metrics"]}
@@ -155,6 +267,22 @@ def _format_eval_results(
 
 
 def __format_metrics_values(metrics_df: pd.DataFrame, eval: dict, config: dict) -> pd.DataFrame:
+    """Formats metrics values with the right number of decimals.
+
+    Parameters
+    ----------
+    metrics_df : pd.DataFrame
+        Dataframe with all metrics at the desired granularity.
+    eval : dict
+        Evaluation specifications.
+    config : dict
+        Lib configuration dictionary containing information about the number of decimals to keep.
+
+    Returns
+    -------
+    pd.DataFrame
+        Dataframe with all metrics formatted with the right number of decimals.
+    """
     mapping_format = {k: "{:,." + str(v) + "f}" for k, v in config["metrics"].items()}
     mapping_round = config["metrics"].copy()
     for col in eval["metrics"]:
@@ -167,6 +295,24 @@ def __format_metrics_values(metrics_df: pd.DataFrame, eval: dict, config: dict) 
 def __format_metrics_df_cv(
     metrics_df: pd.DataFrame, dates: dict, eval: dict, resampling: dict
 ) -> pd.DataFrame:
+    """Formats dataframe containing evaluation metrics, in case cross-validation is used.
+
+    Parameters
+    ----------
+    metrics_df : pd.DataFrame
+        Dataframe with all metrics for each cross-validation fold.
+    dates : dict
+        Dictionary containing cross-validation dates information.
+    eval : dict
+        Evaluation specifications.
+    resampling : dict
+        Resampling specifications.
+
+    Returns
+    -------
+    pd.DataFrame
+        Formatted dataframe with all metrics displayed for each cross-validation fold.
+    """
     metrics_df = metrics_df.rename(columns={"cutoff": "Valid Start"})
     freq = resampling["freq"][-1]
     horizon = dates["folds_horizon"]
@@ -189,6 +335,20 @@ def __format_metrics_df_cv(
 
 
 def __add_avg_std_metrics(metrics_df: pd.DataFrame, eval: dict) -> pd.DataFrame:
+    """Adds rows for average and standard-deviation over each fold to dataframe containing evaluation metrics.
+
+    Parameters
+    ----------
+    metrics_df : pd.DataFrame
+        Dataframe with all metrics for each cross-validation fold.
+    eval : dict
+        Evaluation specifications.
+
+    Returns
+    -------
+    pd.DataFrame
+        Formatted dataframe with two more rows (for average and standard-deviation of each metrics).
+    """
     cols_index = [eval["granularity"], "Valid Start", "Valid End"]
     metrics_df = metrics_df[cols_index + eval["metrics"]].set_index(cols_index)
     metrics_df.loc[("Avg", "", "Average")] = metrics_df.mean(axis=0)
