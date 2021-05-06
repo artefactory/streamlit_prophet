@@ -39,6 +39,12 @@ from streamlit_prophet.lib.utils.load import load_config
 # Load config
 config, readme = load_config("config_streamlit.toml", "config_readme.toml")
 
+# Info
+with st.beta_expander("What is this app?", expanded=False):
+    st.write(readme["app"]["app_intro"])
+    st.write("")
+st.write("")
+
 st.sidebar.title("1. Data")
 
 # Load data
@@ -71,27 +77,6 @@ with st.sidebar.beta_expander("Cleaning", expanded=False):
     df = clean_df(df, cleaning)
     check_dataset_size(df, config)
 
-# Evaluation process
-with st.sidebar.beta_expander("Evaluation process", expanded=False):
-    use_cv = st.checkbox(
-        "Perform cross-validation", value=False, help=readme["tooltips"]["choice_cv"]
-    )
-    dates = input_train_dates(df, use_cv, config, resampling)
-    if use_cv:
-        dates = input_cv(dates, resampling, config, readme)
-        datasets = get_train_set(df, dates)
-    else:
-        dates = input_val_dates(df, dates)
-        datasets = get_train_val_sets(df, dates, config)
-
-# Forecast
-with st.sidebar.beta_expander("Forecast", expanded=False):
-    make_future_forecast = st.checkbox(
-        "Make forecast on future dates", value=False, help=readme["tooltips"]["choice_forecast"]
-    )
-    if make_future_forecast:
-        dates = input_forecast_dates(df, dates, resampling, config, readme)
-
 st.sidebar.title("2. Modelling")
 
 # Prior scale
@@ -116,6 +101,19 @@ with st.sidebar.beta_expander("Other parameters", expanded=False):
 
 st.sidebar.title("3. Evaluation")
 
+# Evaluation process
+with st.sidebar.beta_expander("Evaluation process", expanded=True):
+    use_cv = st.checkbox(
+        "Perform cross-validation", value=False, help=readme["tooltips"]["choice_cv"]
+    )
+    dates = input_train_dates(df, use_cv, config, resampling)
+    if use_cv:
+        dates = input_cv(dates, resampling, config, readme)
+        datasets = get_train_set(df, dates)
+    else:
+        dates = input_val_dates(df, dates)
+        datasets = get_train_val_sets(df, dates, config)
+
 # Performance metrics
 with st.sidebar.beta_expander("Metrics", expanded=False):
     eval = input_metrics(readme)
@@ -124,15 +122,20 @@ with st.sidebar.beta_expander("Metrics", expanded=False):
 with st.sidebar.beta_expander("Scope", expanded=False):
     eval = input_scope_eval(eval, use_cv, readme)
 
-# Info
-with st.beta_expander("What is this app?", expanded=False):
-    st.write(readme["app"]["app_intro"])
-with st.beta_expander("More info on model parameters", expanded=False):
-    st.write(readme["params"]["prophet_params"])
-st.write("")
+# Forecast
+with st.sidebar.beta_expander("Forecast", expanded=False):
+    make_future_forecast = st.checkbox(
+        "Make forecast on future dates", value=False, help=readme["tooltips"]["choice_forecast"]
+    )
+    if make_future_forecast:
+        dates = input_forecast_dates(df, dates, resampling, config, readme)
 
 # Launch training & forecast
-if st.checkbox("Relaunch forecast automatically when parameters change", value=True):
+if st.checkbox(
+    "Relaunch forecast automatically when parameters change",
+    value=True,
+    help=readme["tooltips"]["relaunch_choice"],
+):
     launch_forecast = True
 else:
     launch_forecast = st.button("Launch forecast")
@@ -151,7 +154,7 @@ plot_overview(make_future_forecast, use_cv, models, forecasts, target_col, clean
 st.write(
     f'# 2. Evaluation on {"CV" if use_cv else ""} {eval["set"].lower()} set{"s" if use_cv else ""}'
 )
-plot_performance(use_cv, target_col, datasets, forecasts, dates, eval, resampling, config)
+plot_performance(use_cv, target_col, datasets, forecasts, dates, eval, resampling, config, readme)
 
 st.write("# 3. Impact of components and regressors")
 plot_components(use_cv, target_col, models, forecasts, cleaning, resampling, config)

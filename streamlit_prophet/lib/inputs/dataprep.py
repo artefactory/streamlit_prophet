@@ -41,7 +41,9 @@ def input_dimensions(df: pd.DataFrame, readme: dict) -> dict:
         for col in dimensions_cols:
             values = list(df[col].unique())
             if st.checkbox(
-                f"Keep all values for {col}", True, help=readme["tooltips"]["dimensions_filter"]
+                f"Keep all values for {col}",
+                True,
+                help=readme["tooltips"]["dimensions_keep"] + col + ".",
             ):
                 dimensions[col] = values.copy()
             else:

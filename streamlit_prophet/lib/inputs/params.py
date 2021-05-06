@@ -70,6 +70,12 @@ def input_seasonality_params(config: dict, params: dict, resampling: dict, readm
 def input_prior_scale_params(config: dict, readme: dict) -> dict:
     params = dict()
     default_params = config["model"]
+    changepoint_prior_scale = st.number_input(
+        "changepoint_prior_scale",
+        value=default_params["changepoint_prior_scale"],
+        format="%.3f",
+        help=readme["tooltips"]["changepoint_prior_scale"],
+    )
     seasonality_prior_scale = st.number_input(
         "seasonality_prior_scale",
         value=default_params["seasonality_prior_scale"],
@@ -79,12 +85,6 @@ def input_prior_scale_params(config: dict, readme: dict) -> dict:
         "holidays_prior_scale",
         value=default_params["holidays_prior_scale"],
         help=readme["tooltips"]["holidays_prior_scale"],
-    )
-    changepoint_prior_scale = st.number_input(
-        "changepoint_prior_scale",
-        value=default_params["changepoint_prior_scale"],
-        format="%.3f",
-        help=readme["tooltips"]["changepoint_prior_scale"],
     )
     params["prior_scale"] = {
         "seasonality_prior_scale": seasonality_prior_scale,
@@ -153,11 +153,6 @@ def input_regressors(df: pd.DataFrame, config: dict, params: dict, readme: dict)
             regressors[col]["prior_scale"] = st.number_input(
                 f"Prior scale for {col}",
                 value=default_params["regressors_prior_scale"],
-                help=readme["tooltips"]["regressor_mode"],
-            )
-            regressors[col]["mode"] = st.selectbox(
-                f"Mode for {col}",
-                default_params["seasonality_mode"],
                 help=readme["tooltips"]["regressor_prior_scale"],
             )
     else:
@@ -166,7 +161,7 @@ def input_regressors(df: pd.DataFrame, config: dict, params: dict, readme: dict)
     return params
 
 
-def _print_removed_regressors(nan_cols: list):
+def _print_removed_regressors(nan_cols: list) -> None:
     L = len(nan_cols)
     if L > 0:
         st.error(

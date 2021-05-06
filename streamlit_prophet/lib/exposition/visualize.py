@@ -1,3 +1,5 @@
+# type: ignore
+
 import pandas as pd
 import plotly.express as px
 import plotly.figure_factory as ff
@@ -52,13 +54,11 @@ def plot_overview(make_future_forecast, use_cv, models, forecasts, target_col, c
         )
 
 
-def plot_performance(use_cv, target_col, datasets, forecasts, dates, eval, resampling, config):
+def plot_performance(
+    use_cv, target_col, datasets, forecasts, dates, eval, resampling, config, readme
+):
     style = config["style"]
-    if use_cv:
-        cv_dates = get_cv_dates_dict(dates, resampling)
-        with st.beta_expander("See cross-validation folds", expanded=False):
-            st.plotly_chart(plot_cv_dates(cv_dates, resampling, style))
-        st.write("")
+    _display_sidebars_performance(use_cv, dates, resampling, style, readme)
     evaluation_df = get_evaluation_df(datasets, forecasts, dates, eval, use_cv)
     metrics_df, metrics_dict = get_perf_metrics(
         evaluation_df, eval, dates, resampling, use_cv, config
@@ -342,3 +342,21 @@ def plot_cv_dates(cv_dates: dict, resampling: dict, style: dict):
         title_y=0.85,
     )
     return fig
+
+
+def _display_sidebars_performance(
+    use_cv: bool, dates: dict, resampling: dict, style: dict, readme: dict
+):
+    st.write("")
+    with st.beta_expander("More info on evaluation metrics", expanded=False):
+        st.write(readme["metrics"]["metrics_intro"])
+        st.write("")
+    if use_cv:
+        cv_dates = get_cv_dates_dict(dates, resampling)
+        with st.beta_expander("See cross-validation folds", expanded=False):
+            st.plotly_chart(plot_cv_dates(cv_dates, resampling, style))
+        st.write("")
+        st.write("")
+    else:
+        st.write("")
+        st.write("")

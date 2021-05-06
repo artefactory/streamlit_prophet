@@ -21,9 +21,7 @@ def instantiate_prophet_model(params, use_regressors=True):
     if use_regressors:
         for regressor in params["regressors"].keys():
             model.add_regressor(
-                regressor,
-                prior_scale=params["regressors"][regressor]["prior_scale"],
-                mode=params["regressors"][regressor]["mode"],
+                regressor, prior_scale=params["regressors"][regressor]["prior_scale"]
             )
     return model
 
