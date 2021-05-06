@@ -17,7 +17,16 @@ from streamlit_prophet.lib.exposition.preparation import (
 from streamlit_prophet.lib.utils.misc import reverse_list
 
 
-def plot_overview(make_future_forecast, use_cv, models, forecasts, target_col, cleaning):
+def plot_overview(
+    make_future_forecast: bool,
+    use_cv: bool,
+    models: dict,
+    forecasts: dict,
+    target_col: str,
+    cleaning: dict,
+    readme: dict,
+) -> None:
+    _display_expander(readme, "overview")
     bool_param = False if cleaning["log_transform"] else True
     if make_future_forecast:
         st.plotly_chart(
@@ -55,10 +64,18 @@ def plot_overview(make_future_forecast, use_cv, models, forecasts, target_col, c
 
 
 def plot_performance(
-    use_cv, target_col, datasets, forecasts, dates, eval, resampling, config, readme
-):
+    use_cv: bool,
+    target_col: str,
+    datasets: dict,
+    forecasts: dict,
+    dates: dict,
+    eval: dict,
+    resampling: dict,
+    config: dict,
+    readme: dict,
+) -> None:
     style = config["style"]
-    _display_sidebars_performance(use_cv, dates, resampling, style, readme)
+    _display_expanders_performance(use_cv, dates, resampling, style, readme)
     evaluation_df = get_evaluation_df(datasets, forecasts, dates, eval, use_cv)
     metrics_df, metrics_dict = get_perf_metrics(
         evaluation_df, eval, dates, resampling, use_cv, config
@@ -70,8 +87,18 @@ def plot_performance(
     st.plotly_chart(plot_residuals_distrib(evaluation_df, use_cv, style))
 
 
-def plot_components(use_cv, target_col, models, forecasts, cleaning, resampling, config):
+def plot_components(
+    use_cv: bool,
+    target_col: str,
+    models: dict,
+    forecasts: dict,
+    cleaning: dict,
+    resampling: dict,
+    config: dict,
+    readme: dict,
+) -> None:
     style = config["style"]
+    _display_expander(readme, "components")
     if use_cv:
         forecast_df = forecasts["cv_with_hist"].copy()
         forecast_df = forecast_df.loc[forecast_df["ds"] < forecasts["cv"].ds.min()]
@@ -82,7 +109,10 @@ def plot_components(use_cv, target_col, models, forecasts, cleaning, resampling,
     )
 
 
-def plot_future(models, forecasts, dates, target_col, cleaning):
+def plot_future(
+    models: dict, forecasts: dict, dates: dict, target_col: str, cleaning: dict, readme: dict
+) -> None:
+    _display_expander(readme, "future")
     bool_param = False if cleaning["log_transform"] else True
     fig = plot_plotly(
         models["future"],
@@ -285,7 +315,7 @@ def make_separate_components_plot(
         y_label = f"log {target_col}" if cleaning["log_transform"] else target_col
         fig.update_yaxes(title_text=f"{y_label} / {resampling['freq']}", row=i + 1, col=1)
         if col == "yearly":
-            fig["layout"][f"xaxis{i+1}"].update(
+            fig["layout"][f"xaxis{i + 1}"].update(
                 tickmode="array",
                 tickvals=[1, 61, 122, 183, 244, 305],
                 ticktext=["Jan", "Mar", "May", "Jul", "Sep", "Nov"],
@@ -344,12 +374,21 @@ def plot_cv_dates(cv_dates: dict, resampling: dict, style: dict):
     return fig
 
 
-def _display_sidebars_performance(
+def _display_expander(readme: dict, section: str):
+    st.write("")
+    with st.beta_expander("More info on this plot", expanded=False):
+        st.write(readme["plots"][section])
+        st.write("")
+
+
+def _display_expanders_performance(
     use_cv: bool, dates: dict, resampling: dict, style: dict, readme: dict
 ):
     st.write("")
     with st.beta_expander("More info on evaluation metrics", expanded=False):
-        st.write(readme["metrics"]["metrics_intro"])
+        st.write(readme["plots"]["metrics"])
+        st.write("")
+        __display_metrics()
         st.write("")
     if use_cv:
         cv_dates = get_cv_dates_dict(dates, resampling)
@@ -360,3 +399,15 @@ def _display_sidebars_performance(
     else:
         st.write("")
         st.write("")
+
+
+def __display_metrics():
+    if st.checkbox("Show metric formulas", value=False):
+        st.write("If N is the number of distinct dates in the evaluation set:")
+        st.latex(r"MAPE = \dfrac{1}{N}\sum_{t=1}^{N}|\dfrac{Truth_t - Forecast_t}{Truth_t}|")
+        st.latex(r"RMSE = \sqrt{\dfrac{1}{N}\sum_{t=1}^{N}(Truth_t - Forecast_t)^2}")
+        st.latex(
+            r"SMAPE = \dfrac{1}{N}\sum_{t=1}^{N}\dfrac{2|Truth_t - Forecast_t]}{|Truth_t| + |Forecast_t|}"
+        )
+        st.latex(r"MSE = \dfrac{1}{N}\sum_{t=1}^{N}(Truth_t - Forecast_t)^2")
+        st.latex(r"MAE = \dfrac{1}{N}\sum_{t=1}^{N}|Truth_t - Forecast_t|")
