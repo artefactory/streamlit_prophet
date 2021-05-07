@@ -1,4 +1,21 @@
+from typing import Tuple
+
+
 def convert_into_nb_of_days(freq: str, horizon: int) -> int:
+    """Converts a forecasting horizon in number of days.
+
+    Parameters
+    ----------
+    freq : str
+        Dataset frequency.
+    horizon : int
+        Forecasting horizon in dataset frequency units.
+
+    Returns
+    -------
+    int
+        Forecasting horizon in days.
+    """
     mapping = {
         "s": horizon // (24 * 60 * 60),
         "H": horizon // 24,
@@ -12,6 +29,20 @@ def convert_into_nb_of_days(freq: str, horizon: int) -> int:
 
 
 def convert_into_nb_of_seconds(freq: str, horizon: int) -> int:
+    """Converts a forecasting horizon in number of seconds.
+
+    Parameters
+    ----------
+    freq : str
+        Dataset frequency.
+    horizon : int
+        Forecasting horizon in dataset frequency units.
+
+    Returns
+    -------
+    int
+        Forecasting horizon in seconds.
+    """
     mapping = {
         "s": horizon,
         "H": horizon * 60 * 60,
@@ -25,12 +56,38 @@ def convert_into_nb_of_seconds(freq: str, horizon: int) -> int:
 
 
 def dayname_to_daynumber(days: list) -> list:
+    """Converts a list of day names into a list of day numbers from 0 (Monday) to 6 (Sunday).
+
+    Parameters
+    ----------
+    days : list
+        Day names.
+
+    Returns
+    -------
+    list
+        Day numbers from 0 (Monday) to 6 (Sunday).
+    """
     day_names = ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"]
     mapping = {day: i for i, day in enumerate(day_names)}
     return [mapping[day] for day in days]
 
 
-def mapping_country_names(countries: list) -> list:
+def mapping_country_names(countries: list) -> Tuple[dict, list]:
+    """Converts a list of country long names into a list of country short names.
+
+    Parameters
+    ----------
+    countries : list
+        Country long names.
+
+    Returns
+    -------
+    dict
+        Mapping used for the conversion.
+    list
+        Country short names.
+    """
     mapping = {
         "France": "FR",
         "United States": "US",
@@ -52,6 +109,18 @@ def mapping_country_names(countries: list) -> list:
 
 
 def mapping_freq_names(freq: str) -> str:
+    """Converts a short frequency name into a long frequency name.
+
+    Parameters
+    ----------
+    freq : str
+        Short frequency name.
+
+    Returns
+    -------
+    str
+        Long frequency name.
+    """
     mapping = {
         "s": "seconds",
         "H": "hours",
