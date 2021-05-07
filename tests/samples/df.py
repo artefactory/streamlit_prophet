@@ -10,10 +10,10 @@ config, _ = load_config("config_streamlit.toml", "config_readme.toml")
 def make_test_df(
     ds: Optional[dict] = None,
     cols: Optional[dict] = None,
-    start: Optional[str] = "2010-01-01",
-    end: Optional[str] = "2020-01-01",
-    freq: Optional[str] = "D",
-    range: Optional[int] = 10,
+    start: str = "2010-01-01",
+    end: str = "2020-01-01",
+    freq: str = "D",
+    range: int = 10,
 ):
     """Creates a sample dataframe with specifications defined by the arguments, for testing purpose.
 
@@ -23,13 +23,13 @@ def make_test_df(
         Specifications for date column.
     cols : Optional[dict]
         Specifications for other columns.
-    start : Optional[str]
+    start : str
         Start date for date column.
-    end : Optional[str]
+    end : str
         End date for date column.
-    freq : Optional[str]
+    freq : str
         Frequency for date column.
-    range : Optional[int]
+    range : int
         Range for numerical columns.
 
     Returns

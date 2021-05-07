@@ -1,5 +1,3 @@
-from typing import Optional
-
 from datetime import datetime
 
 import numpy as np
@@ -12,18 +10,16 @@ config, _ = load_config("config_streamlit.toml", "config_readme.toml")
 
 
 # Resampling
-def make_resampling_test(
-    freq: Optional[str] = "D", resample: Optional[bool] = True, agg: Optional[str] = "Mean"
-) -> dict:
+def make_resampling_test(freq: str = "D", resample: bool = True, agg: str = "Mean") -> dict:
     """Creates a resampling dictionary with specifications defined by the arguments, for testing purpose.
 
     Parameters
     ----------
-    freq : Optional[str]
+    freq : str
         Value for the 'freq' key of dictionary.
-    resample : Optional[bool]
+    resample : bool
         Value for the 'resample' key of dictionary.
-    agg : Optional[str]
+    agg : str
         Value for the 'agg' key of dictionary.
 
     Returns
@@ -35,18 +31,16 @@ def make_resampling_test(
 
 
 # Dimensions
-def make_dimensions_test(
-    df: pd.DataFrame, frac: Optional[float] = 0.5, agg: Optional[str] = "Mean"
-) -> dict:
+def make_dimensions_test(df: pd.DataFrame, frac: float = 0.5, agg: str = "Mean") -> dict:
     """Creates a dimensions dictionary with specifications defined by the arguments, for testing purpose.
 
     Parameters
     ----------
     df : pd.DataFrame
         Input dataframe before filtering step.
-    frac : Optional[float]
+    frac : float
         Value for the 'frac' key of dictionary.
-    agg : Optional[str]
+    agg : str
         Value for the 'agg' key of dictionary.
 
     Returns
@@ -66,22 +60,22 @@ def make_dimensions_test(
 
 # Cleaning
 def make_cleaning_test(
-    del_days: Optional[list] = [],
-    del_zeros: Optional[bool] = True,
-    del_negative: Optional[bool] = True,
-    log_transform: Optional[bool] = False,
+    del_days: list = [],
+    del_zeros: bool = True,
+    del_negative: bool = True,
+    log_transform: bool = False,
 ) -> dict:
     """Creates a cleaning dictionary with specifications defined by the arguments, for testing purpose.
 
     Parameters
     ----------
-    del_days : Optional[list]
+    del_days : list
         Value for the 'del_days' key of dictionary.
-    del_zeros : Optional[bool]
+    del_zeros : bool
         Value for the 'del_zeros' key of dictionary.
-    del_negative : Optional[bool]
+    del_negative : bool
         Value for the 'del_negative' key of dictionary.
-    log_transform : Optional[bool]
+    log_transform : bool
         Value for the 'log_transform' key of dictionary.
 
     Returns
@@ -99,37 +93,37 @@ def make_cleaning_test(
 
 # Dates
 def make_dates_test(
-    train_start: Optional[str] = "2010-01-01",
-    train_end: Optional[str] = "2014-12-31",
-    val_start: Optional[str] = "2015-01-01",
-    val_end: Optional[str] = "2019-12-31",
-    forecast_start: Optional[str] = "2020-01-01",
-    forecast_end: Optional[str] = "2020-12-31",
-    n_folds: Optional[int] = 5,
-    folds_horizon: Optional[int] = 0,
-    freq: Optional[str] = "D",
+    train_start: str = "2010-01-01",
+    train_end: str = "2014-12-31",
+    val_start: str = "2015-01-01",
+    val_end: str = "2019-12-31",
+    forecast_start: str = "2020-01-01",
+    forecast_end: str = "2020-12-31",
+    n_folds: int = 5,
+    folds_horizon: int = 0,
+    freq: str = "D",
 ) -> dict:
     """Creates a dates dictionary with specifications defined by the arguments, for testing purpose.
 
     Parameters
     ----------
-    train_start : Optional[str]
+    train_start : str
         Value for the 'train_start_date' key of dictionary.
-    train_end : Optional[str]
+    train_end : str
         Value for the 'train_end_date' key of dictionary.
-    val_start : Optional[str]
+    val_start : str
         Value for the 'val_start_date' key of dictionary.
-    val_end : Optional[str]
+    val_end : str
         Value for the 'val_end_date' key of dictionary.
-    forecast_start : Optional[str]
+    forecast_start : str
         Value for the 'forecast_start_date' key of dictionary.
-    forecast_end : Optional[str]
+    forecast_end : str
         Value for the 'forecast_end_date' key of dictionary.
-    n_folds : Optional[int]
+    n_folds : int
         Value for the 'n_folds' key of dictionary.
-    folds_horizon : Optional[int]
+    folds_horizon : int
         Value for the 'folds_horizon' key of dictionary.
-    freq : Optional[str]
+    freq : str
         Value for the 'freq' key of dictionary.
 
     Returns
@@ -154,16 +148,14 @@ def make_dates_test(
 
 
 # Eval
-def make_eval_test(
-    granularity: Optional[str] = "Daily", get_perf_on_agg_forecast: Optional[bool] = False
-) -> dict:
+def make_eval_test(granularity: str = "Daily", get_perf_on_agg_forecast: bool = False) -> dict:
     """Creates an evaluation dictionary with specifications defined by the arguments, for testing purpose.
 
     Parameters
     ----------
-    granularity : Optional[str]
+    granularity : str
         Value for the 'granularity' key of dictionary.
-    get_perf_on_agg_forecast : Optional[bool]
+    get_perf_on_agg_forecast : bool
         Value for the 'get_perf_on_agg_forecast' key of dictionary.
 
     Returns
@@ -179,12 +171,12 @@ def make_eval_test(
 
 
 # Params
-def make_params_test(regressors: Optional[dict] = dict()):
+def make_params_test(regressors: dict = dict()):
     """Creates a params dictionary with specifications defined by the arguments, for testing purpose.
 
     Parameters
     ----------
-    regressors : Optional[dict]
+    regressors : dict
         Value for the 'regressors' key of dictionary.
 
     Returns
