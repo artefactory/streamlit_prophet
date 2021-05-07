@@ -1,3 +1,5 @@
+from typing import Optional
+
 import numpy as np
 import pandas as pd
 from streamlit_prophet.lib.utils.load import load_config
@@ -5,7 +7,36 @@ from streamlit_prophet.lib.utils.load import load_config
 config, _ = load_config("config_streamlit.toml", "config_readme.toml")
 
 
-def make_test_df(ds=None, cols=None, start="2010-01-01", end="2020-01-01", freq="D", range=10):
+def make_test_df(
+    ds: Optional[dict] = None,
+    cols: Optional[dict] = None,
+    start: Optional[str] = "2010-01-01",
+    end: Optional[str] = "2020-01-01",
+    freq: Optional[str] = "D",
+    range: Optional[int] = 10,
+):
+    """Creates a sample dataframe with specifications defined by the arguments, for testing purpose.
+
+    Parameters
+    ----------
+    ds : Optional[dict]
+        Specifications for date column.
+    cols : Optional[dict]
+        Specifications for other columns.
+    start : Optional[str]
+        Start date for date column.
+    end : Optional[str]
+        End date for date column.
+    freq : Optional[str]
+        Frequency for date column.
+    range : Optional[int]
+        Range for numerical columns.
+
+    Returns
+    -------
+    pd.DataFrame
+        Dataframe that will be used for unit tests.
+    """
     df = pd.DataFrame()
     if ds is not None:
         df["ds"] = pd.date_range(
@@ -50,7 +81,7 @@ str_short_cat = [
     chr(ord("@") + i) for i in range(1, config["validity"]["max_cat_reg_cardinality"] - 1)
 ]
 
-# Synthetic dataframes
+# Test dataframes
 df_test = dict()
 df_test[0] = pd.DataFrame()
 df_test[1] = make_test_df(

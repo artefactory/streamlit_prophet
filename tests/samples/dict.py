@@ -1,3 +1,5 @@
+from typing import Optional
+
 from datetime import datetime
 
 import numpy as np
@@ -10,12 +12,48 @@ config, _ = load_config("config_streamlit.toml", "config_readme.toml")
 
 
 # Resampling
-def make_resampling_test(freq="D", resample=True, agg="Mean") -> dict:
+def make_resampling_test(
+    freq: Optional[str] = "D", resample: Optional[bool] = True, agg: Optional[str] = "Mean"
+) -> dict:
+    """Creates a resampling dictionary with specifications defined by the arguments, for testing purpose.
+
+    Parameters
+    ----------
+    freq : Optional[str]
+        Value for the 'freq' key of dictionary.
+    resample : Optional[bool]
+        Value for the 'resample' key of dictionary.
+    agg : Optional[str]
+        Value for the 'agg' key of dictionary.
+
+    Returns
+    -------
+    dict
+        Resampling dictionary that will be used for unit tests.
+    """
     return {"freq": freq, "resample": resample, "agg": agg}
 
 
 # Dimensions
-def make_dimensions_test(df: pd.DataFrame, frac=0.5, agg="Mean") -> dict:
+def make_dimensions_test(
+    df: pd.DataFrame, frac: Optional[float] = 0.5, agg: Optional[str] = "Mean"
+) -> dict:
+    """Creates a dimensions dictionary with specifications defined by the arguments, for testing purpose.
+
+    Parameters
+    ----------
+    df : pd.DataFrame
+        Input dataframe before filtering step.
+    frac : Optional[float]
+        Value for the 'frac' key of dictionary.
+    agg : Optional[str]
+        Value for the 'agg' key of dictionary.
+
+    Returns
+    -------
+    dict
+        Dimensions dictionary that will be used for unit tests.
+    """
     dimensions = dict()
     dimensions_cols = _autodetect_dimensions(df)
     for col in dimensions_cols:
@@ -27,7 +65,30 @@ def make_dimensions_test(df: pd.DataFrame, frac=0.5, agg="Mean") -> dict:
 
 
 # Cleaning
-def make_cleaning_test(del_days=[], del_zeros=True, del_negative=True, log_transform=False) -> dict:
+def make_cleaning_test(
+    del_days: Optional[list] = [],
+    del_zeros: Optional[bool] = True,
+    del_negative: Optional[bool] = True,
+    log_transform: Optional[bool] = False,
+) -> dict:
+    """Creates a cleaning dictionary with specifications defined by the arguments, for testing purpose.
+
+    Parameters
+    ----------
+    del_days : Optional[list]
+        Value for the 'del_days' key of dictionary.
+    del_zeros : Optional[bool]
+        Value for the 'del_zeros' key of dictionary.
+    del_negative : Optional[bool]
+        Value for the 'del_negative' key of dictionary.
+    log_transform : Optional[bool]
+        Value for the 'log_transform' key of dictionary.
+
+    Returns
+    -------
+    dict
+        Cleaning dictionary that will be used for unit tests.
+    """
     return {
         "del_days": del_days,
         "del_zeros": del_zeros,
@@ -38,16 +99,44 @@ def make_cleaning_test(del_days=[], del_zeros=True, del_negative=True, log_trans
 
 # Dates
 def make_dates_test(
-    train_start="2010-01-01",
-    train_end="2014-12-31",
-    val_start="2015-01-01",
-    val_end="2019-12-31",
-    forecast_start="2020-01-01",
-    forecast_end="2020-12-31",
-    n_folds=5,
-    folds_horizon=0,
-    freq="D",
+    train_start: Optional[str] = "2010-01-01",
+    train_end: Optional[str] = "2014-12-31",
+    val_start: Optional[str] = "2015-01-01",
+    val_end: Optional[str] = "2019-12-31",
+    forecast_start: Optional[str] = "2020-01-01",
+    forecast_end: Optional[str] = "2020-12-31",
+    n_folds: Optional[int] = 5,
+    folds_horizon: Optional[int] = 0,
+    freq: Optional[str] = "D",
 ) -> dict:
+    """Creates a dates dictionary with specifications defined by the arguments, for testing purpose.
+
+    Parameters
+    ----------
+    train_start : Optional[str]
+        Value for the 'train_start_date' key of dictionary.
+    train_end : Optional[str]
+        Value for the 'train_end_date' key of dictionary.
+    val_start : Optional[str]
+        Value for the 'val_start_date' key of dictionary.
+    val_end : Optional[str]
+        Value for the 'val_end_date' key of dictionary.
+    forecast_start : Optional[str]
+        Value for the 'forecast_start_date' key of dictionary.
+    forecast_end : Optional[str]
+        Value for the 'forecast_end_date' key of dictionary.
+    n_folds : Optional[int]
+        Value for the 'n_folds' key of dictionary.
+    folds_horizon : Optional[int]
+        Value for the 'folds_horizon' key of dictionary.
+    freq : Optional[str]
+        Value for the 'freq' key of dictionary.
+
+    Returns
+    -------
+    dict
+        Dates dictionary that will be used for unit tests.
+    """
     dates = {
         "train_start_date": datetime.date(datetime.strptime(train_start, "%Y-%m-%d")),
         "train_end_date": datetime.date(datetime.strptime(train_end, "%Y-%m-%d")),
@@ -65,7 +154,23 @@ def make_dates_test(
 
 
 # Eval
-def make_eval_test(granularity="Daily", get_perf_on_agg_forecast=False) -> dict:
+def make_eval_test(
+    granularity: Optional[str] = "Daily", get_perf_on_agg_forecast: Optional[bool] = False
+) -> dict:
+    """Creates an evaluation dictionary with specifications defined by the arguments, for testing purpose.
+
+    Parameters
+    ----------
+    granularity : Optional[str]
+        Value for the 'granularity' key of dictionary.
+    get_perf_on_agg_forecast : Optional[bool]
+        Value for the 'get_perf_on_agg_forecast' key of dictionary.
+
+    Returns
+    -------
+    dict
+        Evaluation dictionary that will be used for unit tests.
+    """
     return {
         "granularity": granularity,
         "get_perf_on_agg_forecast": get_perf_on_agg_forecast,
@@ -74,7 +179,19 @@ def make_eval_test(granularity="Daily", get_perf_on_agg_forecast=False) -> dict:
 
 
 # Params
-def make_params_test(regressors=dict()):
+def make_params_test(regressors: Optional[dict] = dict()):
+    """Creates a params dictionary with specifications defined by the arguments, for testing purpose.
+
+    Parameters
+    ----------
+    regressors : Optional[dict]
+        Value for the 'regressors' key of dictionary.
+
+    Returns
+    -------
+    dict
+        Params dictionary that will be used for unit tests.
+    """
     default_params = config["model"]
     return {
         "seasonalities": {"yearly": {"prophet_param": "auto"}, "weekly": {"prophet_param": "auto"}},
