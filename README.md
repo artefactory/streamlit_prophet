@@ -12,20 +12,21 @@
 [![Semantic Versions](https://img.shields.io/badge/%F0%9F%9A%80-semantic%20versions-informational.svg)](https://github.com/artefactory/streamlit_prophet/releases)
 [![License](https://img.shields.io/badge/License-Private%20Use-informational.svg)](https://github.com/artefactory/streamlit_prophet}/blob/main/LICENSE)
 
-`streamlit_prophet` is a Python package that deploys a Streamlit app on which you can train, evaluate and optimize a Prophet model
+<p>`streamlit_prophet` is a Python package that deploys a Streamlit app on which you can 
+<br> train, evaluate and optimize a [Prophet](https://facebook.github.io/prophet/) forecasting model</p>
 
 </div>
 
 
-## Supported Python Versions
+## 💻 Supported Python Versions
 
-<p>Main version supported : 3.7 <br>
+<p>Main version supported : `3.7` <br>
 Other supported versions : [TBD] </p>
 
 Please make sure you have one of these versions installed to be able to access the app locally.
 
 
-## Installation
+## ⚙️ Installation
 
 Install the package from PyPi: [NOT YET, ONLY WHEN PACKAGE WILL BE PUBLIC]
 
@@ -34,14 +35,14 @@ pip install -U streamlit_prophet
 ```
 
 
-Or install it from from the main branch of this repository:
+Or install it from the main branch of this repository:
 
 ```bash
 pip install git+ssh://git@github.com/artefactory/streamlit_prophet.git@main
 ```
 
 
-## Usage
+## 📈 Usage
 
 Once installed, run the following command from CLI to access the app:
 
@@ -49,7 +50,7 @@ Once installed, run the following command from CLI to access the app:
 streamlit_prophet deploy dashboard
 ```
 
-<p>You can then train, evaluate and optimize a Prophet model in just a few clicks. <br>
+<p>You can then train, evaluate and optimize a forecasting model in just a few clicks. <br>
 All you have to do is to upload a time series dataset, and follow the guidelines in the sidebar to:</p>
 
 * <strong>Prepare data</strong>: Filter, aggregate, resample and/or clean your dataset.
@@ -60,11 +61,11 @@ assess your model performance.
 * <strong>Make a forecast</strong>: You can optionnaly make a forecast on future dates that are not included in your dataset,
 with the model previously trained.
 
-## How to contribute ?
+## 🛠️ How to contribute ?
 
 If you want to contribute to the development of this package:
 
-1. Clone the repository :
+1. Clone the repository:
 
 ```bash
 git clone git@github.com:artefactory/streamlit_prophet.git
@@ -85,7 +86,7 @@ make install
 And you are ready to develop ! For more information, see `CONTRIBUTING` file at the root of this repository.
 
 
-## Citation
+## ✏️ Citation
 
 ```
 @misc{streamlit_prophet,
@@ -98,6 +99,6 @@ And you are ready to develop ! For more information, see `CONTRIBUTING` file at 
 }
 ```
 
-## Credits
+## ©️ Credits
 
 This project was generated with [`ppt`](https://github.com/artefactory/ppt).
