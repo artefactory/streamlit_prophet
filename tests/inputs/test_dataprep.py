@@ -13,6 +13,7 @@ from tests.samples.df import df_test
     ],
 )
 def test_autodetect_dimensions(df, expected):
+    # The right dimension columns have been detected
     assert _autodetect_dimensions(df.copy()) == expected
 
 
@@ -25,4 +26,5 @@ def test_autodetect_dimensions(df, expected):
     ],
 )
 def test_autodetect_freq(df, expected):
+    # The right frequency has been detected
     assert _autodetect_freq(df.copy()) == expected

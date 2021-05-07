@@ -11,4 +11,5 @@ from streamlit_prophet.lib.utils.misc import reverse_list
     ],
 )
 def test_reverse_list(L, N, expected):
+    # The output list has the expected elements in the right order
     assert reverse_list(L, N) == expected

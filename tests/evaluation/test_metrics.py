@@ -23,6 +23,7 @@ from tests.samples.dict import make_eval_test
 )
 def test_MAPE(y_true, y_pred, expected_min, expected_max):
     output = MAPE(y_true, y_pred)
+    # MAPE should have the expected value
     assert output >= expected_min
     assert output <= expected_max
 
@@ -41,6 +42,7 @@ def test_MAPE(y_true, y_pred, expected_min, expected_max):
 )
 def test_SMAPE(y_true, y_pred, expected_min, expected_max):
     output = SMAPE(y_true, y_pred)
+    # SMAPE should have the expected value
     assert output >= expected_min
     assert output <= expected_max
 
@@ -59,6 +61,7 @@ def test_SMAPE(y_true, y_pred, expected_min, expected_max):
 )
 def test_MSE(y_true, y_pred, expected_min, expected_max):
     output = MSE(y_true, y_pred)
+    # MSE should have the expected value
     assert output >= expected_min
     assert output <= expected_max
 
@@ -77,6 +80,7 @@ def test_MSE(y_true, y_pred, expected_min, expected_max):
 )
 def test_RMSE(y_true, y_pred, expected_min, expected_max):
     output = RMSE(y_true, y_pred)
+    # RMSE should have the expected value
     assert output >= expected_min
     assert output <= expected_max
 
@@ -95,6 +99,7 @@ def test_RMSE(y_true, y_pred, expected_min, expected_max):
 )
 def test_MAE(y_true, y_pred, expected_min, expected_max):
     output = MAE(y_true, y_pred)
+    # MAE should have the expected value
     assert output >= expected_min
     assert output <= expected_max
 
@@ -117,7 +122,9 @@ def test_compute_metrics(df, eval):
     df = add_time_groupers(df)
     output = _compute_metrics(df, eval)
     expected_cols = ["MAPE", "SMAPE", "RMSE", "MSE", "MAE", eval["granularity"]]
+    # There shouldn't be any NaN values in metrics dataframe
     assert output[expected_cols].isnull().sum().sum() == 0
+    # Metrics dataframe should have the expected columns
     assert sorted(output.columns) == sorted(
         expected_cols + ["forecast", "truth"] if eval["get_perf_on_agg_forecast"] else expected_cols
     )

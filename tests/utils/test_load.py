@@ -18,5 +18,7 @@ config, _ = load_config("config_streamlit.toml", "config_readme.toml")
 )
 def test_download_toy_dataset(url, date, target):
     output = download_toy_dataset(url)
+    # The output is a pandas dataframe
     assert isinstance(output, pd.DataFrame)
+    # Date and target columns are in the output dataframe columns
     assert all([x in output.columns for x in [date, target]])

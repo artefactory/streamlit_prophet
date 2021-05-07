@@ -9,5 +9,7 @@ from tests.samples.df import df_test
 )
 def test_add_time_groupers(df):
     output = add_time_groupers(df)
+    # Output and input dataframes should have the same number of rows
     assert output.shape[0] == df.shape[0]
+    # Output dataframe should have 6 columns more than input dataframe
     assert output.shape[1] == df.shape[1] + 6

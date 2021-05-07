@@ -28,6 +28,7 @@ config, _ = load_config("config_streamlit.toml", "config_readme.toml")
 def test_raise_error_train_val_dates(train_start, train_end, val_start, val_end, freq):
     train = pd.date_range(start=train_start, end=train_end, freq=freq)
     val = pd.date_range(start=val_start, end=val_end, freq=freq)
+    # Streamlit should stop and display an error message
     with pytest.raises(st.script_runner.StopException):
         raise_error_train_val_dates(val, train, config=config)
 
@@ -74,6 +75,7 @@ def test_raise_error_train_val_dates(train_start, train_end, val_start, val_end,
     ],
 )
 def test_raise_error_cv_dates(dates):
+    # Streamlit should stop and display an error message
     with pytest.raises(st.script_runner.StopException):
         raise_error_cv_dates(dates, resampling={"freq": dates["freq"]}, config=config)
 
@@ -123,5 +125,7 @@ def test_raise_error_cv_dates(dates):
 )
 def test_get_cv_cutoffs(dates):
     output = sorted(get_cv_cutoffs(dates, freq=dates["freq"][-1]))
+    # Output list should have the number of elements specified by the 'n_folds' value of dates dictionary
     assert len(output) == dates["n_folds"]
+    # Maximum cutoff date + Horizon should be a date before training end date
     assert max(output) + timedelta(days=(output[-1] - output[-2]).days) <= dates["train_end_date"]
