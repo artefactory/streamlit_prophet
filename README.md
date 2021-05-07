@@ -33,14 +33,12 @@ If you want to avoid any dependencies issues, first create and activate a new vi
 
 For example with conda:
 ```bash
-conda create -n streamlit_prophet python=3.7
-conda activate streamlit_prophet
+pip install conda; conda create -n streamlit_prophet python=3.7; conda activate streamlit_prophet
 ```
 
 Or with virtualenv:
 ```bash
-python3.7 -m virtualenv venv --python=python3.7
-source venv/bin/activate
+pip install virtualenv; python3.7 -m virtualenv streamlit_prophet --python=python3.7; source streamlit_prophet/bin/activate
 ```
 
 
