@@ -4,6 +4,20 @@ from streamlit_prophet.lib.utils.mapping import dayname_to_daynumber
 
 
 def input_cleaning(resampling: dict, readme: dict) -> dict:
+    """Lets the user enter cleaning specifications.
+
+    Parameters
+    ----------
+    resampling : dict
+        Dictionary containing dataset frequency information.
+    readme : dict
+        Dictionary containing tooltips to guide user's choices.
+
+    Returns
+    -------
+    dict
+        Cleaning specifications (remove_days, del_days, del_negative, del_zeros, log_transform).
+    """
     # TODO : Ajouter une option "Remove holidays"
     cleaning = dict()
     if resampling["freq"][-1] in ["s", "H", "D"]:
@@ -29,6 +43,20 @@ def input_cleaning(resampling: dict, readme: dict) -> dict:
 
 
 def input_dimensions(df: pd.DataFrame, readme: dict) -> dict:
+    """Lets the user enter filtering and aggregation specifications.
+
+    Parameters
+    ----------
+    df : pd.DataFrame
+        Input dataframe that will be used to detect dimension columns.
+    readme : dict
+        Dictionary containing tooltips to guide user's choices.
+
+    Returns
+    -------
+    dict
+        Filtering and aggregation specifications (dimensions, values to keep, aggregation function).
+    """
     dimensions = dict()
     eligible_cols = set(df.columns) - {"ds", "y"}
     if len(eligible_cols) > 0:
@@ -65,6 +93,18 @@ def input_dimensions(df: pd.DataFrame, readme: dict) -> dict:
 
 
 def _autodetect_dimensions(df: pd.DataFrame) -> list:
+    """Detects dimension columns in input dataframe.
+
+    Parameters
+    ----------
+    df : pd.DataFrame
+        Input dataframe that will be used to detect dimension columns.
+
+    Returns
+    -------
+    list
+        List of dimension columns detected. The user will be able to change that list later if it is incorrect.
+    """
     eligible_cols = set(df.columns) - {"ds", "y"}
     detected_cols = []
     for col in eligible_cols:
@@ -77,6 +117,20 @@ def _autodetect_dimensions(df: pd.DataFrame) -> list:
 
 
 def input_resampling(df: pd.DataFrame, readme: dict) -> dict:
+    """Lets the user enter resampling specifications.
+
+    Parameters
+    ----------
+    df : pd.DataFrame
+        Input dataframe that will be used to detect current frequency in dataset.
+    readme : dict
+        Dictionary containing tooltips to guide user's choices.
+
+    Returns
+    -------
+    dict
+        Resampling specifications (resample or not, frequency, aggregation function).
+    """
     resampling = dict()
     resampling["freq"] = _autodetect_freq(df)
     st.write(f"Frequency detected in dataset: {resampling['freq']}")
@@ -107,6 +161,18 @@ def input_resampling(df: pd.DataFrame, readme: dict) -> dict:
 
 
 def _autodetect_freq(df: pd.DataFrame) -> str:
+    """Detects date frequency of input dataframe.
+
+    Parameters
+    ----------
+    df : pd.DataFrame
+        Input dataframe that will be used to detect dataset frequency.
+
+    Returns
+    -------
+    str
+        Frequency detected. The user will be able to resample later if it is not the value expected.
+    """
     min_delta = pd.Series(df["ds"]).diff().min()
     days = min_delta.days
     seconds = min_delta.seconds

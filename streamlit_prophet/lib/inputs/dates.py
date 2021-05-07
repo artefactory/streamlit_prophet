@@ -18,6 +18,24 @@ from streamlit_prophet.lib.utils.mapping import (
 
 
 def input_train_dates(df: pd.DataFrame, use_cv: bool, config: dict, resampling: dict) -> dict:
+    """Lets the user enter training dates.
+
+    Parameters
+    ----------
+    df : dict
+        Prepared dataset (after filtering, resampling, cleaning).
+    use_cv : bool
+        Whether or not cross-validation is used.
+    config : dict
+        Lib config dictionary containing information needed to set default dates displayed in streamlit.
+    resampling : dict
+        Dictionary containing dataset frequency information.
+
+    Returns
+    -------
+    dict
+        Dictionary containing training dates information.
+    """
     dates = dict()
     set_name = "CV" if use_cv else "Training"
     dates["train_start_date"] = st.date_input(
@@ -34,6 +52,20 @@ def input_train_dates(df: pd.DataFrame, use_cv: bool, config: dict, resampling: 
 
 
 def input_val_dates(df: pd.DataFrame, dates: dict) -> dict:
+    """Lets the user enter validation dates.
+
+    Parameters
+    ----------
+    df : dict
+        Prepared dataset (after filtering, resampling, cleaning).
+    dates : dict
+        Dictionary containing training dates information.
+
+    Returns
+    -------
+    dict
+        Dictionary containing training and validation dates information.
+    """
     dates["val_start_date"] = st.date_input(
         "Validation start date",
         value=dates["train_end_date"] + timedelta(days=1),
@@ -50,6 +82,24 @@ def input_val_dates(df: pd.DataFrame, dates: dict) -> dict:
 
 
 def input_cv(dates: dict, resampling: dict, config: dict, readme: dict) -> dict:
+    """Lets the user enter cross-validation specifications.
+
+    Parameters
+    ----------
+    dates : dict
+        Dictionary containing training dates information.
+    resampling : dict
+        Dictionary containing dataset frequency information.
+    config : dict
+        Lib config dictionary containing information needed to set default dates displayed in streamlit.
+    readme : dict
+        Dictionary containing tooltips to guide user's choices.
+
+    Returns
+    -------
+    dict
+        Dictionary containing training dates and cross-validation specifications.
+    """
     dates["n_folds"] = st.number_input(
         "Number of CV folds", min_value=1, value=5, help=readme["tooltips"]["cv_n_folds"]
     )
@@ -71,6 +121,26 @@ def input_cv(dates: dict, resampling: dict, config: dict, readme: dict) -> dict:
 def input_forecast_dates(
     df: pd.DataFrame, dates: dict, resampling: dict, config: dict, readme: dict
 ) -> dict:
+    """Lets the user enter future forecast dates.
+
+    Parameters
+    ----------
+    df : pd.DataFrame
+        Prepared dataset (after filtering, resampling, cleaning).
+    dates : dict
+        Dictionary containing dates information.
+    resampling : dict
+        Dictionary containing dataset frequency information.
+    config : dict
+        Lib config dictionary containing information needed to set default dates displayed in streamlit.
+    readme : dict
+        Dictionary containing tooltips to guide user's choices.
+
+    Returns
+    -------
+    dict
+        Dictionary containing future forecast dates information.
+    """
     forecast_freq_name = mapping_freq_names(resampling["freq"][-1])
     forecast_horizon = st.number_input(
         f"Forecast horizon in {forecast_freq_name}",

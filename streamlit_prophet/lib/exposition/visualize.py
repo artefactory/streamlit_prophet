@@ -9,8 +9,11 @@ from fbprophet.plot import plot_plotly
 from plotly.subplots import make_subplots
 from streamlit_prophet.lib.evaluation.metrics import get_perf_metrics
 from streamlit_prophet.lib.evaluation.preparation import get_evaluation_df
+from streamlit_prophet.lib.exposition.expanders import (
+    display_expander,
+    display_expanders_performance,
+)
 from streamlit_prophet.lib.exposition.preparation import (
-    get_cv_dates_dict,
     get_forecast_components,
     get_hover_template_cv,
 )
@@ -45,7 +48,7 @@ def plot_overview(
     readme : dict
         Dictionary containing explanations about the graph.
     """
-    _display_expander(readme, "overview")
+    display_expander(readme, "overview")
     bool_param = False if cleaning["log_transform"] else True
     if make_future_forecast:
         st.plotly_chart(
@@ -117,7 +120,7 @@ def plot_performance(
         Dictionary containing explanations about the graphs.
     """
     style = config["style"]
-    _display_expanders_performance(use_cv, dates, resampling, style, readme)
+    display_expanders_performance(use_cv, dates, resampling, style, readme)
     evaluation_df = get_evaluation_df(datasets, forecasts, dates, eval, use_cv)
     metrics_df, metrics_dict = get_perf_metrics(
         evaluation_df, eval, dates, resampling, use_cv, config
@@ -161,7 +164,7 @@ def plot_components(
         Dictionary containing explanations about the graph.
     """
     style = config["style"]
-    _display_expander(readme, "components")
+    display_expander(readme, "components")
     if use_cv:
         forecast_df = forecasts["cv_with_hist"].copy()
         forecast_df = forecast_df.loc[forecast_df["ds"] < forecasts["cv"].ds.min()]
@@ -192,7 +195,7 @@ def plot_future(
     readme : dict
         Dictionary containing explanations about the graph.
     """
-    _display_expander(readme, "future")
+    display_expander(readme, "future")
     bool_param = False if cleaning["log_transform"] else True
     fig = plot_plotly(
         models["future"],
@@ -552,67 +555,3 @@ def plot_cv_dates(cv_dates: dict, resampling: dict, style: dict) -> go.Figure:
         title_y=0.85,
     )
     return fig
-
-
-def _display_expander(readme: dict, section: str) -> None:
-    """Displays a streamlit expander with information about a section of the dashboard.
-
-    Parameters
-    ----------
-    readme : dict
-        Dictionary containing explanations about the section.
-    section : str
-        Section of the dashboard on top of which the expander will be displayed.
-    """
-    st.write("")
-    with st.beta_expander("More info on this plot", expanded=False):
-        st.write(readme["plots"][section])
-        st.write("")
-
-
-def _display_expanders_performance(
-    use_cv: bool, dates: dict, resampling: dict, style: dict, readme: dict
-) -> None:
-    """Displays a streamlit expander with information about performance section.
-
-    Parameters
-    ----------
-    use_cv : bool
-        Whether or not cross-validation is used.
-    dates : dict
-        Dictionary containing cross-validation dates information.
-    resampling : dict
-        Resampling specifications (granularity, dataset frequency).
-    style : dict
-        Style specifications for the graph (colors).
-    readme : dict
-        Dictionary containing explanations about the section.
-    """
-    st.write("")
-    with st.beta_expander("More info on evaluation metrics", expanded=False):
-        st.write(readme["plots"]["metrics"])
-        st.write("")
-        __display_metrics()
-        st.write("")
-    if use_cv:
-        cv_dates = get_cv_dates_dict(dates, resampling)
-        with st.beta_expander("See cross-validation folds", expanded=False):
-            st.plotly_chart(plot_cv_dates(cv_dates, resampling, style))
-        st.write("")
-        st.write("")
-    else:
-        st.write("")
-        st.write("")
-
-
-def __display_metrics() -> None:
-    """Displays formulas for all performance metrics."""
-    if st.checkbox("Show metric formulas", value=False):
-        st.write("If N is the number of distinct dates in the evaluation set:")
-        st.latex(r"MAPE = \dfrac{1}{N}\sum_{t=1}^{N}|\dfrac{Truth_t - Forecast_t}{Truth_t}|")
-        st.latex(r"RMSE = \sqrt{\dfrac{1}{N}\sum_{t=1}^{N}(Truth_t - Forecast_t)^2}")
-        st.latex(
-            r"SMAPE = \dfrac{1}{N}\sum_{t=1}^{N}\dfrac{2|Truth_t - Forecast_t]}{|Truth_t| + |Forecast_t|}"
-        )
-        st.latex(r"MSE = \dfrac{1}{N}\sum_{t=1}^{N}(Truth_t - Forecast_t)^2")
-        st.latex(r"MAE = \dfrac{1}{N}\sum_{t=1}^{N}|Truth_t - Forecast_t|")

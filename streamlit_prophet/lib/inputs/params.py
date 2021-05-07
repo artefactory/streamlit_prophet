@@ -6,6 +6,24 @@ from streamlit_prophet.lib.utils.mapping import mapping_country_names
 
 
 def input_seasonality_params(config: dict, params: dict, resampling: dict, readme: dict) -> dict:
+    """Lets the user enter seasonality parameters.
+
+    Parameters
+    ----------
+    params : dict
+        Model parameters.
+    config : dict
+        Lib config dictionary containing information about default parameters.
+    resampling : dict
+        Dictionary containing dataset frequency information.
+    readme : dict
+        Dictionary containing tooltips to guide user's choices.
+
+    Returns
+    -------
+    dict
+        Model parameters with seasonality parameters added.
+    """
     default_params = config["model"]
     seasonalities = {
         "yearly": {"period": 365.25, "prophet_param": None},
@@ -68,6 +86,20 @@ def input_seasonality_params(config: dict, params: dict, resampling: dict, readm
 
 
 def input_prior_scale_params(config: dict, readme: dict) -> dict:
+    """Lets the user enter prior scale parameters.
+
+    Parameters
+    ----------
+    config : dict
+        Lib config dictionary containing information about default parameters.
+    readme : dict
+        Dictionary containing tooltips to guide user's choices.
+
+    Returns
+    -------
+    dict
+        Model prior scale parameters.
+    """
     params = dict()
     default_params = config["model"]
     changepoint_prior_scale = st.number_input(
@@ -95,6 +127,22 @@ def input_prior_scale_params(config: dict, readme: dict) -> dict:
 
 
 def input_other_params(config: dict, params: dict, readme: dict) -> dict:
+    """Lets the user enter other parameters (growth, changepoints_range, n_changepoints).
+
+    Parameters
+    ----------
+    config : dict
+        Lib config dictionary containing information about default parameters.
+    params : dict
+        Model parameters.
+    readme : dict
+        Dictionary containing tooltips to guide user's choices.
+
+    Returns
+    -------
+    dict
+        Model parameters with other parameters added.
+    """
     default_params = config["model"]
     growth = st.selectbox("growth", default_params["growth"], help=readme["tooltips"]["growth"])
     n_changepoints = st.number_input(
@@ -118,6 +166,20 @@ def input_other_params(config: dict, params: dict, readme: dict) -> dict:
 
 
 def input_holidays_params(params: dict, readme: dict) -> dict:
+    """Lets the user enter holidays parameters.
+
+    Parameters
+    ----------
+    params : dict
+        Model parameters.
+    readme : dict
+        Dictionary containing tooltips to guide user's choices.
+
+    Returns
+    -------
+    dict
+        Model parameters with holidays parameters added.
+    """
     countries = sorted(mapping_country_names([])[0].keys())
     params["holidays"] = st.multiselect(
         "Add some countries' holidays", countries, default=[], help=readme["tooltips"]["holidays"]
@@ -127,6 +189,24 @@ def input_holidays_params(params: dict, readme: dict) -> dict:
 
 
 def input_regressors(df: pd.DataFrame, config: dict, params: dict, readme: dict) -> dict:
+    """Lets the user select regressors.
+
+    Parameters
+    ----------
+    df : dict
+        Prepared dataset (after filtering, resampling, cleaning).
+    config : dict
+        Lib config dictionary containing information about default parameters.
+    params : dict
+        Model parameters.
+    readme : dict
+        Dictionary containing tooltips to guide user's choices.
+
+    Returns
+    -------
+    dict
+        Model parameters with regressors information added.
+    """
     regressors = dict()
     default_params = config["model"]
     all_cols = set(df.columns) - {"ds", "y"}
@@ -162,6 +242,13 @@ def input_regressors(df: pd.DataFrame, config: dict, params: dict, readme: dict)
 
 
 def _print_removed_regressors(nan_cols: list) -> None:
+    """Displays a message in streamlit dashboard if the input list is not empty.
+
+    Parameters
+    ----------
+    nan_cols : list
+        List of columns that have been removed because they contain null values.
+    """
     L = len(nan_cols)
     if L > 0:
         st.error(
