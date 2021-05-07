@@ -1,6 +1,72 @@
+import plotly.graph_objects as go
 import streamlit as st
-from streamlit_prophet.lib.exposition.preparation import get_cv_dates_dict
-from streamlit_prophet.lib.exposition.visualize import plot_cv_dates
+from streamlit_prophet.lib.exposition.preparation import get_cv_dates_dict, get_hover_template_cv
+
+
+def plot_cv_dates(cv_dates: dict, resampling: dict, style: dict) -> go.Figure:
+    """Creates a plotly bar plot showing training and validation dates for each cross-validation fold.
+
+    Parameters
+    ----------
+    cv_dates : dict
+        Dictionary containing training and validation dates of each cross-validation fold.
+    resampling : dict
+        Resampling specifications (granularity, dataset frequency).
+    style : dict
+        Style specifications for the graph (colors).
+
+    Returns
+    -------
+    go.Figure
+        Plotly bar plot showing training and validation dates for each cross-validation fold.
+    """
+    hover_data, hover_template = get_hover_template_cv(cv_dates, resampling)
+    fig = go.Figure()
+    fig.add_trace(
+        go.Bar(
+            y=list(cv_dates.keys()),
+            x=[cv_dates[fold]["val_end"] for fold in cv_dates.keys()],
+            name="",
+            orientation="h",
+            text=hover_data,
+            hoverinfo="y+text",
+            hovertemplate=hover_template,
+            marker=dict(color=style["colors"][1], line=dict(color=style["colors"][1], width=2)),
+        )
+    )
+    fig.add_trace(
+        go.Bar(
+            y=list(cv_dates.keys()),
+            x=[cv_dates[fold]["train_start"] for fold in cv_dates.keys()],
+            name="",
+            orientation="h",
+            text=hover_data,
+            hoverinfo="y+text",
+            hovertemplate=hover_template,
+            marker=dict(color=style["colors"][0], line=dict(color=style["colors"][1], width=2)),
+        )
+    )
+    fig.add_trace(
+        go.Bar(
+            y=list(cv_dates.keys()),
+            x=[cv_dates[fold]["train_end"] for fold in cv_dates.keys()],
+            name="",
+            orientation="h",
+            text=hover_data,
+            hoverinfo="y+text",
+            hovertemplate=hover_template,
+            marker=dict(color=style["colors"][0], line=dict(color=style["colors"][1], width=2)),
+        )
+    )
+    fig.update_layout(
+        showlegend=False,
+        barmode="overlay",
+        xaxis_type="date",
+        title_text="Cross-Validation Folds",
+        title_x=0.5,
+        title_y=0.85,
+    )
+    return fig
 
 
 def display_expander(readme: dict, section: str) -> None:

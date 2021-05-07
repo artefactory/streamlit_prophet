@@ -13,10 +13,7 @@ from streamlit_prophet.lib.exposition.expanders import (
     display_expander,
     display_expanders_performance,
 )
-from streamlit_prophet.lib.exposition.preparation import (
-    get_forecast_components,
-    get_hover_template_cv,
-)
+from streamlit_prophet.lib.exposition.preparation import get_forecast_components
 from streamlit_prophet.lib.utils.misc import reverse_list
 
 
