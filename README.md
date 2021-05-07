@@ -27,7 +27,25 @@ Please make sure you have one of these versions installed to be able to access t
 
 ## ⚙️ Installation
 
-Install the package from PyPi: [NOT YET, ONLY WHEN PACKAGE WILL BE PUBLIC]
+
+### Create a virtual environment (optional)
+If you want to avoid any dependencies issues, first create and activate a new virtual environment.
+
+For example with conda:
+```bash
+conda create -n streamlit_prophet python=3.7
+conda activate streamlit_prophet
+```
+
+Or with virtualenv:
+```bash
+python3.7 -m virtualenv venv --python=python3.7
+source venv/bin/activate
+```
+
+
+### Install package
+Then, install the package from PyPi: [NOT YET, ONLY WHEN PACKAGE WILL BE PUBLIC]
 
 ```bash
 pip install -U streamlit_prophet
