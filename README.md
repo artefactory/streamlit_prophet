@@ -1,6 +1,5 @@
-# streamlit_prophet
-
 <div align="center">
+<h1>Streamlit Prophet</h1>
 
 [![CI status](https://github.com/artefactory/streamlit_prophet/actions/workflows/ci.yml/badge.svg?branch%3Amain&event%3Apush)](https://github.com/artefactory/streamlit_prophet/actions/workflows/ci.yml?query=branch%3Amain)
 [![Python Version](https://img.shields.io/badge/Python-3.7-informational.svg)](#supported-python-versions)
@@ -12,15 +11,15 @@
 [![Semantic Versions](https://img.shields.io/badge/%F0%9F%9A%80-semantic%20versions-informational.svg)](https://github.com/artefactory/streamlit_prophet/releases)
 [![License](https://img.shields.io/badge/License-Private%20Use-informational.svg)](https://github.com/artefactory/streamlit_prophet}/blob/main/LICENSE)
 
-<p>`streamlit_prophet` is a Python package that deploys a Streamlit app on which you can 
-<br> train, evaluate and optimize a [Prophet](https://facebook.github.io/prophet/) forecasting model</p>
+`streamlit_prophet` is a Python package that deploys a Streamlit app on which you can 
+train, evaluate and optimize a [Prophet](https://facebook.github.io/prophet/) forecasting model
 
 </div>
 
 
 ## 💻 Supported Python Versions
 
-<p>Main version supported : `3.7` <br>
+<p>Main version supported : <strong>3.7</strong> <br>
 Other supported versions : [TBD] </p>
 
 Please make sure you have one of these versions installed to be able to access the app locally.
