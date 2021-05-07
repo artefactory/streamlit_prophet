@@ -26,6 +26,25 @@ def plot_overview(
     cleaning: dict,
     readme: dict,
 ) -> None:
+    """Plots a graph with predictions and actual values, with explanations.
+
+    Parameters
+    ----------
+    make_future_forecast : bool
+        Whether or not a forecast is made on future dates.
+    use_cv : bool
+        Whether or not cross-validation is used.
+    models : dict
+        Dictionary containing a model fitted on evaluation data and another model fitted on the whole dataset.
+    forecasts : dict
+        Dictionary containing evaluation forecasts and future forecasts if a future forecast is made.
+    target_col : str
+        Name of target column.
+    cleaning : dict
+        Cleaning specifications.
+    readme : dict
+        Dictionary containing explanations about the graph.
+    """
     _display_expander(readme, "overview")
     bool_param = False if cleaning["log_transform"] else True
     if make_future_forecast:
@@ -74,6 +93,29 @@ def plot_performance(
     config: dict,
     readme: dict,
 ) -> None:
+    """Plots several graphs showing model performance, with explanations.
+
+    Parameters
+    ----------
+    use_cv : bool
+        Whether or not cross-validation is used.
+    target_col : str
+        Name of target column.
+    datasets : dict
+        Dictionary containing evaluation dataset.
+    forecasts : dict
+        Dictionary containing evaluation forecasts.
+    dates : dict
+        Dictionary containing evaluation dates.
+    eval : dict
+        Evaluation specifications (metrics, evaluation set, granularity).
+    resampling : dict
+        Resampling specifications (granularity, dataset frequency).
+    config : dict
+        Cleaning specifications.
+    readme : dict
+        Dictionary containing explanations about the graphs.
+    """
     style = config["style"]
     _display_expanders_performance(use_cv, dates, resampling, style, readme)
     evaluation_df = get_evaluation_df(datasets, forecasts, dates, eval, use_cv)
@@ -97,6 +139,27 @@ def plot_components(
     config: dict,
     readme: dict,
 ) -> None:
+    """Plots a graph showing the different components of prediction, with explanations.
+
+    Parameters
+    ----------
+    use_cv : bool
+        Whether or not cross-validation is used.
+    target_col : str
+        Name of target column.
+    models : dict
+        Dictionary containing a model fitted on evaluation data.
+    forecasts : dict
+        Dictionary containing evaluation forecasts.
+    cleaning : dict
+        Cleaning specifications.
+    resampling : dict
+        Resampling specifications (granularity, dataset frequency).
+    config : dict
+        Cleaning specifications.
+    readme : dict
+        Dictionary containing explanations about the graph.
+    """
     style = config["style"]
     _display_expander(readme, "components")
     if use_cv:
@@ -112,6 +175,23 @@ def plot_components(
 def plot_future(
     models: dict, forecasts: dict, dates: dict, target_col: str, cleaning: dict, readme: dict
 ) -> None:
+    """Plots a graph with predictions for future dates, with explanations.
+
+    Parameters
+    ----------
+    models : dict
+        Dictionary containing a model fitted on the whole dataset.
+    forecasts : dict
+        Dictionary containing future forecast.
+    dates : dict
+        Dictionary containing future forecast dates.
+    target_col : str
+        Name of target column.
+    cleaning : dict
+        Cleaning specifications.
+    readme : dict
+        Dictionary containing explanations about the graph.
+    """
     _display_expander(readme, "future")
     bool_param = False if cleaning["log_transform"] else True
     fig = plot_plotly(
@@ -126,7 +206,27 @@ def plot_future(
     st.plotly_chart(fig)
 
 
-def plot_forecasts_vs_truth(eval_df: pd.DataFrame, target_col: str, use_cv: bool, style: dict):
+def plot_forecasts_vs_truth(
+    eval_df: pd.DataFrame, target_col: str, use_cv: bool, style: dict
+) -> go.Figure:
+    """Creates a plotly line plot showing forecasts and actual values on evaluation period.
+
+    Parameters
+    ----------
+    eval_df : pd.DataFrame
+        Evaluation dataframe.
+    target_col : str
+        Name of target column.
+    use_cv : bool
+        Whether or not cross-validation is used.
+    style : dict
+        Style specifications for the graph (colors).
+
+    Returns
+    -------
+    go.Figure
+        Plotly line plot showing forecasts and actual values on evaluation period.
+    """
     if use_cv:
         colors = reverse_list(style["colors"], eval_df["Fold"].nunique())
         fig = px.line(eval_df, x="ds", y="forecast", color="Fold", color_discrete_sequence=colors)
@@ -170,7 +270,23 @@ def plot_forecasts_vs_truth(eval_df: pd.DataFrame, target_col: str, use_cv: bool
     return fig
 
 
-def plot_truth_vs_actual_scatter(eval_df: pd.DataFrame, use_cv: bool, style: dict):
+def plot_truth_vs_actual_scatter(eval_df: pd.DataFrame, use_cv: bool, style: dict) -> go.Figure:
+    """Creates a plotly scatter plot showing forecasts and actual values on evaluation period.
+
+    Parameters
+    ----------
+    eval_df : pd.DataFrame
+        Evaluation dataframe.
+    use_cv : bool
+        Whether or not cross-validation is used.
+    style : dict
+        Style specifications for the graph (colors).
+
+    Returns
+    -------
+    go.Figure
+        Plotly scatter plot showing forecasts and actual values on evaluation period.
+    """
     if use_cv:
         colors = reverse_list(style["colors"], eval_df["Fold"].nunique())
         fig = px.scatter(
@@ -202,7 +318,23 @@ def plot_truth_vs_actual_scatter(eval_df: pd.DataFrame, use_cv: bool, style: dic
     return fig
 
 
-def plot_residuals_distrib(eval_df: pd.DataFrame, use_cv: bool, style: dict):
+def plot_residuals_distrib(eval_df: pd.DataFrame, use_cv: bool, style: dict) -> go.Figure:
+    """Creates a plotly distribution plot showing distribution of residuals on evaluation period.
+
+    Parameters
+    ----------
+    eval_df : pd.DataFrame
+        Evaluation dataframe.
+    use_cv : bool
+        Whether or not cross-validation is used.
+    style : dict
+        Style specifications for the graph (colors).
+
+    Returns
+    -------
+    go.Figure
+        Plotly distribution plot showing distribution of residuals on evaluation period.
+    """
     eval_df["residuals"] = eval_df["truth"] - eval_df["forecast"]
     if len(eval_df) >= 10:
         x_min, x_max = eval_df["residuals"].quantile(0.01), eval_df["residuals"].quantile(0.99)
@@ -239,7 +371,20 @@ def plot_residuals_distrib(eval_df: pd.DataFrame, use_cv: bool, style: dict):
     return fig
 
 
-def plot_perf_metrics(perf: dict, eval: dict, use_cv: bool, style: dict):
+def plot_perf_metrics(perf: dict, eval: dict, use_cv: bool, style: dict) -> None:
+    """Displays a dataframe and plots graphs showing model performance on selected metrics.
+
+    Parameters
+    ----------
+    perf : dict
+        Dictionary containing model performance on different metrics at the desired granularity.
+    eval : dict
+        Evaluation specifications (evaluation set, selected metrics, granularity).
+    use_cv : bool
+        Whether or not cross-validation is used.
+    style : dict
+        Style specifications for the graph (colors).
+    """
     # TODO : Tout inclure dans un unique subplot
     for i, metric in enumerate(perf.keys()):
         color_sequence = style["colors"] if use_cv else [style["colors"][i % len(style["colors"])]]
@@ -262,9 +407,28 @@ def make_separate_components_plot(
     cleaning: dict,
     resampling: dict,
     style: dict,
-):
-    """
-    Create an area chart with the components of the prediction, each one on its own subplot.
+) -> go.Figure:
+    """Creates plotly area charts with the components of the prediction, each one on its own subplot.
+
+    Parameters
+    ----------
+    models : dict
+        Dictionary containing a model fitted on evaluation data.
+    forecast_df : pd.DataFrame
+        Predictions of Prophet model on evaluation set.
+    target_col : str
+        Name of target column.
+    cleaning : dict
+        Cleaning specifications.
+    resampling : dict
+        Resampling specifications (granularity, dataset frequency).
+    style : dict
+        Style specifications for the graph (colors).
+
+    Returns
+    -------
+    go.Figure
+        Plotly area charts with the components of the prediction, each one on its own subplot.
     """
     components = get_forecast_components(models, forecast_df)
     features = components.columns
@@ -324,7 +488,23 @@ def make_separate_components_plot(
     return fig
 
 
-def plot_cv_dates(cv_dates: dict, resampling: dict, style: dict):
+def plot_cv_dates(cv_dates: dict, resampling: dict, style: dict) -> go.Figure:
+    """Creates a plotly bar plot showing training and validation dates for each cross-validation fold.
+
+    Parameters
+    ----------
+    cv_dates : dict
+        Dictionary containing training and validation dates of each cross-validation fold.
+    resampling : dict
+        Resampling specifications (granularity, dataset frequency).
+    style : dict
+        Style specifications for the graph (colors).
+
+    Returns
+    -------
+    go.Figure
+        Plotly bar plot showing training and validation dates for each cross-validation fold.
+    """
     hover_data, hover_template = get_hover_template_cv(cv_dates, resampling)
     fig = go.Figure()
     fig.add_trace(
@@ -374,7 +554,16 @@ def plot_cv_dates(cv_dates: dict, resampling: dict, style: dict):
     return fig
 
 
-def _display_expander(readme: dict, section: str):
+def _display_expander(readme: dict, section: str) -> None:
+    """Displays a streamlit expander with information about a section of the dashboard.
+
+    Parameters
+    ----------
+    readme : dict
+        Dictionary containing explanations about the section.
+    section : str
+        Section of the dashboard on top of which the expander will be displayed.
+    """
     st.write("")
     with st.beta_expander("More info on this plot", expanded=False):
         st.write(readme["plots"][section])
@@ -383,7 +572,22 @@ def _display_expander(readme: dict, section: str):
 
 def _display_expanders_performance(
     use_cv: bool, dates: dict, resampling: dict, style: dict, readme: dict
-):
+) -> None:
+    """Displays a streamlit expander with information about performance section.
+
+    Parameters
+    ----------
+    use_cv : bool
+        Whether or not cross-validation is used.
+    dates : dict
+        Dictionary containing cross-validation dates information.
+    resampling : dict
+        Resampling specifications (granularity, dataset frequency).
+    style : dict
+        Style specifications for the graph (colors).
+    readme : dict
+        Dictionary containing explanations about the section.
+    """
     st.write("")
     with st.beta_expander("More info on evaluation metrics", expanded=False):
         st.write(readme["plots"]["metrics"])
@@ -401,7 +605,8 @@ def _display_expanders_performance(
         st.write("")
 
 
-def __display_metrics():
+def __display_metrics() -> None:
+    """Displays formulas for all performance metrics."""
     if st.checkbox("Show metric formulas", value=False):
         st.write("If N is the number of distinct dates in the evaluation set:")
         st.latex(r"MAPE = \dfrac{1}{N}\sum_{t=1}^{N}|\dfrac{Truth_t - Forecast_t}{Truth_t}|")
