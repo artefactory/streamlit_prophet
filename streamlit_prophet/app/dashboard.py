@@ -36,6 +36,9 @@ from streamlit_prophet.lib.inputs.params import (
 from streamlit_prophet.lib.models.prophet import forecast_workflow
 from streamlit_prophet.lib.utils.load import load_config
 
+# Page config
+st.set_page_config(page_title="Prophet", layout="wide")
+
 # Load config
 config, readme = load_config("config_streamlit.toml", "config_readme.toml")
 
