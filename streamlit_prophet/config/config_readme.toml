@@ -16,7 +16,7 @@ relaunch_choice = """
 Uncheck if you don't want the forecast to be relaunched each time you change a parameter in the sidebar.
 """
 upload_choice = """
-Check to upload your own dataset, or uncheck to use a toy dataset and see what can be done with this app.
+Check to load a toy dataset and see what can be done with this app.
 """
 dataset_upload = """
 Your csv file should have at least a column with dates and a column with numeric values to forecast.
