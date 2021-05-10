@@ -76,6 +76,8 @@ assess your model performance.
 * <strong>Make a forecast</strong>: You can optionnaly make a forecast on future dates that are not included in your dataset,
 with the model previously trained.
 
+![](demo.gif)
+
 ## 🛠️ How to contribute ?
 
 If you want to contribute to the development of this package:
