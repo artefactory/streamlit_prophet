@@ -148,8 +148,8 @@ def input_other_params(config: dict, params: dict, readme: dict) -> dict:
     changepoint_range = st.number_input(
         "changepoint_range",
         value=default_params["changepoint_range"],
-        max_value=1,
-        min_value=0,
+        max_value=1.0,
+        min_value=0.0,
         format="%.2f",
         help=readme["tooltips"]["changepoint_range"],
     )
