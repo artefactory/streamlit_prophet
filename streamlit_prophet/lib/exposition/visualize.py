@@ -233,7 +233,13 @@ def plot_forecasts_vs_truth(
     """
     if use_cv:
         colors = reverse_list(style["colors"], eval_df["Fold"].nunique())
-        fig = px.line(eval_df, x="ds", y="forecast", color="Fold", color_discrete_sequence=colors)
+        fig = px.line(
+            eval_df,
+            x="ds",
+            y="forecast",
+            color="Fold",
+            color_discrete_sequence=colors,
+        )
         fig.add_trace(
             go.Scatter(
                 x=eval_df["ds"],
@@ -245,7 +251,11 @@ def plot_forecasts_vs_truth(
         )
     else:
         fig = px.line(
-            eval_df, x="ds", y=["truth", "forecast"], color_discrete_sequence=style["colors"][1:]
+            eval_df,
+            x="ds",
+            y=["truth", "forecast"],
+            color_discrete_sequence=style["colors"][1:],
+            hover_data={"variable": True, "value": ":.4f", "ds": False},
         )
     fig.update_xaxes(
         rangeslider_visible=True,
@@ -270,6 +280,7 @@ def plot_forecasts_vs_truth(
         title_text="Forecast vs Truth",
         title_x=0.5,
         title_y=1,
+        hovermode="x unified",
     )
     return fig
 
@@ -291,6 +302,7 @@ def plot_truth_vs_actual_scatter(eval_df: pd.DataFrame, use_cv: bool, style: dic
     go.Figure
         Plotly scatter plot showing forecasts and actual values on evaluation period.
     """
+    eval_df["date"] = eval_df["ds"].map(lambda x: x.strftime("%A %b %d %Y"))
     if use_cv:
         colors = reverse_list(style["colors"], eval_df["Fold"].nunique())
         fig = px.scatter(
@@ -300,6 +312,7 @@ def plot_truth_vs_actual_scatter(eval_df: pd.DataFrame, use_cv: bool, style: dic
             color="Fold",
             opacity=0.5,
             color_discrete_sequence=colors,
+            hover_data={"date": True, "truth": ":.4f", "forecast": ":.4f"},
         )
     else:
         fig = px.scatter(
@@ -308,6 +321,7 @@ def plot_truth_vs_actual_scatter(eval_df: pd.DataFrame, use_cv: bool, style: dic
             y="forecast",
             opacity=0.5,
             color_discrete_sequence=style["colors"][2:],
+            hover_data={"date": True, "truth": ":.4f", "forecast": ":.4f"},
         )
     fig.add_trace(
         go.Scatter(
