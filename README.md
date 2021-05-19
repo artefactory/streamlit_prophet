@@ -65,8 +65,10 @@ Once installed, run the following command from CLI to access the app:
 streamlit_prophet deploy dashboard
 ```
 
-<p>You can then train, evaluate and optimize a forecasting model in just a few clicks. <br>
-All you have to do is to upload a time series dataset, and follow the guidelines in the sidebar to:</p>
+Now you can train, evaluate and optimize a forecasting model in just a few clicks.
+All you have to do is to upload a time series dataset, that contains a date column, a target column and optionally some features.
+
+Then, follow the guidelines in the sidebar to:
 
 * <strong>Prepare data</strong>: Filter, aggregate, resample and/or clean your dataset.
 * <strong>Choose model parameters</strong>: Default parameters are available but you can tune them.
@@ -100,7 +102,7 @@ make download-poetry; source "$HOME/.poetry/env"
 make install
 ```
 
-And you are ready to develop ! For more information, see `CONTRIBUTING` file at the root of this repository.
+And you are ready to develop ! For more information, see [`CONTRIBUTING`](https://github.com/artefactory/streamlit_prophet/blob/main/CONTRIBUTING.md) file at the root of this repository.
 
 
 ## ✏️ Citation
