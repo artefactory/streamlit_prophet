@@ -347,7 +347,7 @@ def plot_residuals_distrib(eval_df: pd.DataFrame, use_cv: bool, style: dict) -> 
     go.Figure
         Plotly distribution plot showing distribution of residuals on evaluation period.
     """
-    eval_df["residuals"] = eval_df["truth"] - eval_df["forecast"]
+    eval_df["residuals"] = eval_df["forecast"] - eval_df["truth"]
     if len(eval_df) >= 10:
         x_min, x_max = eval_df["residuals"].quantile(0.01), eval_df["residuals"].quantile(0.99)
     else:
@@ -365,10 +365,10 @@ def plot_residuals_distrib(eval_df: pd.DataFrame, use_cv: bool, style: dict) -> 
     )
     fig = ff.create_distplot(residuals, labels, show_hist=False, colors=colors)
     fig.update_layout(
-        title_text="Distribution of residuals",
+        title_text="Distribution of errors",
         title_x=0.5,
         title_y=0.85,
-        xaxis_title="Residuals (Truth - Forecast)",
+        xaxis_title="Error (Forecast - Truth)",
         showlegend=True if use_cv else False,
         xaxis_zeroline=True,
         xaxis_zerolinecolor=style["color_axis"],
