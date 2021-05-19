@@ -145,20 +145,16 @@ def input_other_params(config: dict, params: dict, readme: dict) -> dict:
     """
     default_params = config["model"]
     growth = st.selectbox("growth", default_params["growth"], help=readme["tooltips"]["growth"])
-    n_changepoints = st.number_input(
-        "n_changepoints",
-        value=default_params["n_changepoints"],
-        help=readme["tooltips"]["n_changepoints"],
-    )
     changepoint_range = st.number_input(
         "changepoint_range",
         value=default_params["changepoint_range"],
+        max_value=1,
+        min_value=0,
         format="%.2f",
         help=readme["tooltips"]["changepoint_range"],
     )
     params["other"] = {
         "growth": growth,
-        "n_changepoints": n_changepoints,
         "changepoint_range": changepoint_range,
     }
     # TODO: Régler l'erreur avec growth = 'logistic'

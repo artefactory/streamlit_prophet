@@ -153,10 +153,6 @@ This parameter determines how the trend will evolve between change points:
 * `logistic`: The trend will look like a logistic curve between each changepoint.
 Useful if the time series has a cap or a floor that can't be exceeded.
 """
-n_changepoints = """
-Number of changepoints for the trend. You shouldn't have to adjust this parameter,
-the same effect can be achieved by playing with the `changepoint_prior_scale` parameter.
-"""
 changepoint_range = """
 Proportion of training data that will be used to detect changepoints in the trend.
 By default, changepoints are only inferred for the first 80% data points in order to avoid overfitting fluctuations

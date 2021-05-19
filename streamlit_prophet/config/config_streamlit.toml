@@ -19,7 +19,6 @@ regressors_prior_scale = 10
 changepoint_prior_scale = 0.05
 growth = ['linear', 'flat'] # ['linear', 'logistic', 'flat']
 seasonality_mode = ['additive', 'multiplicative']
-n_changepoints = 15
 changepoint_range = 0.8
 
 [horizon]
