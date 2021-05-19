@@ -146,22 +146,22 @@ if launch_forecast:
     datasets, models, forecasts = forecast_workflow(
         config, use_cv, make_future_forecast, cleaning, resampling, params, dates, datasets
     )
-else:
-    st.stop()
 
-# Visualizations
+    # Visualizations
 
-st.write("# 1. Overview")
-plot_overview(make_future_forecast, use_cv, models, forecasts, target_col, cleaning, readme)
+    st.write("# 1. Overview")
+    plot_overview(make_future_forecast, use_cv, models, forecasts, target_col, cleaning, readme)
 
-st.write(
-    f'# 2. Evaluation on {"CV" if use_cv else ""} {eval["set"].lower()} set{"s" if use_cv else ""}'
-)
-plot_performance(use_cv, target_col, datasets, forecasts, dates, eval, resampling, config, readme)
+    st.write(
+        f'# 2. Evaluation on {"CV" if use_cv else ""} {eval["set"].lower()} set{"s" if use_cv else ""}'
+    )
+    plot_performance(
+        use_cv, target_col, datasets, forecasts, dates, eval, resampling, config, readme
+    )
 
-st.write("# 3. Impact of components and regressors")
-plot_components(use_cv, target_col, models, forecasts, cleaning, resampling, config, readme)
+    st.write("# 3. Impact of components and regressors")
+    plot_components(use_cv, target_col, models, forecasts, cleaning, resampling, config, readme)
 
-if make_future_forecast:
-    st.write("# 4. Future forecast")
-    plot_future(models, forecasts, dates, target_col, cleaning, readme)
+    if make_future_forecast:
+        st.write("# 4. Future forecast")
+        plot_future(models, forecasts, dates, target_col, cleaning, readme)
