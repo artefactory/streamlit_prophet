@@ -45,7 +45,7 @@ def plot_overview(
     readme : dict
         Dictionary containing explanations about the graph.
     """
-    display_expander(readme, "overview")
+    display_expander(readme, "overview", "More info on this plot")
     bool_param = False if cleaning["log_transform"] else True
     if make_future_forecast:
         st.plotly_chart(
@@ -117,13 +117,17 @@ def plot_performance(
         Dictionary containing explanations about the graphs.
     """
     style = config["style"]
-    display_expanders_performance(use_cv, dates, resampling, style, readme)
     evaluation_df = get_evaluation_df(datasets, forecasts, dates, eval, use_cv)
     metrics_df, metrics_dict = get_perf_metrics(
         evaluation_df, eval, dates, resampling, use_cv, config
     )
+    st.write("## Performance metrics")
+    display_expanders_performance(use_cv, dates, resampling, style, readme)
+    display_expander(readme, "helper_metrics", "How to evaluate my model?", True)
     st.dataframe(metrics_df)
     plot_perf_metrics(metrics_dict, eval, use_cv, style)
+    st.write("## Error analysis")
+    display_expander(readme, "helper_errors", "How to troubleshoot forecasting errors?", True)
     st.plotly_chart(plot_forecasts_vs_truth(evaluation_df, target_col, use_cv, style))
     st.plotly_chart(plot_truth_vs_actual_scatter(evaluation_df, use_cv, style))
     st.plotly_chart(plot_residuals_distrib(evaluation_df, use_cv, style))
@@ -161,7 +165,7 @@ def plot_components(
         Dictionary containing explanations about the graph.
     """
     style = config["style"]
-    display_expander(readme, "components")
+    display_expander(readme, "components", "More info on this plot")
     if use_cv:
         forecast_df = forecasts["cv_with_hist"].copy()
         forecast_df = forecast_df.loc[forecast_df["ds"] < forecasts["cv"].ds.min()]
@@ -192,7 +196,7 @@ def plot_future(
     readme : dict
         Dictionary containing explanations about the graph.
     """
-    display_expander(readme, "future")
+    display_expander(readme, "future", "More info on this plot")
     bool_param = False if cleaning["log_transform"] else True
     fig = plot_plotly(
         models["future"],
@@ -357,7 +361,6 @@ def plot_residuals_distrib(eval_df: pd.DataFrame, use_cv: bool, style: dict) -> 
         title_x=0.5,
         title_y=0.85,
         xaxis_title="Residuals (Truth - Forecast)",
-        yaxis_showticklabels=False,
         showlegend=True if use_cv else False,
         xaxis_zeroline=True,
         xaxis_zerolinecolor=style["color_axis"],

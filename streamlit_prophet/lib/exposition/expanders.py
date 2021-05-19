@@ -69,7 +69,7 @@ def plot_cv_dates(cv_dates: dict, resampling: dict, style: dict) -> go.Figure:
     return fig
 
 
-def display_expander(readme: dict, section: str) -> None:
+def display_expander(readme: dict, section: str, title: str, add_blank: bool = False) -> None:
     """Displays a streamlit expander with information about a section of the dashboard.
 
     Parameters
@@ -78,10 +78,16 @@ def display_expander(readme: dict, section: str) -> None:
         Dictionary containing explanations about the section.
     section : str
         Section of the dashboard on top of which the expander will be displayed.
+    title : str
+        Title for the expander.
+    add_blank : bool
+        Whether or not to add a blank after the expander.
     """
-    st.write("")
-    with st.beta_expander("More info on this plot", expanded=False):
+    with st.beta_expander(title, expanded=False):
         st.write(readme["plots"][section])
+        st.write("")
+    if add_blank:
+        st.write("")
         st.write("")
 
 
@@ -113,11 +119,6 @@ def display_expanders_performance(
         cv_dates = get_cv_dates_dict(dates, resampling)
         with st.beta_expander("See cross-validation folds", expanded=False):
             st.plotly_chart(plot_cv_dates(cv_dates, resampling, style))
-        st.write("")
-        st.write("")
-    else:
-        st.write("")
-        st.write("")
 
 
 def _display_metrics() -> None:
