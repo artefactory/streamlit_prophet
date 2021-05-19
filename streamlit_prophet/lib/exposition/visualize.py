@@ -13,7 +13,7 @@ from streamlit_prophet.lib.exposition.expanders import (
     display_expander,
     display_expanders_performance,
 )
-from streamlit_prophet.lib.exposition.export import get_df_download_link
+from streamlit_prophet.lib.exposition.export import display_download_link
 from streamlit_prophet.lib.exposition.preparation import get_forecast_components
 from streamlit_prophet.lib.utils.misc import reverse_list
 
@@ -111,16 +111,10 @@ def plot_performance(
     st.write("## Performance metrics")
     display_expanders_performance(use_cv, dates, resampling, style, readme)
     display_expander(readme, "helper_metrics", "How to evaluate my model?", True)
-    st.markdown(
-        get_df_download_link(metrics_df, "performance_metrics", "Export performance metrics"),
-        unsafe_allow_html=True,
-    )
-    st.markdown(
-        get_df_download_link(evaluation_df, "evaluation_data", "Export evaluation data"),
-        unsafe_allow_html=True,
-    )
+    display_download_link(metrics_df, "performance_metrics", "Export performance metrics")
     st.dataframe(metrics_df)
     plot_perf_metrics(metrics_dict, eval, use_cv, style)
+    display_download_link(evaluation_df, "evaluation_data", "Export evaluation data")
     st.write("## Error analysis")
     display_expander(readme, "helper_errors", "How to troubleshoot forecasting errors?", True)
     st.plotly_chart(plot_forecasts_vs_truth(evaluation_df, target_col, use_cv, style))
@@ -166,10 +160,7 @@ def plot_components(
         forecast_df = forecast_df.loc[forecast_df["ds"] < forecasts["cv"].ds.min()]
     else:
         forecast_df = forecasts["eval"].copy()
-    st.markdown(
-        get_df_download_link(forecast_df, "forecast_components", "Export forecast components"),
-        unsafe_allow_html=True,
-    )
+    display_download_link(forecast_df, "forecast_components", "Export forecast components", True)
     st.plotly_chart(
         make_separate_components_plot(models, forecast_df, target_col, cleaning, resampling, style)
     )
@@ -504,5 +495,5 @@ def make_separate_components_plot(
                 tickvals=[1, 61, 122, 183, 244, 305],
                 ticktext=["Jan", "Mar", "May", "Jul", "Sep", "Nov"],
             )
-    fig.update_layout(height=200 * n_features)
+    fig.update_layout(height=200 * n_features if n_features > 1 else 300)
     return fig
