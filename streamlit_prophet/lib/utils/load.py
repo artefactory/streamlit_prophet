@@ -21,13 +21,15 @@ def get_project_root() -> str:
 
 
 @st.cache()
-def load_dataset(file) -> pd.DataFrame:
+def load_dataset(file: str, load_options: dict) -> pd.DataFrame:
     """Loads dataset from user's file system as a pandas dataframe.
 
     Parameters
     ----------
     file : str
         Dataset file path.
+    load_options : dict
+        Dictionary containing separator information.
 
     Returns
     -------
@@ -35,10 +37,10 @@ def load_dataset(file) -> pd.DataFrame:
         Loaded dataset.
     """
     try:
-        return pd.read_csv(file)
+        return pd.read_csv(file, sep=load_options["separator"])
     except:
         st.error(
-            "This file can't be converted into a dataframe. Please import a csv file with ',' as a separator."
+            "This file can't be converted into a dataframe. Please import a csv file with a valid separator."
         )
         st.stop()
 

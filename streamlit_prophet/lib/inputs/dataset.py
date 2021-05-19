@@ -38,8 +38,9 @@ def input_dataset(config: dict, readme: dict) -> Tuple[pd.DataFrame, dict]:
         file = st.file_uploader(
             "Upload a csv file", type="csv", help=readme["tooltips"]["dataset_upload"]
         )
+        load_options["separator"] = st.selectbox("What is the separator?", [",", ";", "|"])
         if file:
-            df = load_dataset(file)
+            df = load_dataset(file, load_options)
         else:
             st.stop()
     return df, load_options
