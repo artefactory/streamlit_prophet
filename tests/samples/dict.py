@@ -193,7 +193,6 @@ def make_params_test(regressors: dict = dict()):
             "holidays_prior_scale": default_params["holidays_prior_scale"],
         },
         "other": {
-            "n_changepoints": default_params["n_changepoints"],
             "changepoint_range": default_params["changepoint_range"],
             "growth": default_params["growth"][0],
         },
