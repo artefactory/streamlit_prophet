@@ -13,6 +13,7 @@ from streamlit_prophet.lib.exposition.expanders import (
     display_expander,
     display_expanders_performance,
 )
+from streamlit_prophet.lib.exposition.export import get_df_download_link
 from streamlit_prophet.lib.exposition.preparation import get_forecast_components
 from streamlit_prophet.lib.utils.misc import reverse_list
 
@@ -48,38 +49,24 @@ def plot_overview(
     display_expander(readme, "overview", "More info on this plot")
     bool_param = False if cleaning["log_transform"] else True
     if make_future_forecast:
-        st.plotly_chart(
-            plot_plotly(
-                models["future"],
-                forecasts["future"],
-                ylabel=target_col,
-                changepoints=bool_param,
-                trend=bool_param,
-                uncertainty=bool_param,
-            )
-        )
+        model = models["future"]
+        forecast = forecasts["future"]
     elif use_cv:
-        st.plotly_chart(
-            plot_plotly(
-                models["eval"],
-                forecasts["cv_with_hist"],
-                ylabel=target_col,
-                changepoints=bool_param,
-                trend=bool_param,
-                uncertainty=bool_param,
-            )
-        )
+        model = models["eval"]
+        forecast = forecasts["cv_with_hist"]
     else:
-        st.plotly_chart(
-            plot_plotly(
-                models["eval"],
-                forecasts["eval"],
-                ylabel=target_col,
-                changepoints=bool_param,
-                trend=bool_param,
-                uncertainty=bool_param,
-            )
+        model = models["eval"]
+        forecast = forecasts["eval"]
+    st.plotly_chart(
+        plot_plotly(
+            model,
+            forecast,
+            ylabel=target_col,
+            changepoints=bool_param,
+            trend=bool_param,
+            uncertainty=bool_param,
         )
+    )
 
 
 def plot_performance(
@@ -124,6 +111,14 @@ def plot_performance(
     st.write("## Performance metrics")
     display_expanders_performance(use_cv, dates, resampling, style, readme)
     display_expander(readme, "helper_metrics", "How to evaluate my model?", True)
+    st.markdown(
+        get_df_download_link(metrics_df, "performance_metrics", "Export performance metrics"),
+        unsafe_allow_html=True,
+    )
+    st.markdown(
+        get_df_download_link(evaluation_df, "evaluation_data", "Export evaluation data"),
+        unsafe_allow_html=True,
+    )
     st.dataframe(metrics_df)
     plot_perf_metrics(metrics_dict, eval, use_cv, style)
     st.write("## Error analysis")
@@ -171,6 +166,10 @@ def plot_components(
         forecast_df = forecast_df.loc[forecast_df["ds"] < forecasts["cv"].ds.min()]
     else:
         forecast_df = forecasts["eval"].copy()
+    st.markdown(
+        get_df_download_link(forecast_df, "forecast_components", "Export forecast components"),
+        unsafe_allow_html=True,
+    )
     st.plotly_chart(
         make_separate_components_plot(models, forecast_df, target_col, cleaning, resampling, style)
     )
@@ -207,6 +206,10 @@ def plot_future(
         uncertainty=bool_param,
     )
     fig.update_layout(xaxis_range=[dates["forecast_start_date"], dates["forecast_end_date"]])
+    st.markdown(
+        get_df_download_link(forecasts["future"], "future_forecasts", "Export future forecasts"),
+        unsafe_allow_html=True,
+    )
     st.plotly_chart(fig)
 
 
