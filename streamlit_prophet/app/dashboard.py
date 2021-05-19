@@ -136,7 +136,7 @@ with st.sidebar.beta_expander("Forecast", expanded=False):
 # Launch training & forecast
 if st.checkbox(
     "Relaunch forecast automatically when parameters change",
-    value=True,
+    value=False,
     help=readme["tooltips"]["relaunch_choice"],
 ):
     launch_forecast = True

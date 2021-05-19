@@ -24,7 +24,7 @@ def input_dataset(config: dict, readme: dict) -> Tuple[pd.DataFrame, dict]:
     """
     load_options = dict()
     load_options["toy_dataset"] = st.checkbox(
-        "Load a toy dataset", True, help=readme["tooltips"]["upload_choice"]
+        "Load a toy dataset", False, help=readme["tooltips"]["upload_choice"]
     )
     if load_options["toy_dataset"]:
         dataset_name = st.selectbox(
