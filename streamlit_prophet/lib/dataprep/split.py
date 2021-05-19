@@ -80,6 +80,15 @@ def raise_error_train_val_dates(val: pd.DataFrame, train: pd.DataFrame, config: 
             f"please expand training period or change the dataset frequency."
         )
         st.stop()
+    if train["ds"].max() >= val["ds"].min():
+        st.error(f"Training end date should be before validation start date.")
+        st.stop()
+    if val["ds"].min() >= val["ds"].max():
+        st.error(f"Validation start date should be before validation end date.")
+        st.stop()
+    if train["ds"].min() >= train["ds"].max():
+        st.error(f"Training start date should be before training end date.")
+        st.stop()
 
 
 def get_train_set(df: pd.DataFrame, dates: dict) -> dict:
