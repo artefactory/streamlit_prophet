@@ -197,10 +197,7 @@ def plot_future(
         uncertainty=bool_param,
     )
     fig.update_layout(xaxis_range=[dates["forecast_start_date"], dates["forecast_end_date"]])
-    st.markdown(
-        get_df_download_link(forecasts["future"], "future_forecasts", "Export future forecasts"),
-        unsafe_allow_html=True,
-    )
+    display_download_link(forecasts["future"], "future_forecasts", "Export future forecasts", True)
     st.plotly_chart(fig)
 
 
