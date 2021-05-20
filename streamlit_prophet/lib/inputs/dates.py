@@ -17,7 +17,9 @@ from streamlit_prophet.lib.utils.mapping import (
 )
 
 
-def input_train_dates(df: pd.DataFrame, use_cv: bool, config: dict, resampling: dict) -> dict:
+def input_train_dates(
+    df: pd.DataFrame, use_cv: bool, config: dict, resampling: dict, dates: dict
+) -> dict:
     """Lets the user enter training dates.
 
     Parameters
@@ -30,13 +32,14 @@ def input_train_dates(df: pd.DataFrame, use_cv: bool, config: dict, resampling: 
         Lib config dictionary containing information needed to set default dates displayed in streamlit.
     resampling : dict
         Dictionary containing dataset frequency information.
+    dates : dict
+        Empty dictionary.
 
     Returns
     -------
     dict
         Dictionary containing training dates information.
     """
-    dates = dict()
     set_name = "CV" if use_cv else "Training"
     dates["train_start_date"] = st.date_input(
         f"{set_name} start date", value=df.ds.min(), min_value=df.ds.min(), max_value=df.ds.max()
@@ -142,13 +145,13 @@ def input_forecast_dates(
         Dictionary containing future forecast dates information.
     """
     forecast_freq_name = mapping_freq_names(resampling["freq"][-1])
-    forecast_horizon = st.number_input(
+    forecast_horizon = st.sidebar.number_input(
         f"Forecast horizon in {forecast_freq_name}",
         min_value=1,
         value=config["horizon"][resampling["freq"][-1]],
         help=readme["tooltips"]["forecast_horizon"],
     )
-    right_after = st.checkbox(
+    right_after = st.sidebar.checkbox(
         "Start forecasting right after the most recent date in dataset",
         value=True,
         help=readme["tooltips"]["forecast_start"],
@@ -159,7 +162,7 @@ def input_forecast_dates(
         else:
             dates["forecast_start_date"] = df.ds.max() + timedelta(days=1)
     else:
-        dates["forecast_start_date"] = st.date_input(
+        dates["forecast_start_date"] = st.sidebar.date_input(
             "Forecast start date:", value=df.ds.max(), min_value=df.ds.max()
         )
     if forecast_freq_name in ["seconds", "hours"]:

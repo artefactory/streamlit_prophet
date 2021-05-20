@@ -6,13 +6,13 @@ import pandas as pd
 from streamlit_prophet.lib.utils.mapping import convert_into_nb_of_days, convert_into_nb_of_seconds
 
 
-def get_forecast_components(models: dict, forecast_df: pd.DataFrame) -> pd.DataFrame:
+def get_forecast_components(model, forecast_df: pd.DataFrame) -> pd.DataFrame:
     """Returns a dataframe with only the relevant components to sum to get the prediction.
 
     Parameters
     ----------
-    models : dict
-        Dictionary containing the model fitted for evaluation.
+    model : Prophet
+        Fitted model.
     forecast_df : pd.DataFrame
         Forecast dataframe returned by Prophet model when predicting on evaluation dataset.
 
@@ -25,7 +25,7 @@ def get_forecast_components(models: dict, forecast_df: pd.DataFrame) -> pd.DataF
     components_col_names = get_forecast_components_col_names(fcst) + ["ds"]
     components = fcst[components_col_names]
     for col in components_col_names:
-        if col in models["eval"].component_modes["multiplicative"]:
+        if col in model.component_modes["multiplicative"]:
             components[col] *= components["trend"]
     components = components.set_index("ds")
     return components

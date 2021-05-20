@@ -75,6 +75,10 @@ Check if the quantity to forecast should never be striclty negative.
 log_transform = """
 Applying a log transformation to the target before modelling might increase performance.
 """
+choice_eval = """
+* Check to evaluate your model with a train/valid split or a cross-validation.
+* Uncheck if you want to skip evaluation and go directly to forecasting.
+"""
 choice_cv = """
 Check to evaluate performance through a cross-validation, or uncheck to use a simple training/validation split.
 """
@@ -85,8 +89,9 @@ cv_horizon = """
 Length of validation period for each fold.
 """
 choice_forecast = """
-Check to make a forecast for a period that is not included in the dataset,
-or uncheck if you just want to evaluate your model performance on known data.
+* Check to make a forecast for a period that is not included in the dataset.
+In that case, the model will be trained on the whole dataset and the forecast will be visible at the bottom of the dashboard.
+* Uncheck if you just want to evaluate your model performance on known data.
 """
 forecast_horizon = """
 Length of the period to forecast.

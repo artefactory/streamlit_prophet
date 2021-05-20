@@ -42,6 +42,9 @@ st.set_page_config(page_title="Prophet", layout="wide")
 # Load config
 config, readme = load_config("config_streamlit.toml", "config_readme.toml")
 
+# Initialization
+dates, datasets = dict(), dict()
+
 # Info
 with st.beta_expander("What is this app?", expanded=False):
     st.write(readme["app"]["app_intro"])
@@ -104,34 +107,45 @@ with st.sidebar.beta_expander("Other parameters", expanded=False):
 
 st.sidebar.title("3. Evaluation")
 
-# Evaluation process
-with st.sidebar.beta_expander("Evaluation process", expanded=True):
-    use_cv = st.checkbox(
-        "Perform cross-validation", value=False, help=readme["tooltips"]["choice_cv"]
-    )
-    dates = input_train_dates(df, use_cv, config, resampling)
-    if use_cv:
-        dates = input_cv(dates, resampling, config, readme)
-        datasets = get_train_set(df, dates)
-    else:
-        dates = input_val_dates(df, dates)
-        datasets = get_train_val_sets(df, dates, config)
+# Choose whether or not to do evaluation
+evaluate = st.sidebar.checkbox(
+    "Evaluate my model", value=True, help=readme["tooltips"]["choice_eval"]
+)
 
-# Performance metrics
-with st.sidebar.beta_expander("Metrics", expanded=False):
-    eval = input_metrics(readme)
+if evaluate:
 
-# Scope of evaluation
-with st.sidebar.beta_expander("Scope", expanded=False):
-    eval = input_scope_eval(eval, use_cv, readme)
+    # Split
+    with st.sidebar.beta_expander("Split", expanded=True):
+        use_cv = st.checkbox(
+            "Perform cross-validation", value=False, help=readme["tooltips"]["choice_cv"]
+        )
+        dates = input_train_dates(df, use_cv, config, resampling, dates)
+        if use_cv:
+            dates = input_cv(dates, resampling, config, readme)
+            datasets = get_train_set(df, dates, datasets)
+        else:
+            dates = input_val_dates(df, dates)
+            datasets = get_train_val_sets(df, dates, config, datasets)
 
-# Forecast
-with st.sidebar.beta_expander("Forecast", expanded=False):
-    make_future_forecast = st.checkbox(
-        "Make forecast on future dates", value=False, help=readme["tooltips"]["choice_forecast"]
-    )
-    if make_future_forecast:
-        dates = input_forecast_dates(df, dates, resampling, config, readme)
+    # Performance metrics
+    with st.sidebar.beta_expander("Metrics", expanded=False):
+        eval = input_metrics(readme)
+
+    # Scope of evaluation
+    with st.sidebar.beta_expander("Scope", expanded=False):
+        eval = input_scope_eval(eval, use_cv, readme)
+
+else:
+    use_cv = False
+
+st.sidebar.title("4. Forecast")
+
+# Choose whether or not to do future forecasts
+make_future_forecast = st.sidebar.checkbox(
+    "Make forecast on future dates", value=False, help=readme["tooltips"]["choice_forecast"]
+)
+if make_future_forecast:
+    dates = input_forecast_dates(df, dates, resampling, config, readme)
 
 # Launch training & forecast
 if st.checkbox(
@@ -143,25 +157,53 @@ if st.checkbox(
 else:
     launch_forecast = st.button("Launch forecast")
 if launch_forecast:
+    if not (evaluate | make_future_forecast):
+        st.error("Please check at least 'Evaluation' or 'Forecast' in the sidebar.")
     datasets, models, forecasts = forecast_workflow(
-        config, use_cv, make_future_forecast, cleaning, resampling, params, dates, datasets
+        config,
+        use_cv,
+        make_future_forecast,
+        evaluate,
+        cleaning,
+        resampling,
+        params,
+        dates,
+        datasets,
+        df,
     )
 
     # Visualizations
 
-    st.write("# 1. Overview")
-    plot_overview(make_future_forecast, use_cv, models, forecasts, target_col, cleaning, readme)
+    if evaluate | make_future_forecast:
+        st.write("# 1. Overview")
+        plot_overview(make_future_forecast, use_cv, models, forecasts, target_col, cleaning, readme)
 
-    st.write(
-        f'# 2. Evaluation on {"CV" if use_cv else ""} {eval["set"].lower()} set{"s" if use_cv else ""}'
-    )
-    plot_performance(
-        use_cv, target_col, datasets, forecasts, dates, eval, resampling, config, readme
-    )
+    if evaluate:
+        st.write(
+            f'# 2. Evaluation on {"CV" if use_cv else ""} {eval["set"].lower()} set{"s" if use_cv else ""}'
+        )
+        plot_performance(
+            use_cv, target_col, datasets, forecasts, dates, eval, resampling, config, readme
+        )
 
-    st.write("# 3. Impact of components and regressors")
-    plot_components(use_cv, target_col, models, forecasts, cleaning, resampling, config, readme)
+    if evaluate | make_future_forecast:
+        st.write(
+            "# 3. Impact of components and regressors"
+            if evaluate
+            else "# 2. Impact of components and regressors"
+        )
+        plot_components(
+            use_cv,
+            make_future_forecast,
+            target_col,
+            models,
+            forecasts,
+            cleaning,
+            resampling,
+            config,
+            readme,
+        )
 
     if make_future_forecast:
-        st.write("# 4. Future forecast")
+        st.write("# 4. Future forecast" if evaluate else "# 3. Future forecast")
         plot_future(models, forecasts, dates, target_col, cleaning, readme)

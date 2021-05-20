@@ -124,6 +124,7 @@ def plot_performance(
 
 def plot_components(
     use_cv: bool,
+    make_future_forecast: bool,
     target_col: str,
     models: dict,
     forecasts: dict,
@@ -138,6 +139,8 @@ def plot_components(
     ----------
     use_cv : bool
         Whether or not cross-validation is used.
+    make_future_forecast : bool
+        Whether or not a future forecast is made.
     target_col : str
         Name of target column.
     models : dict
@@ -155,14 +158,19 @@ def plot_components(
     """
     style = config["style"]
     display_expander(readme, "components", "More info on this plot")
-    if use_cv:
+    if make_future_forecast:
+        forecast_df = forecasts["future"].copy()
+        model = models["future"]
+    elif use_cv:
         forecast_df = forecasts["cv_with_hist"].copy()
         forecast_df = forecast_df.loc[forecast_df["ds"] < forecasts["cv"].ds.min()]
+        model = models["eval"]
     else:
         forecast_df = forecasts["eval"].copy()
+        model = models["eval"]
     display_download_link(forecast_df, "forecast_components", "Export forecast components", True)
     st.plotly_chart(
-        make_separate_components_plot(models, forecast_df, target_col, cleaning, resampling, style)
+        make_separate_components_plot(model, forecast_df, target_col, cleaning, resampling, style)
     )
 
 
@@ -409,7 +417,7 @@ def plot_perf_metrics(perf: dict, eval: dict, use_cv: bool, style: dict) -> None
 
 
 def make_separate_components_plot(
-    models: dict,
+    model,
     forecast_df: pd.DataFrame,
     target_col: str,
     cleaning: dict,
@@ -420,8 +428,8 @@ def make_separate_components_plot(
 
     Parameters
     ----------
-    models : dict
-        Dictionary containing a model fitted on evaluation data.
+    model : Prophet
+        Fitted model.
     forecast_df : pd.DataFrame
         Predictions of Prophet model on evaluation set.
     target_col : str
@@ -438,7 +446,7 @@ def make_separate_components_plot(
     go.Figure
         Plotly area charts with the components of the prediction, each one on its own subplot.
     """
-    components = get_forecast_components(models, forecast_df)
+    components = get_forecast_components(model, forecast_df)
     features = components.columns
     n_features = len(components.columns)
     fig = make_subplots(rows=n_features, cols=1, subplot_titles=features)

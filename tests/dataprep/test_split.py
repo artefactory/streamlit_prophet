@@ -30,7 +30,7 @@ def test_raise_error_train_val_dates(train_start, train_end, val_start, val_end,
     val = pd.date_range(start=val_start, end=val_end, freq=freq)
     # Streamlit should stop and display an error message
     with pytest.raises(st.script_runner.StopException):
-        raise_error_train_val_dates(val, train, config=config)
+        raise_error_train_val_dates(val, train, config=config, dates=make_dates_test())
 
 
 @pytest.mark.parametrize(

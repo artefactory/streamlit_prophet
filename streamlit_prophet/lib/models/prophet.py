@@ -1,5 +1,6 @@
 from typing import Tuple
 
+import pandas as pd
 from fbprophet import Prophet
 from fbprophet.diagnostics import cross_validation
 from streamlit_prophet.lib.dataprep.clean import exp_transform
@@ -46,11 +47,13 @@ def forecast_workflow(
     config: dict,
     use_cv: bool,
     make_future_forecast: bool,
+    evaluate: bool,
     cleaning: dict,
     resampling: dict,
     params: dict,
     dates: dict,
     datasets: dict,
+    df: pd.DataFrame,
 ) -> Tuple[dict, dict, dict]:
     """Trains a Prophet model and makes a prediction on evaluation data and future data if needed.
 
@@ -62,6 +65,8 @@ def forecast_workflow(
         Whether or not cross-validation is used.
     make_future_forecast : bool
         Whether or not to make a forecast on future dates.
+    evaluate : bool
+        Whether or not to do a model evaluation.
     cleaning : dict
         Dataset cleaning specifications.
     resampling : dict
@@ -72,6 +77,8 @@ def forecast_workflow(
         Dictionary containing all relevant dates for training and forecasting.
     datasets : dict
         Dictionary containing all relevant dataframes for training and forecasting.
+    df : pd.DataFrame
+        Full input dataframe, after cleaning, filtering and resampling.
 
     Returns
     -------
@@ -84,14 +91,15 @@ def forecast_workflow(
     """
     models, forecasts = dict(), dict()
     with suppress_stdout_stderr():
-        datasets, models, forecasts = forecast_eval(
-            config, use_cv, resampling, params, dates, datasets, models, forecasts
-        )
+        if evaluate:
+            datasets, models, forecasts = forecast_eval(
+                config, use_cv, resampling, params, dates, datasets, models, forecasts
+            )
         if make_future_forecast:
             datasets, models, forecasts = forecast_future(
-                config, params, cleaning, dates, datasets, models, forecasts
+                config, params, cleaning, dates, datasets, models, forecasts, df
             )
-    if cleaning["log_transform"]:
+    if cleaning["log_transform"] & (evaluate | make_future_forecast):
         datasets, forecasts = exp_transform(datasets, forecasts)
     return datasets, models, forecasts
 
@@ -160,6 +168,7 @@ def forecast_future(
     datasets: dict,
     models: dict,
     forecasts: dict,
+    df: pd.DataFrame,
 ) -> Tuple[dict, dict, dict]:
     """Trains a Prophet model on the whole dataset and makes a prediction on future data.
 
@@ -179,6 +188,8 @@ def forecast_future(
         Dictionary containing instantiated Prophet models.
     forecasts : dict
         Dictionary containing the different forecasts.
+    df : pd.DataFrame
+        Full input dataframe, after cleaning, filtering and resampling.
 
     Returns
     -------
@@ -189,9 +200,9 @@ def forecast_future(
     dict
         Dictionary containing the different forecasts.
     """
+    datasets = make_future_df(dates, df, datasets, cleaning)
     models["future"] = instantiate_prophet_model(params, use_regressors=False)
     models["future"].fit(datasets["full"], seed=config["global"]["seed"])
-    datasets = make_future_df(dates, datasets, cleaning)
     forecasts["future"] = models["future"].predict(datasets["future"])
     return datasets, models, forecasts
 

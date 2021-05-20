@@ -7,7 +7,7 @@ from streamlit_prophet.lib.dataprep.clean import clean_future_df
 from streamlit_prophet.lib.utils.mapping import convert_into_nb_of_days, convert_into_nb_of_seconds
 
 
-def get_train_val_sets(df: pd.DataFrame, dates: dict, config: dict) -> dict:
+def get_train_val_sets(df: pd.DataFrame, dates: dict, config: dict, datasets: dict) -> dict:
     """Adds training and validation dataframes in datasets dictionary's values.
 
     Parameters
@@ -18,20 +18,21 @@ def get_train_val_sets(df: pd.DataFrame, dates: dict, config: dict) -> dict:
         Dictionary containing training and validation dates information.
     config : dict
         Lib configuration dictionary.
+    datasets : dict
+        Empty dictionary.
 
     Returns
     -------
     dict
         The datasets dictionary containing training and validation dataframes.
     """
-    datasets = dict()
     train = df.query(
         f'ds >= "{dates["train_start_date"]}" & ds <= "{dates["train_end_date"]}"'
     ).copy()
     val = df.query(f'ds >= "{dates["val_start_date"]}" & ds <= "{dates["val_end_date"]}"').copy()
-    datasets["train"], datasets["val"], datasets["full"] = train, val, df.copy()
+    datasets["train"], datasets["val"] = train, val
+    raise_error_train_val_dates(val, train, config, dates)
     print_train_val_dates(val, train)
-    raise_error_train_val_dates(val, train, config)
     return datasets
 
 
@@ -54,7 +55,9 @@ def print_train_val_dates(val: pd.DataFrame, train: pd.DataFrame) -> None:
     )
 
 
-def raise_error_train_val_dates(val: pd.DataFrame, train: pd.DataFrame, config: dict) -> None:
+def raise_error_train_val_dates(
+    val: pd.DataFrame, train: pd.DataFrame, config: dict, dates: dict
+) -> None:
     """Displays a message in streamlit dashboard and stops it if training and/or validation dates are incorrect.
 
     Parameters
@@ -65,13 +68,26 @@ def raise_error_train_val_dates(val: pd.DataFrame, train: pd.DataFrame, config: 
         Dataframe containing training data.
     config : dict
         Lib configuration dictionary where rules for training and validation dates are given.
+    dates : dict
+        Dictionary containing training and validation dates information.
     """
     threshold_train = config["validity"]["min_data_points_train"]
     threshold_val = config["validity"]["min_data_points_val"]
+    if dates["train_end_date"] >= dates["val_start_date"]:
+        st.error(f"Training end date should be before validation start date.")
+        st.stop()
+    if dates["val_start_date"] >= dates["val_end_date"]:
+        st.error(f"Validation start date should be before validation end date.")
+        st.stop()
+    if dates["train_start_date"] >= dates["train_end_date"]:
+        st.error(f"Training start date should be before training end date.")
+        st.stop()
     if len(val) <= threshold_val:
         st.error(
             f"There are less than {threshold_val + 1} data points in validation set ({len(val)}), "
-            f"please expand validation period or change the dataset frequency."
+            f"please expand validation period or change the dataset frequency. "
+            f"If you wish to train a model on the whole dataset and forecast on future dates, "
+            f"please go to the 'Forecast' section at the bottom of the sidebar."
         )
         st.stop()
     if len(train) <= threshold_train:
@@ -80,18 +96,9 @@ def raise_error_train_val_dates(val: pd.DataFrame, train: pd.DataFrame, config: 
             f"please expand training period or change the dataset frequency."
         )
         st.stop()
-    if train["ds"].max() >= val["ds"].min():
-        st.error(f"Training end date should be before validation start date.")
-        st.stop()
-    if val["ds"].min() >= val["ds"].max():
-        st.error(f"Validation start date should be before validation end date.")
-        st.stop()
-    if train["ds"].min() >= train["ds"].max():
-        st.error(f"Training start date should be before training end date.")
-        st.stop()
 
 
-def get_train_set(df: pd.DataFrame, dates: dict) -> dict:
+def get_train_set(df: pd.DataFrame, dates: dict, datasets: dict) -> dict:
     """Adds training dataframe in datasets dictionary's values.
 
     Parameters
@@ -100,18 +107,18 @@ def get_train_set(df: pd.DataFrame, dates: dict) -> dict:
         Input dataframe containing both training and validation samples.
     dates : dict
         Dictionary containing training dates information.
+    datasets : dict
+        Empty dictionary.
 
     Returns
     -------
     dict
         The datasets dictionary containing training dataframe.
     """
-    datasets = dict()
     train = df.query(
         f'ds >= "{dates["train_start_date"]}" & ds <= "{dates["train_end_date"]}"'
     ).copy()
     datasets["train"] = train
-    datasets["full"] = df.copy()
     return datasets
 
 
@@ -135,7 +142,7 @@ def make_eval_df(datasets: dict) -> dict:
 
 
 def make_future_df(
-    dates: dict, datasets: dict, cleaning: dict, include_history: bool = True
+    dates: dict, df: pd.DataFrame, datasets: dict, cleaning: dict, include_history: bool = True
 ) -> dict:
     """Adds future dataframe in datasets dictionary's values.
 
@@ -143,6 +150,8 @@ def make_future_df(
     ----------
     dates : dict
         Dictionary containing future forecasting dates information.
+    df : pd.DataFrame
+        Full input dataframe, after cleaning, filtering and resampling.
     datasets : dict
         Dictionary storing all dataframes.
     cleaning : dict
@@ -156,6 +165,7 @@ def make_future_df(
         The datasets dictionary containing future dataframe.
     """
     # TODO: Inclure les valeurs futures de régresseurs ? Pour l'instant, use_regressors = False pour le forecast
+    datasets["full"] = df.copy()
     if include_history:
         start_date = datasets["full"].ds.min()
     else:
@@ -346,12 +356,12 @@ def print_forecast_dates(dates: dict, resampling: dict) -> None:
         Dictionary containing dataset frequency information.
     """
     if resampling["freq"][-1] in ["s", "H"]:
-        st.success(
+        st.sidebar.success(
             f"""Forecast: {dates['forecast_start_date'].strftime('%Y/%m/%d %H:%M:%S')} -
                                  {dates['forecast_end_date'].strftime('%Y/%m/%d %H:%M:%S')}"""
         )
     else:
-        st.success(
+        st.sidebar.success(
             f"""Forecast: {dates['forecast_start_date'].strftime('%Y/%m/%d')} -
                                  {dates['forecast_end_date'].strftime('%Y/%m/%d')}"""
         )
