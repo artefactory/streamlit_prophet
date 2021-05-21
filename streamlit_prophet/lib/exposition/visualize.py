@@ -15,7 +15,7 @@ from streamlit_prophet.lib.exposition.expanders import (
     display_expander,
     display_expanders_performance,
 )
-from streamlit_prophet.lib.exposition.export import display_download_link
+from streamlit_prophet.lib.exposition.export import display_2_download_links, display_download_link
 from streamlit_prophet.lib.exposition.preparation import get_forecast_components
 from streamlit_prophet.lib.inputs.dates import input_waterfall_dates
 from streamlit_prophet.lib.utils.misc import reverse_list
@@ -114,10 +114,18 @@ def plot_performance(
     st.write("## Performance metrics")
     display_expanders_performance(use_cv, dates, resampling, style, readme)
     display_expander(readme, "helper_metrics", "How to evaluate my model?", True)
-    display_download_link(metrics_df, "performance_metrics", "Export performance metrics")
-    st.dataframe(metrics_df)
+    st.write("### Global performance")
+    display_global_metrics(evaluation_df, eval, dates, resampling, use_cv, config)
+    st.write("### Deep dive")
     plot_perf_metrics(metrics_dict, eval, use_cv, style)
-    display_download_link(evaluation_df, "evaluation_data", "Export evaluation data")
+    display_2_download_links(
+        evaluation_df,
+        "evaluation_data",
+        "Export evaluation data",
+        metrics_df,
+        "performance_metrics",
+        "Export performance metrics",
+    )
     st.write("## Error analysis")
     display_expander(readme, "helper_errors", "How to troubleshoot forecasting errors?", True)
     st.plotly_chart(plot_forecasts_vs_truth(evaluation_df, target_col, use_cv, style))
@@ -598,3 +606,70 @@ def make_waterfall_components_plot(
         width=800,
     )
     return fig
+
+
+def display_global_metrics(
+    evaluation_df: pd.DataFrame,
+    eval: dict,
+    dates: dict,
+    resampling: dict,
+    use_cv: bool,
+    config: dict,
+) -> None:
+    """Displays all global metrics.
+
+    Parameters
+    ----------
+    evaluation_df : pd.DataFrame
+        Evaluation dataframe.
+    eval : dict
+        Evaluation specifications.
+    dates : dict
+        Dictionary containing all dates information.
+    resampling : dict
+        Resampling specifications.
+    use_cv : bool
+        Whether or note cross-validation is used.
+    config : dict
+        Lib configuration dictionary.
+    """
+    eval_all = {
+        "granularity": "cutoff" if use_cv else "Global",
+        "metrics": ["RMSE", "MAPE", "MAE", "MSE", "SMAPE"],
+        "get_perf_on_agg_forecast": eval["get_perf_on_agg_forecast"],
+    }
+    metrics_df, _ = get_perf_metrics(evaluation_df, eval_all, dates, resampling, use_cv, config)
+    if use_cv:
+        st.dataframe(metrics_df)
+    else:
+        col1, col2, col3, col4, col5 = st.beta_columns(5)
+        col1.markdown(
+            f"<p style='color: {config['style']['colors'][1]}; "
+            f"font-weight: bold; font-size: 20px;'> {eval_all['metrics'][0]}</p>",
+            unsafe_allow_html=True,
+        )
+        col1.write(metrics_df.loc["Global", eval_all["metrics"][0]])
+        col2.markdown(
+            f"<p style='color: {config['style']['colors'][1]}; "
+            f"font-weight: bold; font-size: 20px;'> {eval_all['metrics'][1]}</p>",
+            unsafe_allow_html=True,
+        )
+        col2.write(metrics_df.loc["Global", eval_all["metrics"][1]])
+        col3.markdown(
+            f"<p style='color: {config['style']['colors'][1]}; "
+            f"font-weight: bold; font-size: 20px;'> {eval_all['metrics'][2]}</p>",
+            unsafe_allow_html=True,
+        )
+        col3.write(metrics_df.loc["Global", eval_all["metrics"][2]])
+        col4.markdown(
+            f"<p style='color: {config['style']['colors'][1]}; "
+            f"font-weight: bold; font-size: 20px;'> {eval_all['metrics'][3]}</p>",
+            unsafe_allow_html=True,
+        )
+        col4.write(metrics_df.loc["Global", eval_all["metrics"][3]])
+        col5.markdown(
+            f"<p style='color: {config['style']['colors'][1]}; "
+            f"font-weight: bold; font-size: 20px;'> {eval_all['metrics'][4]}</p>",
+            unsafe_allow_html=True,
+        )
+        col5.write(metrics_df.loc["Global", eval_all["metrics"][4]])
