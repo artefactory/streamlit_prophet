@@ -288,6 +288,7 @@ def plot_forecasts_vs_truth(
         yaxis_title=target_col,
         legend_title_text="",
         height=500,
+        width=800,
         title_text="Forecast vs Truth",
         title_x=0.5,
         title_y=1,
@@ -343,7 +344,9 @@ def plot_truth_vs_actual_scatter(eval_df: pd.DataFrame, use_cv: bool, style: dic
             line=dict(color=style["color_axis"], width=1.5),
         )
     )
-    fig.update_layout(xaxis_title="Truth", yaxis_title="Forecast", legend_title_text="", height=450)
+    fig.update_layout(
+        xaxis_title="Truth", yaxis_title="Forecast", legend_title_text="", height=450, width=800
+    )
     return fig
 
 
@@ -395,6 +398,7 @@ def plot_residuals_distrib(eval_df: pd.DataFrame, use_cv: bool, style: dict) -> 
         yaxis_zerolinewidth=1,
         yaxis_rangemode="tozero",
         height=500,
+        width=800,
     )
     return fig
 
@@ -413,19 +417,29 @@ def plot_perf_metrics(perf: dict, eval: dict, use_cv: bool, style: dict) -> None
     style : dict
         Style specifications for the graph (colors).
     """
-    # TODO : Tout inclure dans un unique subplot
-    for i, metric in enumerate(perf.keys()):
-        color_sequence = style["colors"] if use_cv else [style["colors"][i % len(style["colors"])]]
-        if perf[metric][eval["granularity"]].nunique() > 1:
-            fig = px.bar(
+    metrics = [metric for metric in perf.keys() if perf[metric][eval["granularity"]].nunique() > 1]
+    if len(metrics) > 0:
+        fig = make_subplots(
+            rows=len(metrics) // 2 + len(metrics) % 2, cols=2, subplot_titles=metrics
+        )
+        for i, metric in enumerate(metrics):
+            color_sequence = (
+                style["colors"] if use_cv else [style["colors"][i % len(style["colors"])]]
+            )
+            fig_metric = px.bar(
                 perf[metric],
                 x=eval["granularity"],
                 y=metric,
-                color=eval["granularity"],
+                # color=eval["granularity"],
                 color_discrete_sequence=color_sequence,
             )
-            fig.update_layout(xaxis_title="", showlegend=False, height=400)
-            st.plotly_chart(fig)
+            fig.append_trace(fig_metric["data"][0], row=i // 2 + 1, col=i % 2 + 1)
+        fig.update_layout(
+            height=300 if len(metrics) <= 2 else 250 * (len(metrics) // 2 + len(metrics) % 2),
+            width=1000,
+            showlegend=False,
+        )
+        st.plotly_chart(fig)
 
 
 def make_separate_components_plot(
@@ -513,7 +527,7 @@ def make_separate_components_plot(
                 tickvals=[1, 61, 122, 183, 244, 305],
                 ticktext=["Jan", "Mar", "May", "Jul", "Sep", "Nov"],
             )
-    fig.update_layout(height=200 * n_features if n_features > 1 else 300)
+    fig.update_layout(height=200 * n_features if n_features > 1 else 300, width=800)
     return fig
 
 
@@ -581,6 +595,7 @@ def make_waterfall_components_plot(
     fig.update_layout(
         title=f"Forecast decomposition "
         f"(from {start_date.strftime('%Y-%m-%d')} to {end_date.strftime('%Y-%m-%d')})",
-        title_x=0.17,
+        title_x=0.2,
+        width=800,
     )
     return fig
