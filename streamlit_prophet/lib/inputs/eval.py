@@ -50,7 +50,7 @@ def input_scope_eval(eval: dict, use_cv: bool, readme: dict) -> dict:
         )
         eval["granularity"] = st.selectbox(
             "Select evaluation granularity",
-            ["Daily", "Weekly", "Monthly", "Quarterly", "Yearly", "Global"],
+            ["Daily", "Day of Week", "Weekly", "Monthly", "Quarterly", "Yearly", "Global"],
             help=readme["tooltips"]["eval_granularity"],
         )
     eval["get_perf_on_agg_forecast"] = st.checkbox(

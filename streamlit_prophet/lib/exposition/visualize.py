@@ -117,7 +117,7 @@ def plot_performance(
     st.write("### Global performance")
     display_global_metrics(evaluation_df, eval, dates, resampling, use_cv, config)
     st.write("### Deep dive")
-    plot_perf_metrics(metrics_dict, eval, use_cv, style)
+    plot_detailed_metrics(metrics_df, metrics_dict, eval, use_cv, style)
     display_2_download_links(
         evaluation_df,
         "evaluation_data",
@@ -377,7 +377,7 @@ def plot_residuals_distrib(eval_df: pd.DataFrame, use_cv: bool, style: dict) -> 
     """
     eval_df["residuals"] = eval_df["forecast"] - eval_df["truth"]
     if len(eval_df) >= 10:
-        x_min, x_max = eval_df["residuals"].quantile(0.01), eval_df["residuals"].quantile(0.99)
+        x_min, x_max = eval_df["residuals"].quantile(0.005), eval_df["residuals"].quantile(0.995)
     else:
         x_min, x_max = eval_df["residuals"].min(), eval_df["residuals"].max()
     if use_cv:
@@ -411,11 +411,15 @@ def plot_residuals_distrib(eval_df: pd.DataFrame, use_cv: bool, style: dict) -> 
     return fig
 
 
-def plot_perf_metrics(perf: dict, eval: dict, use_cv: bool, style: dict) -> None:
-    """Displays a dataframe and plots graphs showing model performance on selected metrics.
+def plot_detailed_metrics(
+    metrics_df: pd.DataFrame, perf: dict, eval: dict, use_cv: bool, style: dict
+) -> None:
+    """Displays a dataframe or plots graphs showing model performance on selected metrics.
 
     Parameters
     ----------
+    metrics_df : pd.DataFrame
+        Dataframe containing model performance on different metrics at the desired granularity.
     perf : dict
         Dictionary containing model performance on different metrics at the desired granularity.
     eval : dict
@@ -447,6 +451,8 @@ def plot_perf_metrics(perf: dict, eval: dict, use_cv: bool, style: dict) -> None
             showlegend=False,
         )
         st.plotly_chart(fig)
+    else:
+        st.dataframe(metrics_df)
 
 
 def make_separate_components_plot(
