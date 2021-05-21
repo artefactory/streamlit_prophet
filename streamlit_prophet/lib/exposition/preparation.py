@@ -6,7 +6,7 @@ import pandas as pd
 from streamlit_prophet.lib.utils.mapping import convert_into_nb_of_days, convert_into_nb_of_seconds
 
 
-def get_forecast_components(model, forecast_df: pd.DataFrame) -> pd.DataFrame:
+def get_forecast_components(model, forecast_df: pd.DataFrame, include_yhat=False) -> pd.DataFrame:
     """Returns a dataframe with only the relevant components to sum to get the prediction.
 
     Parameters
@@ -15,6 +15,8 @@ def get_forecast_components(model, forecast_df: pd.DataFrame) -> pd.DataFrame:
         Fitted model.
     forecast_df : pd.DataFrame
         Forecast dataframe returned by Prophet model when predicting on evaluation dataset.
+    include_yhat : bool
+        Whether or nto to include yhat in columns.
 
     Returns
     -------
@@ -23,6 +25,8 @@ def get_forecast_components(model, forecast_df: pd.DataFrame) -> pd.DataFrame:
     """
     fcst = forecast_df.copy()
     components_col_names = get_forecast_components_col_names(fcst) + ["ds"]
+    if include_yhat:
+        components_col_names = components_col_names + ["yhat"]
     components = fcst[components_col_names]
     for col in components_col_names:
         if col in model.component_modes["multiplicative"]:

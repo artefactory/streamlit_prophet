@@ -1,5 +1,7 @@
 # type: ignore
 
+import datetime
+
 import pandas as pd
 import plotly.express as px
 import plotly.figure_factory as ff
@@ -15,6 +17,7 @@ from streamlit_prophet.lib.exposition.expanders import (
 )
 from streamlit_prophet.lib.exposition.export import display_download_link
 from streamlit_prophet.lib.exposition.preparation import get_forecast_components
+from streamlit_prophet.lib.inputs.dates import input_waterfall_dates
 from streamlit_prophet.lib.utils.misc import reverse_list
 
 
@@ -157,6 +160,7 @@ def plot_components(
         Dictionary containing explanations about the graph.
     """
     style = config["style"]
+    st.write("## Global impact")
     display_expander(readme, "components", "More info on this plot")
     if make_future_forecast:
         forecast_df = forecasts["future"].copy()
@@ -171,6 +175,14 @@ def plot_components(
     display_download_link(forecast_df, "forecast_components", "Export forecast components", True)
     st.plotly_chart(
         make_separate_components_plot(model, forecast_df, target_col, cleaning, resampling, style)
+    )
+    st.write("## Local impact")
+    display_expander(readme, "waterfall", "More info on this plot", True)
+    start_date, end_date = input_waterfall_dates(forecast_df, resampling)
+    st.plotly_chart(
+        make_waterfall_components_plot(
+            model, forecast_df, start_date, end_date, target_col, cleaning, resampling, style
+        )
     )
 
 
@@ -431,7 +443,7 @@ def make_separate_components_plot(
     model : Prophet
         Fitted model.
     forecast_df : pd.DataFrame
-        Predictions of Prophet model on evaluation set.
+        Predictions of Prophet model.
     target_col : str
         Name of target column.
     cleaning : dict
@@ -494,6 +506,7 @@ def make_separate_components_plot(
 
         y_label = f"log {target_col}" if cleaning["log_transform"] else target_col
         fig.update_yaxes(title_text=f"{y_label} / {resampling['freq']}", row=i + 1, col=1)
+        fig.update_xaxes(showgrid=False)
         if col == "yearly":
             fig["layout"][f"xaxis{i + 1}"].update(
                 tickmode="array",
@@ -501,4 +514,73 @@ def make_separate_components_plot(
                 ticktext=["Jan", "Mar", "May", "Jul", "Sep", "Nov"],
             )
     fig.update_layout(height=200 * n_features if n_features > 1 else 300)
+    return fig
+
+
+def make_waterfall_components_plot(
+    model,
+    forecast_df: pd.DataFrame,
+    start_date: datetime.date,
+    end_date: datetime.date,
+    target_col: str,
+    cleaning: dict,
+    resampling: dict,
+    style: dict,
+) -> go.Figure:
+    """Creates a waterfall chart with the components of the prediction.
+
+    Parameters
+    ----------
+    model : Prophet
+        Fitted model.
+    forecast_df : pd.DataFrame
+        Predictions of Prophet model.
+    start_date : datetime.date
+        Start date for components computation.
+    end_date : datetime.date
+        End date for components computation.
+    target_col : str
+        Name of target column.
+    cleaning : dict
+        Cleaning specifications.
+    resampling : dict
+        Resampling specifications (granularity, dataset frequency).
+    style : dict
+        Style specifications for the graph (colors).
+
+    Returns
+    -------
+    go.Figure
+        Waterfall chart with the components of prediction.
+    """
+    components = get_forecast_components(model, forecast_df, True).reset_index()
+    waterfall = components.loc[
+        (components["ds"] >= pd.to_datetime(start_date))
+        & (components["ds"] <= pd.to_datetime(end_date))
+    ]
+    waterfall = waterfall.mean(axis=0, numeric_only=True)
+    fig = go.Figure(
+        go.Waterfall(
+            orientation="v",
+            measure=["relative"] * (len(components.columns) - 2) + ["total"],
+            x=[x.capitalize() for x in list(waterfall.index)[:-1] + ["Forecast"]],
+            y=list(waterfall.values),
+            textposition="auto",
+            text=[
+                "+" + str(round(x, 3)) if x > 0 else "" + str(round(x, 3))
+                for x in list(waterfall.values)[:-1]
+            ]
+            + [str(round(waterfall.values[-1], 3))],
+            decreasing={"marker": {"color": style["colors"][1]}},
+            increasing={"marker": {"color": style["colors"][0]}},
+            totals={"marker": {"color": style["colors"][2]}},
+        )
+    )
+    y_label = f"log {target_col}" if cleaning["log_transform"] else target_col
+    fig.update_yaxes(title_text=f"{y_label} / {resampling['freq']}")
+    fig.update_layout(
+        title=f"Forecast decomposition "
+        f"(from {start_date.strftime('%Y-%m-%d')} to {end_date.strftime('%Y-%m-%d')})",
+        title_x=0.17,
+    )
     return fig

@@ -1,3 +1,6 @@
+from typing import Tuple
+
+import datetime
 from datetime import timedelta
 
 import pandas as pd
@@ -40,12 +43,13 @@ def input_train_dates(
     dict
         Dictionary containing training dates information.
     """
+    col1, col2 = st.beta_columns(2)
     set_name = "CV" if use_cv else "Training"
-    dates["train_start_date"] = st.date_input(
+    dates["train_start_date"] = col1.date_input(
         f"{set_name} start date", value=df.ds.min(), min_value=df.ds.min(), max_value=df.ds.max()
     )
     default_end_date = get_train_end_date_default_value(df, dates, resampling, config, use_cv)
-    dates["train_end_date"] = st.date_input(
+    dates["train_end_date"] = col2.date_input(
         f"{set_name} end date",
         value=default_end_date,
         min_value=dates["train_start_date"] + timedelta(days=1),
@@ -69,13 +73,14 @@ def input_val_dates(df: pd.DataFrame, dates: dict) -> dict:
     dict
         Dictionary containing training and validation dates information.
     """
-    dates["val_start_date"] = st.date_input(
+    col1, col2 = st.beta_columns(2)
+    dates["val_start_date"] = col1.date_input(
         "Validation start date",
         value=dates["train_end_date"] + timedelta(days=1),
         min_value=dates["train_end_date"] + timedelta(days=1),
         max_value=df.ds.max(),
     )
-    dates["val_end_date"] = st.date_input(
+    dates["val_end_date"] = col2.date_input(
         "Validation end date",
         value=df.ds.max(),
         min_value=dates["val_start_date"] + timedelta(days=1),
@@ -178,3 +183,35 @@ def input_forecast_dates(
     dates["forecast_freq"] = str(resampling["freq"])
     print_forecast_dates(dates, resampling)
     return dates
+
+
+def input_waterfall_dates(
+    forecast_df: pd.DataFrame, resampling: dict
+) -> Tuple[datetime.date, datetime.date]:
+    """Lets the user enter dates for waterfall components chart.
+
+    Parameters
+    ----------
+    forecast_df : pd.DataFrame
+        Dataframe with forecast and components.
+    resampling : dict
+        Resampling specifications (granularity, dataset frequency).
+
+    Returns
+    -------
+    datetime.date
+        Waterfall start date.
+    datetime.date
+        Waterfall end date.
+    """
+    max_date = forecast_df.loc[~pd.isnull(forecast_df["trend"])]["ds"].max()
+    col1, col2 = st.beta_columns(2)
+    start_date = col1.date_input(
+        "Start date", value=forecast_df.ds.min(), min_value=forecast_df.ds.min(), max_value=max_date
+    )
+    freq = resampling["freq"][-1]
+    n_periods = col2.number_input(
+        f"Number of {mapping_freq_names(freq)} to focus on", value=1, min_value=1
+    )
+    end_date = start_date + timedelta(days=convert_into_nb_of_days(freq, n_periods))
+    return start_date, end_date
