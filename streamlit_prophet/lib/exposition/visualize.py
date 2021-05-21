@@ -423,19 +423,18 @@ def plot_perf_metrics(perf: dict, eval: dict, use_cv: bool, style: dict) -> None
             rows=len(metrics) // 2 + len(metrics) % 2, cols=2, subplot_titles=metrics
         )
         for i, metric in enumerate(metrics):
-            color_sequence = (
-                style["colors"] if use_cv else [style["colors"][i % len(style["colors"])]]
+            colors = (
+                style["colors"]
+                if use_cv
+                else [style["colors"][i % len(style["colors"])]]
+                * perf[metric][eval["granularity"]].nunique()
             )
-            fig_metric = px.bar(
-                perf[metric],
-                x=eval["granularity"],
-                y=metric,
-                # color=eval["granularity"],
-                color_discrete_sequence=color_sequence,
+            fig_metric = go.Bar(
+                x=perf[metric][eval["granularity"]], y=perf[metric][metric], marker_color=colors
             )
-            fig.append_trace(fig_metric["data"][0], row=i // 2 + 1, col=i % 2 + 1)
+            fig.append_trace(fig_metric, row=i // 2 + 1, col=i % 2 + 1)
         fig.update_layout(
-            height=300 if len(metrics) <= 2 else 250 * (len(metrics) // 2 + len(metrics) % 2),
+            height=300 * (len(metrics) // 2 + len(metrics) % 2),
             width=1000,
             showlegend=False,
         )
