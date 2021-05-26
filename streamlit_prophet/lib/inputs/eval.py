@@ -18,7 +18,7 @@ def input_metrics(readme: dict) -> dict:
     eval["metrics"] = st.multiselect(
         "Select evaluation metrics",
         ["MAPE", "SMAPE", "MSE", "RMSE", "MAE"],
-        default=["MAPE", "RMSE"],
+        default=["MAPE", "RMSE", "SMAPE", "MAE"],
         help=readme["tooltips"]["metrics"],
     )
     return eval

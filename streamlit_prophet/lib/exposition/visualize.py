@@ -586,10 +586,12 @@ def make_waterfall_components_plot(
         & (components["ds"] <= pd.to_datetime(end_date))
     ]
     waterfall = waterfall.mean(axis=0, numeric_only=True)
+    waterfall = waterfall[waterfall != 0]
+    waterfall = waterfall[~waterfall.index.str.endswith("holidays")]
     fig = go.Figure(
         go.Waterfall(
             orientation="v",
-            measure=["relative"] * (len(components.columns) - 2) + ["total"],
+            measure=["relative"] * (len(waterfall) - 1) + ["total"],
             x=[x.capitalize() for x in list(waterfall.index)[:-1] + ["Forecast"]],
             y=list(waterfall.values),
             textposition="auto",
