@@ -66,7 +66,9 @@ streamlit_prophet deploy dashboard
 ```
 
 Now you can train, evaluate and optimize a forecasting model in just a few clicks.
-All you have to do is to upload a time series dataset, that contains a date column, a target column and optionally some features.
+All you have to do is to upload a time series dataset, that contains a date column, a target column and optionally some features, like on the example below:
+
+![](references/input_format.png)
 
 Then, follow the guidelines in the sidebar to:
 
@@ -78,7 +80,7 @@ assess your model performance.
 * <strong>Make a forecast</strong>: You can optionnaly make a forecast on future dates that are not included in your dataset,
 with the model previously trained.
 
-![](demo.gif)
+![](references/demo.gif)
 
 ## 🛠️ How to contribute ?
 
