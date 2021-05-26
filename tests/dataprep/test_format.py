@@ -45,7 +45,8 @@ def test_remove_empty_cols(df, expected0, expected1):
 def test_format_date(df, date_col):
     # Streamlit should stop and display an error message
     with pytest.raises(st.script_runner.StopException):
-        _format_date(df.copy(), date_col)
+        load_options = {"date_format": config["dataprep"]["date_format"]}
+        _format_date(df.copy(), date_col, load_options, config)
 
 
 @pytest.mark.parametrize(
@@ -71,7 +72,8 @@ def test_format_target(df, target_col):
     ),
 )
 def test_format_date_and_target(df, date_col, target_col):
-    output = format_date_and_target(df.copy(), date_col, target_col, config)
+    load_options = {"date_format": config["dataprep"]["date_format"]}
+    output = format_date_and_target(df.copy(), date_col, target_col, config, load_options)
     # Date column should have the same number of unique values in input and output dataframes
     assert output["ds"].nunique() == df[date_col].nunique()
     # Target column should have the same number of unique values in input and output dataframes
