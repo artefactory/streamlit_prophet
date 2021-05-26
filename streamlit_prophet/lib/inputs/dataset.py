@@ -34,11 +34,19 @@ def input_dataset(config: dict, readme: dict) -> Tuple[pd.DataFrame, dict]:
         )
         df = download_toy_dataset(config["datasets"][dataset_name]["url"])
         load_options["dataset"] = dataset_name
+        load_options["date_format"] = config["dataprep"]["date_format"]
     else:
         file = st.file_uploader(
             "Upload a csv file", type="csv", help=readme["tooltips"]["dataset_upload"]
         )
-        load_options["separator"] = st.selectbox("What is the separator?", [",", ";", "|"])
+        load_options["separator"] = st.selectbox(
+            "What is the separator?", [",", ";", "|"], help=readme["tooltips"]["separator"]
+        )
+        load_options["date_format"] = st.text_input(
+            "What is the date format?",
+            config["dataprep"]["date_format"],
+            help=readme["tooltips"]["date_format"],
+        )
         if file:
             df = load_dataset(file, load_options)
         else:

@@ -62,7 +62,7 @@ with st.sidebar.beta_expander("Dataset", expanded=True):
 # Column names
 with st.sidebar.beta_expander("Columns", expanded=True):
     date_col, target_col = input_columns(config, readme, df, load_options)
-    df = format_date_and_target(df, date_col, target_col, config)
+    df = format_date_and_target(df, date_col, target_col, config, load_options)
 
 # Filtering
 with st.sidebar.beta_expander("Filtering", expanded=False):

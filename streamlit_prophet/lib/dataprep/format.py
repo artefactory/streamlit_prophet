@@ -44,7 +44,7 @@ def print_empty_cols(empty_cols: list) -> None:
 
 @st.cache(suppress_st_warning=True)
 def format_date_and_target(
-    df_input: pd.DataFrame, date_col: str, target_col: str, config: dict
+    df_input: pd.DataFrame, date_col: str, target_col: str, config: dict, load_options: dict
 ) -> pd.DataFrame:
     """Formats date and target columns of input dataframe.
 
@@ -58,6 +58,8 @@ def format_date_and_target(
         Name of target column in input dataframe.
     config : dict
         Lib configuration dictionary.
+    load_options : dict
+        Loading options selected by user.
 
     Returns
     -------
@@ -65,13 +67,13 @@ def format_date_and_target(
         Dataframe with columns formatted.
     """
     df = df_input.copy()  # To avoid CachedObjectMutationWarning
-    df = _format_date(df, date_col)
+    df = _format_date(df, date_col, load_options, config)
     df = _format_target(df, target_col, config)
     df = _rename_cols(df, date_col, target_col)
     return df
 
 
-def _format_date(df: pd.DataFrame, date_col: str) -> pd.DataFrame:
+def _format_date(df: pd.DataFrame, date_col: str, load_options: dict, config: dict) -> pd.DataFrame:
     """Formats date column of input dataframe.
 
     Parameters
@@ -80,6 +82,10 @@ def _format_date(df: pd.DataFrame, date_col: str) -> pd.DataFrame:
         Input dataframe whose columns will be formatted.
     date_col : str
         Name of date column in input dataframe.
+    load_options : dict
+        Loading options selected by user.
+    config : dict
+        Lib config dictionary containing information about default date format.
 
     Returns
     -------
@@ -87,7 +93,12 @@ def _format_date(df: pd.DataFrame, date_col: str) -> pd.DataFrame:
         Dataframe with date column formatted.
     """
     try:
-        df[date_col] = pd.to_datetime(df[date_col])
+        date_series = pd.to_datetime(df[date_col])
+        if __check_date_format(date_series) | (
+            config["dataprep"]["date_format"] != load_options["date_format"]
+        ):
+            date_series = pd.to_datetime(df[date_col], format=load_options["date_format"])
+        df[date_col] = date_series
         days_range = (df[date_col].max() - df[date_col].min()).days
         sec_range = (df[date_col].max() - df[date_col].min()).seconds
         if ((days_range < 1) & (sec_range < 1)) | (np.isnan(days_range) & np.isnan(sec_range)):
@@ -98,9 +109,31 @@ def _format_date(df: pd.DataFrame, date_col: str) -> pd.DataFrame:
         return df
     except:
         st.error(
-            "Please select the correct date column (selected column can't be converted into date)."
+            "Please select a valid date format (selected column can't be converted into date)."
         )
         st.stop()
+
+
+def __check_date_format(date_series: pd.Series):
+    """Checks whether the date column has been correctly converted to datetime.
+
+    Parameters
+    ----------
+    date_series : pd.Series
+        Date column that has been converted.
+
+    Returns
+    -------
+    bool
+        False if conversion has not worked correctly, True otherwise.
+    """
+    test1 = date_series.map(lambda x: x.year).nunique() < 2
+    test2 = date_series.map(lambda x: x.month).nunique() < 2
+    test3 = date_series.map(lambda x: x.day).nunique() < 2
+    if test1 & test2 & test3:
+        return True
+    else:
+        return False
 
 
 def _format_target(df: pd.DataFrame, target_col: str, config: dict) -> pd.DataFrame:

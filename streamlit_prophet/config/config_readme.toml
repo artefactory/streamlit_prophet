@@ -28,6 +28,12 @@ Three toy datasets are available:
 * __SAV__: Traffic in call centers
 * __Weather__: Temperature in Madrid
 """
+date_format = """
+For example "%Y-%m-%d" or "%d/%m/%Y %H:%M:%S".
+"""
+separator = """
+Delimiter used in the csv file
+"""
 date_column = """
 Column to be parsed as a date
 """

@@ -12,6 +12,9 @@ url = "https://raw.githubusercontent.com/MaximeLutel/streamlit_prophet_datasets/
 date = "datetime"
 target = "temperature"
 
+[dataprep] # Default dataprep parameters
+date_format = "%Y-%m-%d"
+
 [model] # Default model parameters
 seasonality_prior_scale = 10
 holidays_prior_scale = 10
@@ -43,9 +46,9 @@ MSE = 1
 RMSE = 2
 MAE = 2
 
-[style]
+[style] # Colors for visualizations
 colors = ["#002244", "#ff0066", "#66cccc", "#ff9933", "#337788", "#429e79", "#474747", "#f7d126", "#ee5eab", "#b8b8b8"]
 color_axis = '#d62728'
 
 [global]
-seed = 42
+seed = 42 # Random seed for modelling
