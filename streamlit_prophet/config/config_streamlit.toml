@@ -47,8 +47,10 @@ RMSE = 2
 MAE = 2
 
 [style] # Colors for visualizations
-colors = ["#002244", "#ff0066", "#66cccc", "#ff9933", "#337788", "#429e79", "#474747", "#f7d126", "#ee5eab", "#b8b8b8"]
-color_axis = '#d62728'
+colors = ["#002244", "#ff0066", "#66cccc", "#ff9933", "#337788",
+          "#429e79", "#474747", "#f7d126", "#ee5eab", "#b8b8b8"] # Color palette for visualizations
+color_axis = '#d62728' # Color for axis
+waterfall_digits = 2 # Number of digits in waterfall chart
 
 [global]
 seed = 42 # Random seed for modelling

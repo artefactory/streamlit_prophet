@@ -202,6 +202,7 @@ if launch_forecast:
             resampling,
             config,
             readme,
+            df,
         )
 
     if make_future_forecast:

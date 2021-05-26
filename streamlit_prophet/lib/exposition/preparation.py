@@ -1,5 +1,6 @@
 from typing import Tuple
 
+import datetime
 from datetime import timedelta
 
 import pandas as pd
@@ -153,3 +154,32 @@ def get_hover_template_cv(cv_dates: dict, resampling: dict) -> Tuple[pd.DataFram
         ]
     )
     return hover_data, hover_template
+
+
+def prepare_waterfall(
+    components: pd.DataFrame, start_date: datetime.date, end_date: datetime.date
+) -> pd.DataFrame:
+    """Returns a dataframe with only the relevant components to sum to get the prediction.
+
+    Parameters
+    ----------
+    components : pd.DataFrame
+        Dataframe with relevant components
+    start_date : datetime.date
+        Start date for components computation.
+    end_date : datetime.date
+        End date for components computation.
+
+    Returns
+    -------
+    pd.DataFrame
+        Dataframe with only the relevant data to plot the waterfall chart.
+    """
+    waterfall = components.loc[
+        (components["ds"] >= pd.to_datetime(start_date))
+        & (components["ds"] < pd.to_datetime(end_date))
+    ]
+    waterfall = waterfall.mean(axis=0, numeric_only=True)
+    waterfall = waterfall[waterfall != 0]
+    waterfall = waterfall[~waterfall.index.str.endswith("holidays")]
+    return waterfall

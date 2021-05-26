@@ -16,7 +16,7 @@ from streamlit_prophet.lib.exposition.expanders import (
     display_expanders_performance,
 )
 from streamlit_prophet.lib.exposition.export import display_2_download_links, display_download_link
-from streamlit_prophet.lib.exposition.preparation import get_forecast_components
+from streamlit_prophet.lib.exposition.preparation import get_forecast_components, prepare_waterfall
 from streamlit_prophet.lib.inputs.dates import input_waterfall_dates
 from streamlit_prophet.lib.utils.misc import reverse_list
 
@@ -143,6 +143,7 @@ def plot_components(
     resampling: dict,
     config: dict,
     readme: dict,
+    df: pd.DataFrame,
 ) -> None:
     """Plots a graph showing the different components of prediction, with explanations.
 
@@ -166,6 +167,8 @@ def plot_components(
         Cleaning specifications.
     readme : dict
         Dictionary containing explanations about the graph.
+    df: pd.DataFrame
+        Dataframe containing the ground truth.
     """
     style = config["style"]
     st.write("## Global impact")
@@ -189,7 +192,7 @@ def plot_components(
     start_date, end_date = input_waterfall_dates(forecast_df, resampling)
     st.plotly_chart(
         make_waterfall_components_plot(
-            model, forecast_df, start_date, end_date, target_col, cleaning, resampling, style
+            model, forecast_df, start_date, end_date, target_col, cleaning, resampling, style, df
         )
     )
 
@@ -553,6 +556,7 @@ def make_waterfall_components_plot(
     cleaning: dict,
     resampling: dict,
     style: dict,
+    df: pd.DataFrame,
 ) -> go.Figure:
     """Creates a waterfall chart with the components of the prediction.
 
@@ -574,32 +578,32 @@ def make_waterfall_components_plot(
         Resampling specifications (granularity, dataset frequency).
     style : dict
         Style specifications for the graph (colors).
+    df: pd.DataFrame
+        Dataframe containing the ground truth.
 
     Returns
     -------
     go.Figure
         Waterfall chart with the components of prediction.
     """
+    N_digits = style["waterfall_digits"]
     components = get_forecast_components(model, forecast_df, True).reset_index()
-    waterfall = components.loc[
-        (components["ds"] >= pd.to_datetime(start_date))
-        & (components["ds"] <= pd.to_datetime(end_date))
-    ]
-    waterfall = waterfall.mean(axis=0, numeric_only=True)
-    waterfall = waterfall[waterfall != 0]
-    waterfall = waterfall[~waterfall.index.str.endswith("holidays")]
+    waterfall = prepare_waterfall(components, start_date, end_date)
+    truth = df.loc[
+        (df["ds"] >= pd.to_datetime(start_date)) & (df["ds"] < pd.to_datetime(end_date)), "y"
+    ].mean(axis=0)
     fig = go.Figure(
         go.Waterfall(
             orientation="v",
             measure=["relative"] * (len(waterfall) - 1) + ["total"],
-            x=[x.capitalize() for x in list(waterfall.index)[:-1] + ["Forecast"]],
+            x=[x.capitalize() for x in list(waterfall.index)[:-1] + ["Forecast (Truth)"]],
             y=list(waterfall.values),
             textposition="auto",
             text=[
-                "+" + str(round(x, 3)) if x > 0 else "" + str(round(x, 3))
+                "+" + str(round(x, N_digits)) if x > 0 else "" + str(round(x, N_digits))
                 for x in list(waterfall.values)[:-1]
             ]
-            + [str(round(waterfall.values[-1], 3))],
+            + [f"{round(waterfall.values[-1], N_digits)} ({round(truth, N_digits)})"],
             decreasing={"marker": {"color": style["colors"][1]}},
             increasing={"marker": {"color": style["colors"][0]}},
             totals={"marker": {"color": style["colors"][2]}},
