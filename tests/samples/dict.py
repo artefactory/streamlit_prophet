@@ -6,7 +6,9 @@ from streamlit_prophet.lib.dataprep.split import get_cv_cutoffs
 from streamlit_prophet.lib.inputs.dataprep import _autodetect_dimensions
 from streamlit_prophet.lib.utils.load import load_config
 
-config, _ = load_config("config_streamlit.toml", "config_readme.toml")
+config, _, _ = load_config(
+    "config_streamlit.toml", "config_instructions.toml", "config_readme.toml"
+)
 
 
 # Resampling

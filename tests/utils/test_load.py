@@ -2,7 +2,9 @@ import pandas as pd
 import pytest
 from streamlit_prophet.lib.utils.load import download_toy_dataset, load_config
 
-config, _ = load_config("config_streamlit.toml", "config_readme.toml")
+config, _, _ = load_config(
+    "config_streamlit.toml", "config_instructions.toml", "config_readme.toml"
+)
 
 
 @pytest.mark.parametrize(

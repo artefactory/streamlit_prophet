@@ -11,7 +11,9 @@ from streamlit_prophet.lib.dataprep.split import (
 from streamlit_prophet.lib.utils.load import load_config
 from tests.samples.dict import make_dates_test
 
-config, _ = load_config("config_streamlit.toml", "config_readme.toml")
+config, _, _ = load_config(
+    "config_streamlit.toml", "config_instructions.toml", "config_readme.toml"
+)
 
 
 @pytest.mark.parametrize(

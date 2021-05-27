@@ -14,7 +14,9 @@ from streamlit_prophet.lib.utils.load import load_config
 from tests.samples.df import df_test
 from tests.samples.dict import make_dimensions_test, make_resampling_test
 
-config, _ = load_config("config_streamlit.toml", "config_readme.toml")
+config, _, _ = load_config(
+    "config_streamlit.toml", "config_instructions.toml", "config_readme.toml"
+)
 
 
 @pytest.mark.parametrize(
