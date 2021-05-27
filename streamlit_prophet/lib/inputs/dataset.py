@@ -89,12 +89,18 @@ def input_columns(
             help=readme["tooltips"]["target_column"],
         )
     else:
-        date_col = st.selectbox(
-            "Date column", list(df.columns), help=readme["tooltips"]["date_column"]
-        )
-        target_col = st.selectbox(
-            "Target column",
-            list(set(df.columns) - {date_col}),
-            help=readme["tooltips"]["target_column"],
-        )
+        if config["columns"]["date"] not in ["false", False]:
+            date_col = config["columns"]["date"]
+        else:
+            date_col = st.selectbox(
+                "Date column", list(df.columns), help=readme["tooltips"]["date_column"]
+            )
+        if config["columns"]["target"] not in ["false", False]:
+            target_col = config["columns"]["target"]
+        else:
+            target_col = st.selectbox(
+                "Target column",
+                list(set(df.columns) - {date_col}),
+                help=readme["tooltips"]["target_column"],
+            )
     return date_col, target_col

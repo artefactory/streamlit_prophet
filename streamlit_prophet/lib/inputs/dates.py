@@ -58,7 +58,7 @@ def input_train_dates(
     return dates
 
 
-def input_val_dates(df: pd.DataFrame, dates: dict) -> dict:
+def input_val_dates(df: pd.DataFrame, dates: dict, config: dict) -> dict:
     """Lets the user enter validation dates.
 
     Parameters
@@ -67,6 +67,8 @@ def input_val_dates(df: pd.DataFrame, dates: dict) -> dict:
         Prepared dataset (after filtering, resampling, cleaning).
     dates : dict
         Dictionary containing training dates information.
+    config : dict
+        Lib config dictionary containing information needed to set default dates displayed in streamlit.
 
     Returns
     -------
@@ -76,7 +78,7 @@ def input_val_dates(df: pd.DataFrame, dates: dict) -> dict:
     col1, col2 = st.beta_columns(2)
     dates["val_start_date"] = col1.date_input(
         "Validation start date",
-        value=dates["train_end_date"] + timedelta(days=1),
+        value=dates["train_end_date"] + timedelta(days=config["split"]["gap_train_valid"]),
         min_value=dates["train_end_date"] + timedelta(days=1),
         max_value=df.ds.max(),
     )
@@ -109,7 +111,10 @@ def input_cv(dates: dict, resampling: dict, config: dict, readme: dict) -> dict:
         Dictionary containing training dates and cross-validation specifications.
     """
     dates["n_folds"] = st.number_input(
-        "Number of CV folds", min_value=1, value=5, help=readme["tooltips"]["cv_n_folds"]
+        "Number of CV folds",
+        min_value=1,
+        value=config["split"]["CV"],
+        help=readme["tooltips"]["cv_n_folds"],
     )
     freq = resampling["freq"][-1]
     max_possible_horizon = get_max_possible_cv_horizon(dates, resampling)

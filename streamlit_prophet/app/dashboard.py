@@ -66,7 +66,7 @@ with st.sidebar.beta_expander("Columns", expanded=True):
 
 # Filtering
 with st.sidebar.beta_expander("Filtering", expanded=False):
-    dimensions = input_dimensions(df, readme)
+    dimensions = input_dimensions(df, readme, config)
     df, cols_to_drop = filter_and_aggregate_df(df, dimensions, config, date_col, target_col)
     print_removed_cols(cols_to_drop)
 
@@ -79,7 +79,7 @@ with st.sidebar.beta_expander("Resampling", expanded=False):
 
 # Cleaning
 with st.sidebar.beta_expander("Cleaning", expanded=False):
-    cleaning = input_cleaning(resampling, readme)
+    cleaning = input_cleaning(resampling, readme, config)
     df = clean_df(df, cleaning)
     check_dataset_size(df, config)
 
@@ -95,7 +95,7 @@ with st.sidebar.beta_expander("Seasonalities", expanded=False):
 
 # Holidays
 with st.sidebar.beta_expander("Holidays"):
-    params = input_holidays_params(params, readme)
+    params = input_holidays_params(params, readme, config)
 
 # External regressors
 with st.sidebar.beta_expander("External regressors"):
@@ -124,12 +124,12 @@ if evaluate:
             dates = input_cv(dates, resampling, config, readme)
             datasets = get_train_set(df, dates, datasets)
         else:
-            dates = input_val_dates(df, dates)
+            dates = input_val_dates(df, dates, config)
             datasets = get_train_val_sets(df, dates, config, datasets)
 
     # Performance metrics
     with st.sidebar.beta_expander("Metrics", expanded=False):
-        eval = input_metrics(readme)
+        eval = input_metrics(readme, config)
 
     # Scope of evaluation
     with st.sidebar.beta_expander("Scope", expanded=False):

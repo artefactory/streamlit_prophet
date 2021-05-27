@@ -1,13 +1,15 @@
 import streamlit as st
 
 
-def input_metrics(readme: dict) -> dict:
+def input_metrics(readme: dict, config: dict) -> dict:
     """Lets the user select evaluation metrics to be used for model evaluation.
 
     Parameters
     ----------
     readme : dict
         Dictionary containing tooltips to guide user's choices.
+    config : dict
+        Lib config containing the default list of metrics to use for evaluation.
 
     Returns
     -------
@@ -18,7 +20,7 @@ def input_metrics(readme: dict) -> dict:
     eval["metrics"] = st.multiselect(
         "Select evaluation metrics",
         ["MAPE", "SMAPE", "MSE", "RMSE", "MAE"],
-        default=["MAPE", "RMSE", "SMAPE", "MAE"],
+        default=config["metrics"]["default"]["selection"],
         help=readme["tooltips"]["metrics"],
     )
     return eval

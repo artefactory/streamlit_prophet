@@ -283,8 +283,8 @@ def __format_metrics_values(metrics_df: pd.DataFrame, eval: dict, config: dict) 
     pd.DataFrame
         Dataframe with all metrics formatted with the right number of decimals.
     """
-    mapping_format = {k: "{:,." + str(v) + "f}" for k, v in config["metrics"].items()}
-    mapping_round = config["metrics"].copy()
+    mapping_format = {k: "{:,." + str(v) + "f}" for k, v in config["metrics"]["digits"].items()}
+    mapping_round = config["metrics"]["digits"].copy()
     for col in eval["metrics"]:
         metrics_df[col] = metrics_df[col].map(
             lambda x: mapping_format[col].format(round(x, mapping_round[col]))

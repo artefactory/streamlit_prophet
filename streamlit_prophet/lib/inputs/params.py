@@ -161,7 +161,7 @@ def input_other_params(config: dict, params: dict, readme: dict) -> dict:
     return params
 
 
-def input_holidays_params(params: dict, readme: dict) -> dict:
+def input_holidays_params(params: dict, readme: dict, config: dict) -> dict:
     """Lets the user enter holidays parameters.
 
     Parameters
@@ -170,6 +170,8 @@ def input_holidays_params(params: dict, readme: dict) -> dict:
         Model parameters.
     readme : dict
         Dictionary containing tooltips to guide user's choices.
+    config : dict
+        Dictionary where user can provide the list of countries whose holidays will be included.
 
     Returns
     -------
@@ -178,7 +180,10 @@ def input_holidays_params(params: dict, readme: dict) -> dict:
     """
     countries = sorted(mapping_country_names([])[0].keys())
     params["holidays"] = st.multiselect(
-        "Add some countries' holidays", countries, default=[], help=readme["tooltips"]["holidays"]
+        "Add some countries' holidays",
+        countries,
+        default=config["model"]["holidays"],
+        help=readme["tooltips"]["holidays"],
     )
     _, params["holidays"] = mapping_country_names(params["holidays"])
     return params
@@ -218,10 +223,22 @@ def input_regressors(df: pd.DataFrame, config: dict, params: dict, readme: dict)
             default_regressors = list(eligible_cols)
         else:
             default_regressors = []
+            config_regressors = config["columns"]["regressors"]
+            if config_regressors not in ["false", False]:
+                if len(set(config_regressors).intersection(set(eligible_cols))) != len(
+                    config_regressors
+                ):
+                    st.error(
+                        f"Selected regressors are not in the dataset columns, "
+                        f"please provide a list of valid columns for regressors in the config file."
+                    )
+                    st.stop()
         regressor_cols = st.multiselect(
             "Select external regressors if any",
             list(eligible_cols),
-            default=default_regressors,
+            default=default_regressors
+            if config_regressors in ["false", False]
+            else config_regressors,
             help=readme["tooltips"]["select_regressors"],
         )
         for col in regressor_cols:

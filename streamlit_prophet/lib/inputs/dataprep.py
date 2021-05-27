@@ -3,7 +3,7 @@ import streamlit as st
 from streamlit_prophet.lib.utils.mapping import dayname_to_daynumber
 
 
-def input_cleaning(resampling: dict, readme: dict) -> dict:
+def input_cleaning(resampling: dict, readme: dict, config: dict) -> dict:
     """Lets the user enter cleaning specifications.
 
     Parameters
@@ -12,6 +12,8 @@ def input_cleaning(resampling: dict, readme: dict) -> dict:
         Dictionary containing dataset frequency information.
     readme : dict
         Dictionary containing tooltips to guide user's choices.
+    config : dict
+        Dictionary where user can provide default cleaning choices.
 
     Returns
     -------
@@ -24,25 +26,31 @@ def input_cleaning(resampling: dict, readme: dict) -> dict:
         del_days = st.multiselect(
             "Remove days",
             ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"],
-            default=[],
+            default=config["dataprep"]["remove_days"],
             help=readme["tooltips"]["remove_days"],
         )
         cleaning["del_days"] = dayname_to_daynumber(del_days)
     else:
         cleaning["del_days"] = []
     cleaning["del_zeros"] = st.checkbox(
-        "Delete rows where target = 0", True, help=readme["tooltips"]["del_zeros"]
+        "Delete rows where target = 0",
+        False if config["dataprep"]["remove_zeros"] in ["false", False] else True,
+        help=readme["tooltips"]["del_zeros"],
     )
     cleaning["del_negative"] = st.checkbox(
-        "Delete rows where target < 0", True, help=readme["tooltips"]["del_negative"]
+        "Delete rows where target < 0",
+        False if config["dataprep"]["remove_negative"] in ["false", False] else True,
+        help=readme["tooltips"]["del_negative"],
     )
     cleaning["log_transform"] = st.checkbox(
-        "Target log transform", False, help=readme["tooltips"]["log_transform"]
+        "Target log transform",
+        False if config["dataprep"]["log_transform"] in ["false", False] else True,
+        help=readme["tooltips"]["log_transform"],
     )
     return cleaning
 
 
-def input_dimensions(df: pd.DataFrame, readme: dict) -> dict:
+def input_dimensions(df: pd.DataFrame, readme: dict, config: dict) -> dict:
     """Lets the user enter filtering and aggregation specifications.
 
     Parameters
@@ -51,6 +59,8 @@ def input_dimensions(df: pd.DataFrame, readme: dict) -> dict:
         Input dataframe that will be used to detect dimension columns.
     readme : dict
         Dictionary containing tooltips to guide user's choices.
+    config : dict
+        Dictionary where user can provide the list of dimensions.
 
     Returns
     -------
@@ -60,10 +70,22 @@ def input_dimensions(df: pd.DataFrame, readme: dict) -> dict:
     dimensions = dict()
     eligible_cols = set(df.columns) - {"ds", "y"}
     if len(eligible_cols) > 0:
+        config_dimensions = config["columns"]["dimensions"]
+        if config_dimensions not in ["false", False]:
+            if len(set(config_dimensions).intersection(set(eligible_cols))) != len(
+                config_dimensions
+            ):
+                st.error(
+                    f"Selected dimensions are not in the dataset columns, "
+                    f"please provide a list of valid columns for dimensions in the config file."
+                )
+                st.stop()
         dimensions_cols = st.multiselect(
             "Select dataset dimensions if any",
             list(eligible_cols),
-            default=_autodetect_dimensions(df),
+            default=_autodetect_dimensions(df)
+            if config_dimensions in ["false", False]
+            else config_dimensions,
             help=readme["tooltips"]["dimensions"],
         )
         for col in dimensions_cols:
@@ -83,7 +105,7 @@ def input_dimensions(df: pd.DataFrame, readme: dict) -> dict:
                 )
         dimensions["agg"] = st.selectbox(
             "Target aggregation function over dimensions",
-            ["Mean", "Sum", "Max", "Min"],
+            config["dataprep"]["dimensions_agg"],
             help=readme["tooltips"]["dimensions_agg"],
         )
     else:
