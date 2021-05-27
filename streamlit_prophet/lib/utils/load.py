@@ -48,7 +48,7 @@ def load_dataset(file, load_options: dict) -> pd.DataFrame:
 @st.cache(allow_output_mutation=True)
 def load_config(
     config_streamlit_filename: str, config_instructions_filename: str, config_readme_filename: str
-) -> Tuple[dict, dict]:
+) -> Tuple[dict, dict, dict]:
     """Loads configuration files.
 
     Parameters
@@ -114,13 +114,13 @@ def load_custom_config(config_file) -> dict:
     return config
 
 
-def write_bytesio_to_file(filename: str, bytesio) -> None:
+def write_bytesio_to_file(filename, bytesio) -> None:
     """
     Write the contents of the given BytesIO to a file.
 
     Parameters
     ----------
-    filename : str
+    filename
         Uploaded toml config file.
     bytesio
         BytesIO object.

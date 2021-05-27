@@ -6,7 +6,9 @@ from streamlit_prophet.lib.exposition.export import display_config_download_link
 from streamlit_prophet.lib.utils.load import download_toy_dataset, load_custom_config, load_dataset
 
 
-def input_dataset(config: dict, readme: dict, instructions: dict) -> Tuple[pd.DataFrame, dict]:
+def input_dataset(
+    config: dict, readme: dict, instructions: dict
+) -> Tuple[pd.DataFrame, dict, dict]:
     """Lets the user decide whether to upload a dataset or download a toy dataset.
 
     Parameters
