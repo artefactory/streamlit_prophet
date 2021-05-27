@@ -19,6 +19,16 @@ upload_choice = """
 * Check to load a toy dataset and see what can be done with this app.
 * Uncheck to upload your own dataset.
 """
+custom_config = """
+Follow these steps to provide your own configuration file:
+* Download config template and instructions files above.
+* Edit config template file with your own specifications.
+* Upload the edited file below.
+"""
+custom_config_choice = """
+* Check if you want to upload a configuration file with specifications adapted to your usage.
+* Uncheck to enter directly your specifications in the sidebar.
+"""
 dataset_upload = """
 Your csv file should have at least a column with dates and a column with numeric values to forecast.
 """

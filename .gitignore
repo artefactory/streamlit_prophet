@@ -3,6 +3,10 @@
 # Edit at https://www.gitignore.io/?templates=osx,python,pycharm,windows,visualstudio,visualstudiocode
 
 ### OSX ###
+
+# Project specific
+streamlit_prophet/config/custom_*
+
 # General
 .DS_Store
 .AppleDouble

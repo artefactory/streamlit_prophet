@@ -21,13 +21,13 @@ def get_project_root() -> str:
 
 
 @st.cache()
-def load_dataset(file: str, load_options: dict) -> pd.DataFrame:
+def load_dataset(file, load_options: dict) -> pd.DataFrame:
     """Loads dataset from user's file system as a pandas dataframe.
 
     Parameters
     ----------
-    file : str
-        Dataset file path.
+    file
+        Uploaded dataset file.
     load_options : dict
         Dictionary containing separator information.
 
@@ -45,14 +45,18 @@ def load_dataset(file: str, load_options: dict) -> pd.DataFrame:
         st.stop()
 
 
-@st.cache()
-def load_config(config_streamlit_filename: str, config_readme_filename: str) -> Tuple[dict, dict]:
+@st.cache(allow_output_mutation=True)
+def load_config(
+    config_streamlit_filename: str, config_instructions_filename: str, config_readme_filename: str
+) -> Tuple[dict, dict]:
     """Loads configuration files.
 
     Parameters
     ----------
     config_streamlit_filename : str
         Filename of lib configuration file.
+    config_instructions_filename : str
+        Filename of custom config instruction file.
     config_readme_filename : str
         Filename of readme configuration file.
 
@@ -64,8 +68,11 @@ def load_config(config_streamlit_filename: str, config_readme_filename: str) -> 
         Readme configuration file.
     """
     config_streamlit = toml.load(Path(get_project_root()) / f"config/{config_streamlit_filename}")
+    config_instructions = toml.load(
+        Path(get_project_root()) / f"config/{config_instructions_filename}"
+    )
     config_readme = toml.load(Path(get_project_root()) / f"config/{config_readme_filename}")
-    return config_streamlit, config_readme
+    return config_streamlit, config_instructions, config_readme
 
 
 @st.cache()
@@ -85,3 +92,38 @@ def download_toy_dataset(url: str) -> pd.DataFrame:
     download = requests.get(url).content
     df = pd.read_csv(io.StringIO(download.decode("utf-8")))
     return df
+
+
+@st.cache()
+def load_custom_config(config_file) -> dict:
+    """Loads config toml file from user's file system as a dictionary.
+
+    Parameters
+    ----------
+    config_file
+        Uploaded toml config file.
+
+    Returns
+    -------
+    dict
+        Loaded config dictionary.
+    """
+    toml_file = Path(get_project_root()) / f"config/custom_{config_file.name}"
+    write_bytesio_to_file(toml_file, config_file)
+    config = toml.load(toml_file)
+    return config
+
+
+def write_bytesio_to_file(filename: str, bytesio) -> None:
+    """
+    Write the contents of the given BytesIO to a file.
+
+    Parameters
+    ----------
+    filename : str
+        Uploaded toml config file.
+    bytesio
+        BytesIO object.
+    """
+    with open(filename, "wb") as outfile:
+        outfile.write(bytesio.getbuffer())

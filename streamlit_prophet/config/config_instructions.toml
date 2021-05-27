@@ -1,0 +1,60 @@
+[columns]
+date = "Name of date column, choose false to select it directly in the app."
+target = "Name of target column, choose false to select it directly in the app."
+dimensions = "List of dimension columns, choose false to select it directly in the app."
+regressors = "List of regressor columns, choose false to select it directly in the app."
+
+[dataprep]
+date_format = "Default date format"
+dimensions_agg = "List of possible target agg functions over dimensions. First is the default option."
+remove_days = "List of days of week to remove from dataset (up to 6 elements among 'Monday', 'Tuesday', ..., 'Saturday', 'Sunday')."
+remove_zeros = "Whether or not to remove rows where target is 0 (true or false)."
+remove_negative = "Whether or not to remove rows where target is <0 (true or false)."
+log_transform = "Whether or not to apply a target log transform (true or false)."
+
+[model]
+seasonality_prior_scale = "Default value for seasonality_prior_scale."
+holidays_prior_scale = "Default value for holidays_prior_scale."
+regressors_prior_scale = "Default value for regressors_prior_scale."
+changepoint_prior_scale = "Default value for changepoint_prior_scale."
+growth = "List of options, the first element of the list will be the default parameter."
+seasonality_mode = "List of options, the first element of the list will be the default parameter."
+changepoint_range = "Default value for changepoint_range."
+holidays = "List of countries whose holidays will be added as regressors. Options: 'France', 'United States', 'United Kingdom', ... (+ many more)."
+
+[horizon]
+s = "Default number of seconds in validation set if dataset frequency is in seconds."
+H = "Default number of hours in validation set if dataset frequency is in hours."
+D = "Default number of days in validation set if dataset frequency is in days."
+W = "Default number of weeks in validation set if dataset frequency is in weeks."
+M = "Default number of months in validation set if dataset frequency is in months."
+Q = "Default number of quarters in validation set if dataset frequency is in quarters."
+Y = "Default number of years in validation set if dataset frequency is in years."
+
+[split]
+CV = "Default number of cross-validation folds if cross-validation is selected."
+gap_train_valid = "Default number of days between training set and validation set."
+
+[validity]
+min_data_points_train = "Minimum number of datapoints (-1) to have in training set to train a model."
+min_data_points_val = "Minimum number of datapoints (-1) to have in validation set to evaluate model."
+min_target_cardinality = "Minimum number of distinct values that the target should have."
+max_cat_reg_cardinality = "Maximum number of distinct values that a categorical regressor should have."
+
+[metrics]
+[metrics.default]
+selection = 'List of metrics to display by default (up to 5 among "MAPE", "RMSE", "SMAPE", "MAE", "MSE").'
+[metrics.digits]
+MAPE = "Number of decimals to use when displaying MAPE."
+SMAPE = "Number of decimals to use when displaying SMAPE."
+MSE = "Number of decimals to use when displaying MSE."
+RMSE = "Number of decimals to use when displaying RMSE."
+MAE = "Number of decimals to use when displaying MAE."
+
+[style]
+colors =  "List of colors for visualizations."
+color_axis = "Color for axis on residuals chart and scatter plot."
+waterfall_digits = "Number of digits in waterfall chart."
+
+[global]
+seed = "Random seed for modelling."

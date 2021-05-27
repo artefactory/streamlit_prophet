@@ -40,7 +40,9 @@ from streamlit_prophet.lib.utils.load import load_config
 st.set_page_config(page_title="Prophet", layout="wide")
 
 # Load config
-config, readme = load_config("config_streamlit.toml", "config_readme.toml")
+config, instructions, readme = load_config(
+    "config_streamlit.toml", "config_instructions.toml", "config_readme.toml"
+)
 
 # Initialization
 dates, datasets = dict(), dict()
@@ -55,7 +57,7 @@ st.sidebar.title("1. Data")
 
 # Load data
 with st.sidebar.beta_expander("Dataset", expanded=True):
-    df, load_options = input_dataset(config, readme)
+    df, load_options, config = input_dataset(config, readme, instructions)
     df, empty_cols = remove_empty_cols(df)
     print_empty_cols(empty_cols)
 
