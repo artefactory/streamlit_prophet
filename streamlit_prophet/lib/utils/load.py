@@ -20,7 +20,7 @@ def get_project_root() -> str:
     return str(Path(__file__).parent.parent.parent)
 
 
-@st.cache()
+@st.cache(suppress_st_warning=True)
 def load_dataset(file, load_options: dict) -> pd.DataFrame:
     """Loads dataset from user's file system as a pandas dataframe.
 

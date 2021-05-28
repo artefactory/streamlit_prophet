@@ -356,12 +356,12 @@ def print_forecast_dates(dates: dict, resampling: dict) -> None:
         Dictionary containing dataset frequency information.
     """
     if resampling["freq"][-1] in ["s", "H"]:
-        st.sidebar.success(
+        st.success(
             f"""Forecast: {dates['forecast_start_date'].strftime('%Y/%m/%d %H:%M:%S')} -
                                  {dates['forecast_end_date'].strftime('%Y/%m/%d %H:%M:%S')}"""
         )
     else:
-        st.sidebar.success(
+        st.success(
             f"""Forecast: {dates['forecast_start_date'].strftime('%Y/%m/%d')} -
                                  {dates['forecast_end_date'].strftime('%Y/%m/%d')}"""
         )

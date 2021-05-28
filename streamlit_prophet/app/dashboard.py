@@ -18,7 +18,11 @@ from streamlit_prophet.lib.exposition.visualize import (
     plot_performance,
 )
 from streamlit_prophet.lib.inputs.dataprep import input_cleaning, input_dimensions, input_resampling
-from streamlit_prophet.lib.inputs.dataset import input_columns, input_dataset
+from streamlit_prophet.lib.inputs.dataset import (
+    input_columns,
+    input_dataset,
+    input_future_regressors,
+)
 from streamlit_prophet.lib.inputs.dates import (
     input_cv,
     input_forecast_dates,
@@ -100,7 +104,7 @@ with st.sidebar.beta_expander("Holidays"):
     params = input_holidays_params(params, readme, config)
 
 # External regressors
-with st.sidebar.beta_expander("External regressors"):
+with st.sidebar.beta_expander("Regressors"):
     params = input_regressors(df, config, params, readme)
 
 # Other parameters
@@ -147,7 +151,10 @@ make_future_forecast = st.sidebar.checkbox(
     "Make forecast on future dates", value=False, help=readme["tooltips"]["choice_forecast"]
 )
 if make_future_forecast:
-    dates = input_forecast_dates(df, dates, resampling, config, readme)
+    with st.sidebar.beta_expander("Horizon", expanded=False):
+        dates = input_forecast_dates(df, dates, resampling, config, readme)
+    with st.sidebar.beta_expander("Regressors", expanded=False):
+        datasets = input_future_regressors(datasets, dates, params, resampling, load_options)
 
 # Launch training & forecast
 if st.checkbox(

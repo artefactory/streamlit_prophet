@@ -223,16 +223,16 @@ def input_regressors(df: pd.DataFrame, config: dict, params: dict, readme: dict)
             default_regressors = list(eligible_cols)
         else:
             default_regressors = []
-            config_regressors = config["columns"]["regressors"]
-            if config_regressors not in ["false", False]:
-                if len(set(config_regressors).intersection(set(eligible_cols))) != len(
-                    config_regressors
-                ):
-                    st.error(
-                        f"Selected regressors are not in the dataset columns, "
-                        f"please provide a list of valid columns for regressors in the config file."
-                    )
-                    st.stop()
+        config_regressors = config["columns"]["regressors"]
+        if config_regressors not in ["false", False]:
+            if len(set(config_regressors).intersection(set(eligible_cols))) != len(
+                config_regressors
+            ):
+                st.error(
+                    f"Selected regressors are not in the dataset columns, "
+                    f"please provide a list of valid columns for regressors in the config file."
+                )
+                st.stop()
         regressor_cols = st.multiselect(
             "Select external regressors if any",
             list(eligible_cols),

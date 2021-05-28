@@ -155,13 +155,13 @@ def input_forecast_dates(
         Dictionary containing future forecast dates information.
     """
     forecast_freq_name = mapping_freq_names(resampling["freq"][-1])
-    forecast_horizon = st.sidebar.number_input(
+    forecast_horizon = st.number_input(
         f"Forecast horizon in {forecast_freq_name}",
         min_value=1,
         value=config["horizon"][resampling["freq"][-1]],
         help=readme["tooltips"]["forecast_horizon"],
     )
-    right_after = st.sidebar.checkbox(
+    right_after = st.checkbox(
         "Start forecasting right after the most recent date in dataset",
         value=True,
         help=readme["tooltips"]["forecast_start"],
@@ -172,7 +172,7 @@ def input_forecast_dates(
         else:
             dates["forecast_start_date"] = df.ds.max() + timedelta(days=1)
     else:
-        dates["forecast_start_date"] = st.sidebar.date_input(
+        dates["forecast_start_date"] = st.date_input(
             "Forecast start date:", value=df.ds.max(), min_value=df.ds.max()
         )
     if forecast_freq_name in ["seconds", "hours"]:

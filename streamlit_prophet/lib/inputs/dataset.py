@@ -40,6 +40,7 @@ def input_dataset(
         df = download_toy_dataset(config["datasets"][dataset_name]["url"])
         load_options["dataset"] = dataset_name
         load_options["date_format"] = config["dataprep"]["date_format"]
+        load_options["separator"] = ","
     else:
         file = st.file_uploader(
             "Upload a csv file", type="csv", help=readme["tooltips"]["dataset_upload"]
@@ -128,3 +129,36 @@ def input_columns(
             help=readme["tooltips"]["target_column"],
         )
     return date_col, target_col
+
+
+def input_future_regressors(
+    datasets: dict, dates: dict, params: dict, resampling: dict, load_options: dict
+) -> pd.DataFrame:
+    if len(params["regressors"].keys()) > 0:
+        regressors_col = list(params["regressors"].keys())
+        start, end = dates["forecast_start_date"], dates["forecast_end_date"]
+        freq = resampling["freq"]
+        tooltip = (
+            f"Please upload a csv file with delimiter '{load_options['separator']}' "
+            "and the following specifications: \n"
+        )
+        tooltip += (
+            f"- Date column from {start.strftime('%Y-%m-%d')} "
+            f"to {end.strftime('%Y-%m-%d')} at frequency {freq} "
+            f"(without skipping any date in this range). \n"
+        )
+        if len(regressors_col) > 1:
+            tooltip += (
+                f"- Values for the following regressors: {', '.join(regressors_col[:-1])}, "
+                f"{regressors_col[-1]}."
+            )
+        else:
+            tooltip += f"- Values for the regressor {regressors_col[0]}."
+        regressors_file = st.file_uploader(
+            "Upload a csv file for regressors", type="csv", help=tooltip
+        )
+        if regressors_file:
+            datasets["future_regressors"] = load_dataset(regressors_file, load_options)
+    else:
+        st.write("There are no regressors selected.")
+    return datasets
