@@ -4,6 +4,7 @@ from datetime import datetime, timedelta
 import pandas as pd
 import streamlit as st
 from streamlit_prophet.lib.dataprep.clean import clean_future_df
+from streamlit_prophet.lib.dataprep.format import prepare_future_df
 from streamlit_prophet.lib.utils.mapping import convert_into_nb_of_days, convert_into_nb_of_seconds
 
 
@@ -142,7 +143,16 @@ def make_eval_df(datasets: dict) -> dict:
 
 
 def make_future_df(
-    dates: dict, df: pd.DataFrame, datasets: dict, cleaning: dict, include_history: bool = True
+    dates: dict,
+    df: pd.DataFrame,
+    datasets: dict,
+    cleaning: dict,
+    date_col: str,
+    target_col: str,
+    dimensions: dict,
+    load_options: dict,
+    config: dict,
+    resampling: dict,
 ) -> dict:
     """Adds future dataframe in datasets dictionary's values.
 
@@ -156,8 +166,18 @@ def make_future_df(
         Dictionary storing all dataframes.
     cleaning : dict
         Cleaning specifications to apply to future dataframe.
-    include_history : bool
-        Whether or not to include historical data in future dataframe.
+    date_col : str
+        Name of date column.
+    target_col : str
+        Name of target column.
+    dimensions : dict
+        Dictionary containing dimensions information.
+    load_options : dict
+        Loading options selected by user.
+    config : dict
+        Lib configuration dictionary.
+    resampling : dict
+        Resampling specifications.
 
     Returns
     -------
@@ -166,14 +186,9 @@ def make_future_df(
     """
     # TODO: Inclure les valeurs futures de régresseurs ? Pour l'instant, use_regressors = False pour le forecast
     datasets["full"] = df.copy()
-    if include_history:
-        start_date = datasets["full"].ds.min()
-    else:
-        start_date = dates["forecast_start_date"]
-    future = pd.date_range(
-        start=start_date, end=dates["forecast_end_date"], freq=dates["forecast_freq"]
+    future, datasets = prepare_future_df(
+        datasets, dates, date_col, target_col, dimensions, load_options, config, resampling
     )
-    future = pd.DataFrame(future, columns=["ds"])
     future = clean_future_df(future, cleaning)
     datasets["future"] = future
     return datasets

@@ -401,3 +401,146 @@ def check_dataset_size(df: pd.DataFrame, config: dict) -> None:
             f"Please resample with a higher frequency or change cleaning options."
         )
         st.stop()
+
+
+def check_future_regressors_df(
+    datasets: dict, dates: dict, params: dict, resampling: dict, date_col: str, dimensions: dict
+) -> bool:
+    """Displays a message if the future regressors dataframe is incorrect and says whether or not to use it afterwards.
+
+    Parameters
+    ----------
+    datasets : dict
+        Dictionary storing all dataframes.
+    dates : dict
+        Dictionary containing future forecasting dates information.
+    params : dict
+        Dictionary containing all model parameters and list of selected regressors.
+    resampling : dict
+        Dictionary containing dataset frequency information.
+    date_col : str
+        Name of date column.
+    dimensions : dict
+        Dictionary containing dimensions information.
+
+    Returns
+    -------
+    bool
+        Whether or not to use regressors for future forecast.
+    """
+    use_regressors = False
+    if "future_regressors" in datasets.keys():
+        # Check date column
+        if date_col not in datasets["future_regressors"].columns:
+            st.error(
+                f"Date column '{date_col}' not found in the dataset provided for future regressors."
+            )
+            st.stop()
+        # Check number of distinct dates
+        N_dates_input = datasets["future_regressors"][date_col].nunique()
+        N_dates_expected = len(
+            pd.date_range(
+                start=dates["forecast_start_date"],
+                end=dates["forecast_end_date"],
+                freq=resampling["freq"],
+            )
+        )
+        if N_dates_input != N_dates_expected:
+            st.error(
+                f"The dataset provided for future regressors has the right number of distinct dates "
+                f"(expected {N_dates_expected}, found {N_dates_input}). "
+                f"Please make sure that the date column goes from {dates['forecast_start_date'].strftime('%Y-%m-%d')} "
+                f"to {dates['forecast_end_date'].strftime('%Y-%m-%d')} at frequency {resampling['freq']} "
+                f"without skipping any date in this range."
+            )
+            st.stop()
+        # Check regressors
+        regressors_expected = set(params["regressors"].keys())
+        input_cols = set(datasets["future_regressors"])
+        if len(input_cols.intersection(regressors_expected)) != len(regressors_expected):
+            missing_regressors = [reg for reg in regressors_expected if reg not in input_cols]
+            if len(missing_regressors) > 1:
+                st.error(
+                    f"Columns {', '.join(missing_regressors[:-1])} and {missing_regressors[-1]} are missing "
+                    f"in the dataset provided for future regressors."
+                )
+            else:
+                st.error(
+                    f"Column {missing_regressors[0]} is missing in the dataset provided for future regressors."
+                )
+            st.stop()
+        # Check dimensions
+        dim_expected = {dim for dim in dimensions.keys() if dim != "agg"}
+        if len(input_cols.intersection(dim_expected)) != len(dim_expected):
+            missing_dim = [dim for dim in dim_expected if dim not in input_cols]
+            if len(missing_dim) > 1:
+                st.error(
+                    f"Dimension columns {', '.join(missing_dim[:-1])} and {missing_dim[-1]} are missing "
+                    f"in the dataset provided for future regressors."
+                )
+            else:
+                st.error(
+                    f"Dimension column {missing_dim[0]} is missing in the dataset provided for future regressors."
+                )
+            st.stop()
+        use_regressors = True
+    return use_regressors
+
+
+def prepare_future_df(
+    datasets: dict,
+    dates: dict,
+    date_col: str,
+    target_col: str,
+    dimensions: dict,
+    load_options: dict,
+    config: dict,
+    resampling: dict,
+) -> Tuple[pd.DataFrame, dict]:
+    """Applies data preparation to the dataset provided with future regressors.
+
+    Parameters
+    ----------
+    datasets : dict
+        Dictionary storing all dataframes.
+    dates : dict
+        Dictionary containing future forecasting dates information.
+    date_col : str
+        Name of date column.
+    target_col : str
+        Name of target column.
+    dimensions : dict
+        Dictionary containing dimensions information.
+    load_options : dict
+        Loading options selected by user.
+    config : dict
+        Lib configuration dictionary.
+    resampling : dict
+        Resampling specifications.
+
+    Returns
+    -------
+    pd.DataFrame
+        Prepared  future dataframe.
+    dict
+        Dictionary storing all dataframes.
+    """
+    if "future_regressors" in datasets.keys():
+        future = datasets["future_regressors"]
+        future[target_col] = 0
+        future = pd.concat([datasets["uploaded"][list(future.columns)], future], axis=0)
+        future, _ = remove_empty_cols(future)
+        future = format_date_and_target(future, date_col, target_col, config, load_options)
+        future, _ = filter_and_aggregate_df(future, dimensions, config, date_col, target_col)
+        future = format_datetime(future, resampling)
+        future = resample_df(future, resampling)
+        datasets["full"] = future.loc[future["ds"] < dates["forecast_start_date"]]
+        future = future.drop("y", axis=1)
+    else:
+        future_dates = pd.date_range(
+            start=datasets["full"].ds.min(),
+            end=dates["forecast_end_date"],
+            freq=dates["forecast_freq"],
+        )
+        future = pd.DataFrame(future_dates, columns=["ds"])
+    return future, datasets

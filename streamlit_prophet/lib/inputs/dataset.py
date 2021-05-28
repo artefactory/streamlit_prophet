@@ -8,7 +8,7 @@ from streamlit_prophet.lib.utils.load import download_toy_dataset, load_custom_c
 
 def input_dataset(
     config: dict, readme: dict, instructions: dict
-) -> Tuple[pd.DataFrame, dict, dict]:
+) -> Tuple[pd.DataFrame, dict, dict, dict]:
     """Lets the user decide whether to upload a dataset or download a toy dataset.
 
     Parameters
@@ -26,8 +26,12 @@ def input_dataset(
         Selected dataset loaded into a dataframe.
     dict
         Loading options selected by user (upload or download, dataset name if download).
+    dict
+        Lib configuration dictionary.
+    dict
+        Dictionary containing all datasets.
     """
-    load_options = dict()
+    load_options, datasets = dict(), dict()
     load_options["toy_dataset"] = st.checkbox(
         "Load a toy dataset", True, help=readme["tooltips"]["upload_choice"]
     )
@@ -76,7 +80,8 @@ def input_dataset(
             df = load_dataset(file, load_options)
         else:
             st.stop()
-    return df, load_options, config
+    datasets["uploaded"] = df.copy()
+    return df, load_options, config, datasets
 
 
 def input_columns(
@@ -132,28 +137,58 @@ def input_columns(
 
 
 def input_future_regressors(
-    datasets: dict, dates: dict, params: dict, resampling: dict, load_options: dict
+    datasets: dict, dates: dict, params: dict, dimensions: dict, load_options: dict, date_col: str
 ) -> pd.DataFrame:
+    """Adds future regressors dataframe in datasets dictionary's values.
+
+    Parameters
+    ----------
+    datasets : dict
+        Dictionary storing all dataframes.
+    dates : dict
+        Dictionary containing future forecasting dates information.
+    params : dict
+        Dictionary containing all model parameters and list of selected regressors.
+    dimensions : dict
+        Dictionary containing dimensions information.
+    load_options : dict
+        Loading options selected by user (including csv delimiter).
+    date_col : str
+        Name of date column.
+
+    Returns
+    -------
+    dict
+        The datasets dictionary containing future regressors dataframe.
+    """
     if len(params["regressors"].keys()) > 0:
         regressors_col = list(params["regressors"].keys())
         start, end = dates["forecast_start_date"], dates["forecast_end_date"]
-        freq = resampling["freq"]
         tooltip = (
             f"Please upload a csv file with delimiter '{load_options['separator']}' "
-            "and the following specifications: \n"
+            "and the same format as input dataset, ie with the following specifications: \n"
         )
         tooltip += (
-            f"- Date column from {start.strftime('%Y-%m-%d')} "
-            f"to {end.strftime('%Y-%m-%d')} at frequency {freq} "
-            f"(without skipping any date in this range). \n"
+            f"- Date column named `{date_col}`, going from **{start.strftime('%Y-%m-%d')}** "
+            f"to **{end.strftime('%Y-%m-%d')}** at the same frequency as input dataset "
+            f"and at format **{load_options['date_format']}**. \n"
         )
+        dimensions_col = [col for col in dimensions.keys() if col != "agg"]
+        if len(dimensions_col) > 0:
+            if len(dimensions_col) > 1:
+                tooltip += (
+                    f"- Columns with the following names for dimensions: `{', '.join(dimensions_col[:-1])}, "
+                    f"{dimensions_col[-1]}`. \n"
+                )
+            else:
+                tooltip += f"- Dimension column named `{dimensions_col[0]}`. \n"
         if len(regressors_col) > 1:
             tooltip += (
-                f"- Values for the following regressors: {', '.join(regressors_col[:-1])}, "
-                f"{regressors_col[-1]}."
+                f"- Columns with the following names for regressors: `{', '.join(regressors_col[:-1])}, "
+                f"{regressors_col[-1]}`."
             )
         else:
-            tooltip += f"- Values for the regressor {regressors_col[0]}."
+            tooltip += f"- Regressor column named `{regressors_col[0]}`."
         regressors_file = st.file_uploader(
             "Upload a csv file for regressors", type="csv", help=tooltip
         )

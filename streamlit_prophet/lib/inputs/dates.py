@@ -155,33 +155,25 @@ def input_forecast_dates(
         Dictionary containing future forecast dates information.
     """
     forecast_freq_name = mapping_freq_names(resampling["freq"][-1])
-    forecast_horizon = st.number_input(
+    dates["forecast_horizon"] = st.number_input(
         f"Forecast horizon in {forecast_freq_name}",
         min_value=1,
         value=config["horizon"][resampling["freq"][-1]],
         help=readme["tooltips"]["forecast_horizon"],
     )
-    right_after = st.checkbox(
-        "Start forecasting right after the most recent date in dataset",
-        value=True,
-        help=readme["tooltips"]["forecast_start"],
-    )
-    if right_after:
-        if forecast_freq_name in ["seconds", "hours"]:
-            dates["forecast_start_date"] = df.ds.max() + timedelta(seconds=1)
-        else:
-            dates["forecast_start_date"] = df.ds.max() + timedelta(days=1)
-    else:
-        dates["forecast_start_date"] = st.date_input(
-            "Forecast start date:", value=df.ds.max(), min_value=df.ds.max()
-        )
     if forecast_freq_name in ["seconds", "hours"]:
-        timedelta_horizon = convert_into_nb_of_seconds(resampling["freq"][-1], forecast_horizon)
+        dates["forecast_start_date"] = df.ds.max() + timedelta(seconds=1)
+        timedelta_horizon = convert_into_nb_of_seconds(
+            resampling["freq"][-1], dates["forecast_horizon"]
+        )
         dates["forecast_end_date"] = dates["forecast_start_date"] + timedelta(
             seconds=timedelta_horizon
         )
     else:
-        timedelta_horizon = convert_into_nb_of_days(resampling["freq"][-1], forecast_horizon)
+        dates["forecast_start_date"] = df.ds.max() + timedelta(days=1)
+        timedelta_horizon = convert_into_nb_of_days(
+            resampling["freq"][-1], dates["forecast_horizon"]
+        )
         dates["forecast_end_date"] = dates["forecast_start_date"] + timedelta(
             days=timedelta_horizon
         )

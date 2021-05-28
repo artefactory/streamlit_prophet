@@ -49,7 +49,7 @@ config, instructions, readme = load_config(
 )
 
 # Initialization
-dates, datasets = dict(), dict()
+dates = dict()
 
 # Info
 with st.beta_expander("What is this app?", expanded=False):
@@ -61,7 +61,7 @@ st.sidebar.title("1. Data")
 
 # Load data
 with st.sidebar.beta_expander("Dataset", expanded=True):
-    df, load_options, config = input_dataset(config, readme, instructions)
+    df, load_options, config, datasets = input_dataset(config, readme, instructions)
     df, empty_cols = remove_empty_cols(df)
     print_empty_cols(empty_cols)
 
@@ -154,7 +154,9 @@ if make_future_forecast:
     with st.sidebar.beta_expander("Horizon", expanded=False):
         dates = input_forecast_dates(df, dates, resampling, config, readme)
     with st.sidebar.beta_expander("Regressors", expanded=False):
-        datasets = input_future_regressors(datasets, dates, params, resampling, load_options)
+        datasets = input_future_regressors(
+            datasets, dates, params, dimensions, load_options, date_col
+        )
 
 # Launch training & forecast
 if st.checkbox(
@@ -179,6 +181,10 @@ if launch_forecast:
         dates,
         datasets,
         df,
+        date_col,
+        target_col,
+        dimensions,
+        load_options,
     )
 
     # Visualizations

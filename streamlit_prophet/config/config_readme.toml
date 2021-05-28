@@ -110,11 +110,7 @@ In that case, the model will be trained on the whole dataset and the forecast wi
 * Uncheck if you just want to evaluate your model performance on known data.
 """
 forecast_horizon = """
-Length of the period to forecast.
-"""
-forecast_start = """
-By default, forecasting will start just after the most recent date in your dataset.
-Uncheck if you want to select another forecasting start date.
+Length of the period to forecast after the last date available in input dataset.
 """
 holidays_prior_scale = """
 Determines the magnitude of the holidays effect on your predictions.

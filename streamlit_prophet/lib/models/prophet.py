@@ -4,10 +4,11 @@ import pandas as pd
 from fbprophet import Prophet
 from fbprophet.diagnostics import cross_validation
 from streamlit_prophet.lib.dataprep.clean import exp_transform
+from streamlit_prophet.lib.dataprep.format import check_future_regressors_df
 from streamlit_prophet.lib.dataprep.split import make_eval_df, make_future_df
 from streamlit_prophet.lib.exposition.preparation import get_df_cv_with_hist
+from streamlit_prophet.lib.models.preparation import get_prophet_cv_horizon
 from streamlit_prophet.lib.utils.logging import suppress_stdout_stderr
-from streamlit_prophet.lib.utils.mapping import convert_into_nb_of_days, convert_into_nb_of_seconds
 
 
 def instantiate_prophet_model(params, use_regressors=True) -> Prophet:
@@ -54,6 +55,10 @@ def forecast_workflow(
     dates: dict,
     datasets: dict,
     df: pd.DataFrame,
+    date_col: str,
+    target_col: str,
+    dimensions: dict,
+    load_options: dict,
 ) -> Tuple[dict, dict, dict]:
     """Trains a Prophet model and makes a prediction on evaluation data and future data if needed.
 
@@ -79,6 +84,14 @@ def forecast_workflow(
         Dictionary containing all relevant dataframes for training and forecasting.
     df : pd.DataFrame
         Full input dataframe, after cleaning, filtering and resampling.
+    date_col : str
+        Name of date column.
+    target_col : str
+        Name of target column.
+    dimensions : dict
+        Dictionary containing dimensions information.
+    load_options : dict
+        Loading options selected by user.
 
     Returns
     -------
@@ -97,7 +110,19 @@ def forecast_workflow(
             )
         if make_future_forecast:
             datasets, models, forecasts = forecast_future(
-                config, params, cleaning, dates, datasets, models, forecasts, df
+                config,
+                params,
+                cleaning,
+                dates,
+                datasets,
+                models,
+                forecasts,
+                df,
+                resampling,
+                date_col,
+                target_col,
+                dimensions,
+                load_options,
             )
     if cleaning["log_transform"] & (evaluate | make_future_forecast):
         datasets, forecasts = exp_transform(datasets, forecasts)
@@ -150,7 +175,7 @@ def forecast_eval(
         forecasts["cv"] = cross_validation(
             models["eval"],
             cutoffs=dates["cutoffs"],
-            horizon=_get_prophet_cv_horizon(dates, resampling),
+            horizon=get_prophet_cv_horizon(dates, resampling),
             parallel="processes",
         )
         forecasts["cv_with_hist"] = get_df_cv_with_hist(forecasts, datasets, models)
@@ -169,6 +194,11 @@ def forecast_future(
     models: dict,
     forecasts: dict,
     df: pd.DataFrame,
+    resampling: dict,
+    date_col: str,
+    target_col: str,
+    dimensions: dict,
+    load_options: dict,
 ) -> Tuple[dict, dict, dict]:
     """Trains a Prophet model on the whole dataset and makes a prediction on future data.
 
@@ -190,6 +220,16 @@ def forecast_future(
         Dictionary containing the different forecasts.
     df : pd.DataFrame
         Full input dataframe, after cleaning, filtering and resampling.
+    resampling : dict
+        Dictionary containing dataset frequency information.
+    date_col : str
+        Name of date column.
+    target_col : str
+        Name of target column.
+    dimensions : dict
+        Dictionary containing dimensions information.
+    load_options : dict
+        Loading options selected by user.
 
     Returns
     -------
@@ -200,32 +240,22 @@ def forecast_future(
     dict
         Dictionary containing the different forecasts.
     """
-    datasets = make_future_df(dates, df, datasets, cleaning)
-    models["future"] = instantiate_prophet_model(params, use_regressors=False)
+    use_regressors = check_future_regressors_df(
+        datasets, dates, params, resampling, date_col, dimensions
+    )
+    datasets = make_future_df(
+        dates,
+        df,
+        datasets,
+        cleaning,
+        date_col,
+        target_col,
+        dimensions,
+        load_options,
+        config,
+        resampling,
+    )
+    models["future"] = instantiate_prophet_model(params, use_regressors=use_regressors)
     models["future"].fit(datasets["full"], seed=config["global"]["seed"])
     forecasts["future"] = models["future"].predict(datasets["future"])
     return datasets, models, forecasts
-
-
-def _get_prophet_cv_horizon(dates: dict, resampling: dict) -> str:
-    """Returns cross-validation horizon at the right format for Prophet cross_validation function.
-
-    Parameters
-    ----------
-    dates : dict
-        Dictionary containing cross-validation information.
-    resampling : dict
-        Dictionary containing dataset frequency information.
-
-    Returns
-    -------
-    str
-        Cross-validation horizon at the right format for Prophet cross_validation function.
-    """
-    freq = resampling["freq"][-1]
-    horizon = dates["folds_horizon"]
-    if freq in ["s", "H"]:
-        prophet_horizon = f"{convert_into_nb_of_seconds(freq, horizon)} seconds"
-    else:
-        prophet_horizon = f"{convert_into_nb_of_days(freq, horizon)} days"
-    return prophet_horizon
