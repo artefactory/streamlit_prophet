@@ -184,7 +184,6 @@ def make_future_df(
     dict
         The datasets dictionary containing future dataframe.
     """
-    # TODO: Inclure les valeurs futures de régresseurs ? Pour l'instant, use_regressors = False pour le forecast
     datasets["full"] = df.copy()
     future, datasets = prepare_future_df(
         datasets, dates, date_col, target_col, dimensions, load_options, config, resampling

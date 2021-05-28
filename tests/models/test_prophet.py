@@ -6,6 +6,7 @@ from tests.samples.df import df_test
 from tests.samples.dict import (
     make_cleaning_test,
     make_dates_test,
+    make_dimensions_test,
     make_params_test,
     make_resampling_test,
 )
@@ -33,6 +34,9 @@ def test_forecast_workflow(use_cv, make_future_forecast, evaluate):
     dates = make_dates_test()
     cleaning = make_cleaning_test()
     resampling = make_resampling_test()
+    dimensions = make_dimensions_test(df, frac=1)
+    load_options = {"date_format": "%Y-%m-%d"}
+    date_col, target_col = "ds", "y"
     datasets = (
         get_train_set(df, dates, dict())
         if use_cv
@@ -49,6 +53,10 @@ def test_forecast_workflow(use_cv, make_future_forecast, evaluate):
         dates,
         datasets,
         df,
+        date_col,
+        target_col,
+        dimensions,
+        load_options,
     )
     # All dataframes in forecasts dictionary have at least a 'ds' column and a 'yhat' column
     assert all([len({"ds", "yhat"}.intersection(set(x.columns))) == 2 for x in forecasts.values()])
