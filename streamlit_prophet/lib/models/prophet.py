@@ -272,7 +272,7 @@ def _add_prophet_holidays(model: Prophet, holidays_params: dict, dates: dict) ->
 
     holidays_df_list = []
     if holidays_params["school_holidays"]:
-        years = range(min(dates.values()).year, max(dates.values()).year + 1)
+        years = list(range(min(dates.values()).year, max(dates.values()).year + 1))
         get_holidays_func = SCHOOL_HOLIDAYS_FUNC_MAPPING[holidays_country]
         holidays_df = get_holidays_func(years)
         holidays_df[["lower_window", "upper_window"]] = 0
