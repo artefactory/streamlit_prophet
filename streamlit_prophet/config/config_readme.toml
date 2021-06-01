@@ -150,8 +150,18 @@ Number of days of each cycle.
 add_custom_seasonality = """
 Check to include a specific seasonality in the model (other than the ones listed above).
 """
-holidays = """
+holidays_country = """
+To add country specific holidays, you need to select a unique country first.\
 Prophet will try to model the impact of each selected holidays on the target variable.
+"""
+public_holidays = """
+Public holidays such as Bastille day in France, Christmas, 4th of July in the US, etc
+"""
+school_holidays = """
+School holidays. Not availaible for alla countries at this time.
+"""
+lockdown_events = """
+Nation-wide lockdown events due to covid 19 pandemic in 2020-2021. Not availaible for alla countries at this time.
 """
 add_all_regressors = """
 Regressors are quantities related to the target, that will help Prophet adjusting its forecasts.

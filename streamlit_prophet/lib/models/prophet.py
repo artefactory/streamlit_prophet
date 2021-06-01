@@ -9,9 +9,13 @@ from streamlit_prophet.lib.dataprep.split import make_eval_df, make_future_df
 from streamlit_prophet.lib.exposition.preparation import get_df_cv_with_hist
 from streamlit_prophet.lib.models.preparation import get_prophet_cv_horizon
 from streamlit_prophet.lib.utils.logging import suppress_stdout_stderr
+from streamlit_prophet.lib.utils.mapping import (
+    COVID_LOCKDOWN_DATES_MAPPING,
+    SCHOOL_HOLIDAYS_FUNC_MAPPING,
+)
 
 
-def instantiate_prophet_model(params, use_regressors=True) -> Prophet:
+def instantiate_prophet_model(params, use_regressors=True, dates=None) -> Prophet:
     """Instantiates a Prophet model with input parameters.
 
     Parameters
@@ -34,8 +38,8 @@ def instantiate_prophet_model(params, use_regressors=True) -> Prophet:
     for _, values in params["seasonalities"].items():
         if "custom_param" in values:
             model.add_seasonality(**values["custom_param"])
-    for country in params["holidays"]:
-        model.add_country_holidays(country)
+    model = _add_prophet_holidays(model, params["holidays"], dates)
+
     if use_regressors:
         for regressor in params["regressors"].keys():
             model.add_regressor(
@@ -169,7 +173,7 @@ def forecast_eval(
     dict
         Dictionary containing the different forecasts.
     """
-    models["eval"] = instantiate_prophet_model(params)
+    models["eval"] = instantiate_prophet_model(params, dates=dates)
     models["eval"].fit(datasets["train"], seed=config["global"]["seed"])
     if use_cv:
         forecasts["cv"] = cross_validation(
@@ -259,3 +263,33 @@ def forecast_future(
     models["future"].fit(datasets["full"], seed=config["global"]["seed"])
     forecasts["future"] = models["future"].predict(datasets["future"])
     return datasets, models, forecasts
+
+
+def _add_prophet_holidays(model: Prophet, holidays_params: dict, dates: dict) -> pd.DataFrame:
+    holidays_country = holidays_params["country"]
+    if holidays_params["public_holidays"]:
+        model.add_country_holidays(holidays_country)
+
+    holidays_df_list = []
+    if holidays_params["school_holidays"]:
+        years = range(min(dates.values()).year, max(dates.values()).year + 1)
+        get_holidays_func = SCHOOL_HOLIDAYS_FUNC_MAPPING[holidays_country]
+        holidays_df = get_holidays_func(years)
+        holidays_df[["lower_window", "upper_window"]] = 0
+        holidays_df["holiday"] = "school_holiday_" + holidays_df["holiday"]
+        holidays_df_list.append(holidays_df)
+
+    for lockdown in holidays_params["lockdowns"]:
+        lockdown_idx = int(lockdown.split()[-1]) - 1
+        start, end = COVID_LOCKDOWN_DATES_MAPPING[holidays_country][lockdown_idx]
+        ds = pd.date_range(start=start, end=end)
+        lockdown_df = pd.DataFrame(
+            {"holiday": lockdown, "ds": ds, "lower_window": 0, "upper_window": 0}
+        )
+        holidays_df_list.append(lockdown_df)
+
+    if len(holidays_df_list) == 0:
+        return model
+    holidays_df = pd.concat(holidays_df_list, sort=True)
+    model.holidays = holidays_df
+    return model

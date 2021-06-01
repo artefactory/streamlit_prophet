@@ -35,9 +35,12 @@ changepoint_prior_scale = 0.05
 growth = ['linear', 'flat'] # List of options, the first element of the list will be the default parameter.
 seasonality_mode = ['additive', 'multiplicative'] # List of options, the first element of the list will be the default parameter.
 changepoint_range = 0.8
-holidays = [] # List of countries whose holidays will be added as regressors.
+holidays_country = "France" # List of countries whose holidays will be added as regressors.
 # Options: "France", "United States", "United Kingdom", "Canada", "Brazil", "Mexico", "India", "China", "Japan",
 # "Germany", "Italy", "Russia", "Belgium", "Portugal", "Poland"
+public_holidays = false
+school_holidays = false
+lockdown_events = []
 
 [horizon]
 s = 86400 # Default number of seconds in validation set if dataset frequency is in seconds
