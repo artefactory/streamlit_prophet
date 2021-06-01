@@ -2,6 +2,7 @@
 
 import pandas as pd
 import streamlit as st
+from streamlit_prophet.lib.utils.holidays import lockdown_format_func
 from streamlit_prophet.lib.utils.mapping import (
     COUNTRY_NAMES_MAPPING,
     COVID_LOCKDOWN_DATES_MAPPING,
@@ -185,15 +186,15 @@ def input_holidays_params(params: dict, readme: dict, config: dict) -> dict:
     countries = list(COUNTRY_NAMES_MAPPING.keys())
     default_country = config["model"]["holidays_country"]
     country = st.selectbox(
-        "Chose the country you want to add holidays for",
-        countries,
+        label="Chose the country you want to add holidays for",
+        options=countries,
         index=countries.index(default_country),
+        format_func=lambda x: COUNTRY_NAMES_MAPPING[x],
         help=readme["tooltips"]["holidays_country"],
     )
-    country = COUNTRY_NAMES_MAPPING[country]
 
     public_holidays = st.checkbox(
-        "Public holidays",
+        label="Public holidays",
         value=config["model"]["public_holidays"],
         help=readme["tooltips"]["public_holidays"],
     )
@@ -201,18 +202,19 @@ def input_holidays_params(params: dict, readme: dict, config: dict) -> dict:
     school_holidays = False
     if country in SCHOOL_HOLIDAYS_FUNC_MAPPING.keys():
         school_holidays = st.checkbox(
-            "School holidays",
+            label="School holidays",
             value=config["model"]["school_holidays"],
             help=readme["tooltips"]["school_holidays"],
         )
 
     lockdowns = []
     if country in COVID_LOCKDOWN_DATES_MAPPING.keys():
-        n_lockdowns = len(COVID_LOCKDOWN_DATES_MAPPING[country])
+        lockdown_options = list(range(len(COVID_LOCKDOWN_DATES_MAPPING[country])))
         lockdowns = st.multiselect(
-            "Lockdown events",
-            [f"Lockdown {i + 1}" for i in range(n_lockdowns)],
+            label="Lockdown events",
+            options=lockdown_options,
             default=config["model"]["lockdown_events"],
+            format_func=lockdown_format_func,
             help=readme["tooltips"]["lockdown_events"],
         )
 
@@ -220,7 +222,7 @@ def input_holidays_params(params: dict, readme: dict, config: dict) -> dict:
         "country": country,
         "public_holidays": public_holidays,
         "school_holidays": school_holidays,
-        "lockdowns": lockdowns,
+        "lockdown_events": lockdowns,
     }
     return params
 

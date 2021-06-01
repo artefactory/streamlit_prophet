@@ -8,6 +8,7 @@ from streamlit_prophet.lib.dataprep.format import check_future_regressors_df
 from streamlit_prophet.lib.dataprep.split import make_eval_df, make_future_df
 from streamlit_prophet.lib.exposition.preparation import get_df_cv_with_hist
 from streamlit_prophet.lib.models.preparation import get_prophet_cv_horizon
+from streamlit_prophet.lib.utils.holidays import lockdown_format_func
 from streamlit_prophet.lib.utils.logging import suppress_stdout_stderr
 from streamlit_prophet.lib.utils.mapping import (
     COVID_LOCKDOWN_DATES_MAPPING,
@@ -266,6 +267,15 @@ def forecast_future(
 
 
 def _add_prophet_holidays(model: Prophet, holidays_params: dict, dates: dict) -> pd.DataFrame:
+    """Add all available holidays fto the Prophet model
+
+    Parameters
+    ----------
+    model: Prophet
+        Prophet model to add holidays to
+    holidays_params: dict
+        dict of parameters including 'country': str, 'public_holidays': bool, 'school_holidays': bool, lockdown_events: List[int]
+    """
     holidays_country = holidays_params["country"]
     if holidays_params["public_holidays"]:
         model.add_country_holidays(holidays_country)
@@ -276,15 +286,18 @@ def _add_prophet_holidays(model: Prophet, holidays_params: dict, dates: dict) ->
         get_holidays_func = SCHOOL_HOLIDAYS_FUNC_MAPPING[holidays_country]
         holidays_df = get_holidays_func(years)
         holidays_df[["lower_window", "upper_window"]] = 0
-        holidays_df["holiday"] = "school_holiday_" + holidays_df["holiday"]
         holidays_df_list.append(holidays_df)
 
-    for lockdown in holidays_params["lockdowns"]:
-        lockdown_idx = int(lockdown.split()[-1]) - 1
+    for lockdown_idx in holidays_params["lockdown_events"]:
         start, end = COVID_LOCKDOWN_DATES_MAPPING[holidays_country][lockdown_idx]
         ds = pd.date_range(start=start, end=end)
         lockdown_df = pd.DataFrame(
-            {"holiday": lockdown, "ds": ds, "lower_window": 0, "upper_window": 0}
+            {
+                "holiday": lockdown_format_func(lockdown_idx),
+                "ds": ds,
+                "lower_window": 0,
+                "upper_window": 0,
+            }
         )
         holidays_df_list.append(lockdown_df)
 
