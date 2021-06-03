@@ -1,3 +1,5 @@
+from typing import Any, Dict, List
+
 from datetime import datetime
 
 import numpy as np
@@ -12,7 +14,9 @@ config, _, _ = load_config(
 
 
 # Resampling
-def make_resampling_test(freq: str = "D", resample: bool = True, agg: str = "Mean") -> dict:
+def make_resampling_test(
+    freq: str = "D", resample: bool = True, agg: str = "Mean"
+) -> Dict[Any, Any]:
     """Creates a resampling dictionary with specifications defined by the arguments, for testing purpose.
 
     Parameters
@@ -33,7 +37,7 @@ def make_resampling_test(freq: str = "D", resample: bool = True, agg: str = "Mea
 
 
 # Dimensions
-def make_dimensions_test(df: pd.DataFrame, frac: float = 0.5, agg: str = "Mean") -> dict:
+def make_dimensions_test(df: pd.DataFrame, frac: float = 0.5, agg: str = "Mean") -> Dict[Any, Any]:
     """Creates a dimensions dictionary with specifications defined by the arguments, for testing purpose.
 
     Parameters
@@ -62,11 +66,11 @@ def make_dimensions_test(df: pd.DataFrame, frac: float = 0.5, agg: str = "Mean")
 
 # Cleaning
 def make_cleaning_test(
-    del_days: list = [],
+    del_days: List[Any] = [],
     del_zeros: bool = True,
     del_negative: bool = True,
     log_transform: bool = False,
-) -> dict:
+) -> Dict[Any, Any]:
     """Creates a cleaning dictionary with specifications defined by the arguments, for testing purpose.
 
     Parameters
@@ -104,7 +108,7 @@ def make_dates_test(
     n_folds: int = 5,
     folds_horizon: int = 0,
     freq: str = "D",
-) -> dict:
+) -> Dict[Any, Any]:
     """Creates a dates dictionary with specifications defined by the arguments, for testing purpose.
 
     Parameters
@@ -150,7 +154,9 @@ def make_dates_test(
 
 
 # Eval
-def make_eval_test(granularity: str = "Daily", get_perf_on_agg_forecast: bool = False) -> dict:
+def make_eval_test(
+    granularity: str = "Daily", get_perf_on_agg_forecast: bool = False
+) -> Dict[Any, Any]:
     """Creates an evaluation dictionary with specifications defined by the arguments, for testing purpose.
 
     Parameters
@@ -173,12 +179,12 @@ def make_eval_test(granularity: str = "Daily", get_perf_on_agg_forecast: bool = 
 
 
 # Params
-def make_params_test(regressors: dict = dict()):
+def make_params_test(regressors: Dict[Any, Any] = dict()) -> Dict[Any, Any]:
     """Creates a params dictionary with specifications defined by the arguments, for testing purpose.
 
     Parameters
     ----------
-    regressors : dict
+    regressors : Dict
         Value for the 'regressors' key of dictionary.
 
     Returns

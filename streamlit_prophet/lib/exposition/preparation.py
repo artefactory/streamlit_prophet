@@ -1,13 +1,16 @@
-from typing import Tuple
+from typing import Any, Dict, List, Tuple
 
 import datetime
 from datetime import timedelta
 
 import pandas as pd
+from fbprophet import Prophet
 from streamlit_prophet.lib.utils.mapping import convert_into_nb_of_days, convert_into_nb_of_seconds
 
 
-def get_forecast_components(model, forecast_df: pd.DataFrame, include_yhat=False) -> pd.DataFrame:
+def get_forecast_components(
+    model: Prophet, forecast_df: pd.DataFrame, include_yhat: bool = False
+) -> pd.DataFrame:
     """Returns a dataframe with only the relevant components to sum to get the prediction.
 
     Parameters
@@ -36,7 +39,7 @@ def get_forecast_components(model, forecast_df: pd.DataFrame, include_yhat=False
     return components
 
 
-def get_forecast_components_col_names(forecast_df: pd.DataFrame) -> list:
+def get_forecast_components_col_names(forecast_df: pd.DataFrame) -> List[Any]:
     """Returns the list of columns to keep in forecast dataframe to get all components without upper/lower bounds.
 
     Parameters
@@ -60,16 +63,18 @@ def get_forecast_components_col_names(forecast_df: pd.DataFrame) -> list:
     return components_col
 
 
-def get_df_cv_with_hist(forecasts: dict, datasets: dict, models: dict) -> pd.DataFrame:
+def get_df_cv_with_hist(
+    forecasts: Dict[Any, Any], datasets: Dict[Any, Any], models: Dict[Any, Any]
+) -> pd.DataFrame:
     """Adds training rows not included in CV validation folds to the dataframe containing cross-validation results.
 
     Parameters
     ----------
-    forecasts : dict
+    forecasts : Dict
         Dictionary containing the dataframe with cross-validation results.
-    datasets : dict
+    datasets : Dict
         Dictionary containing training dataframe.
-    models : dict
+    models : Dict
         Dictionary containing the model fitted for evaluation.
 
     Returns
@@ -87,14 +92,14 @@ def get_df_cv_with_hist(forecasts: dict, datasets: dict, models: dict) -> pd.Dat
     return df_cv
 
 
-def get_cv_dates_dict(dates: dict, resampling: dict) -> dict:
+def get_cv_dates_dict(dates: Dict[Any, Any], resampling: Dict[Any, Any]) -> Dict[Any, Any]:
     """Returns a dictionary whose keys are CV folds and values are dictionaries with each fold's train/valid dates.
 
     Parameters
     ----------
-    dates : dict
+    dates : Dict
         Dictionary containing cross-validation dates information.
-    resampling : dict
+    resampling : Dict
         Dictionary containing dataset frequency information.
 
     Returns
@@ -105,7 +110,7 @@ def get_cv_dates_dict(dates: dict, resampling: dict) -> dict:
     freq = resampling["freq"][-1]
     train_start = dates["train_start_date"]
     horizon = dates["folds_horizon"]
-    cv_dates = dict()
+    cv_dates: Dict[Any, Any] = dict()
     for i, cutoff in sorted(enumerate(dates["cutoffs"]), reverse=True):
         cv_dates[f"Fold {i + 1}"] = dict()
         cv_dates[f"Fold {i + 1}"]["train_start"] = train_start
@@ -122,14 +127,16 @@ def get_cv_dates_dict(dates: dict, resampling: dict) -> dict:
     return cv_dates
 
 
-def get_hover_template_cv(cv_dates: dict, resampling: dict) -> Tuple[pd.DataFrame, str]:
+def get_hover_template_cv(
+    cv_dates: Dict[Any, Any], resampling: Dict[Any, Any]
+) -> Tuple[pd.DataFrame, str]:
     """Returns a dataframe and a dictionary that will be used to show CV folds on a plotly bar plot.
 
     Parameters
     ----------
-    cv_dates : dict
+    cv_dates : Dict
         Dictionary containing training and validation dates of each cross-validation fold.
-    resampling : dict
+    resampling : Dict
         Dictionary containing dataset frequency information.
 
     Returns

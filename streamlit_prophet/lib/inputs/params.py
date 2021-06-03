@@ -1,22 +1,29 @@
 # type: ignore
 
+from typing import Any, Dict
+
 import pandas as pd
 import streamlit as st
 from streamlit_prophet.lib.utils.mapping import mapping_country_names
 
 
-def input_seasonality_params(config: dict, params: dict, resampling: dict, readme: dict) -> dict:
+def input_seasonality_params(
+    config: Dict[Any, Any],
+    params: Dict[Any, Any],
+    resampling: Dict[Any, Any],
+    readme: Dict[Any, Any],
+) -> Dict[Any, Any]:
     """Lets the user enter seasonality parameters.
 
     Parameters
     ----------
-    params : dict
+    params : Dict
         Model parameters.
-    config : dict
+    config : Dict
         Lib config dictionary containing information about default parameters.
-    resampling : dict
+    resampling : Dict
         Dictionary containing dataset frequency information.
-    readme : dict
+    readme : Dict
         Dictionary containing tooltips to guide user's choices.
 
     Returns
@@ -85,14 +92,14 @@ def input_seasonality_params(config: dict, params: dict, resampling: dict, readm
     return params
 
 
-def input_prior_scale_params(config: dict, readme: dict) -> dict:
+def input_prior_scale_params(config: Dict[Any, Any], readme: Dict[Any, Any]) -> Dict[Any, Any]:
     """Lets the user enter prior scale parameters.
 
     Parameters
     ----------
-    config : dict
+    config : Dict
         Lib config dictionary containing information about default parameters.
-    readme : dict
+    readme : Dict
         Dictionary containing tooltips to guide user's choices.
 
     Returns
@@ -126,16 +133,18 @@ def input_prior_scale_params(config: dict, readme: dict) -> dict:
     return params
 
 
-def input_other_params(config: dict, params: dict, readme: dict) -> dict:
+def input_other_params(
+    config: Dict[Any, Any], params: Dict[Any, Any], readme: Dict[Any, Any]
+) -> Dict[Any, Any]:
     """Lets the user enter other parameters (growth, changepoints_range, n_changepoints).
 
     Parameters
     ----------
-    config : dict
+    config : Dict
         Lib config dictionary containing information about default parameters.
-    params : dict
+    params : Dict
         Model parameters.
-    readme : dict
+    readme : Dict
         Dictionary containing tooltips to guide user's choices.
 
     Returns
@@ -161,16 +170,18 @@ def input_other_params(config: dict, params: dict, readme: dict) -> dict:
     return params
 
 
-def input_holidays_params(params: dict, readme: dict, config: dict) -> dict:
+def input_holidays_params(
+    params: Dict[Any, Any], readme: Dict[Any, Any], config: Dict[Any, Any]
+) -> Dict[Any, Any]:
     """Lets the user enter holidays parameters.
 
     Parameters
     ----------
-    params : dict
+    params : Dict
         Model parameters.
-    readme : dict
+    readme : Dict
         Dictionary containing tooltips to guide user's choices.
-    config : dict
+    config : Dict
         Dictionary where user can provide the list of countries whose holidays will be included.
 
     Returns
@@ -189,18 +200,20 @@ def input_holidays_params(params: dict, readme: dict, config: dict) -> dict:
     return params
 
 
-def input_regressors(df: pd.DataFrame, config: dict, params: dict, readme: dict) -> dict:
+def input_regressors(
+    df: pd.DataFrame, config: Dict[Any, Any], params: Dict[Any, Any], readme: Dict[Any, Any]
+) -> Dict[Any, Any]:
     """Lets the user select regressors.
 
     Parameters
     ----------
-    df : dict
+    df : Dict
         Prepared dataset (after filtering, resampling, cleaning).
-    config : dict
+    config : Dict
         Lib config dictionary containing information about default parameters.
-    params : dict
+    params : Dict
         Model parameters.
-    readme : dict
+    readme : Dict
         Dictionary containing tooltips to guide user's choices.
 
     Returns

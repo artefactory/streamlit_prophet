@@ -1,14 +1,16 @@
+from typing import Any, Dict
+
 from streamlit_prophet.lib.utils.mapping import convert_into_nb_of_days, convert_into_nb_of_seconds
 
 
-def get_prophet_cv_horizon(dates: dict, resampling: dict) -> str:
+def get_prophet_cv_horizon(dates: Dict[Any, Any], resampling: Dict[Any, Any]) -> str:
     """Returns cross-validation horizon at the right format for Prophet cross_validation function.
 
     Parameters
     ----------
-    dates : dict
+    dates : Dict
         Dictionary containing cross-validation information.
-    resampling : dict
+    resampling : Dict
         Dictionary containing dataset frequency information.
 
     Returns

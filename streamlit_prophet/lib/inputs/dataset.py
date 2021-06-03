@@ -1,4 +1,4 @@
-from typing import Tuple
+from typing import Any, Dict, Tuple
 
 import pandas as pd
 import streamlit as st
@@ -7,17 +7,17 @@ from streamlit_prophet.lib.utils.load import download_toy_dataset, load_custom_c
 
 
 def input_dataset(
-    config: dict, readme: dict, instructions: dict
-) -> Tuple[pd.DataFrame, dict, dict, dict]:
+    config: Dict[Any, Any], readme: Dict[Any, Any], instructions: Dict[Any, Any]
+) -> Tuple[pd.DataFrame, Dict[Any, Any], Dict[Any, Any], Dict[Any, Any]]:
     """Lets the user decide whether to upload a dataset or download a toy dataset.
 
     Parameters
     ----------
-    config : dict
+    config : Dict
         Lib config dictionary containing information about toy datasets (download links).
-    readme : dict
+    readme : Dict
         Dictionary containing tooltips to guide user's choices.
-    instructions : dict
+    instructions : Dict
         Dictionary containing instructions to provide a custom config.
 
     Returns
@@ -85,19 +85,19 @@ def input_dataset(
 
 
 def input_columns(
-    config: dict, readme: dict, df: pd.DataFrame, load_options: dict
+    config: Dict[Any, Any], readme: Dict[Any, Any], df: pd.DataFrame, load_options: Dict[Any, Any]
 ) -> Tuple[str, str]:
     """Lets the user specify date and target column names.
 
     Parameters
     ----------
-    config : dict
+    config : Dict
         Lib config dictionary containing information about toy datasets (date and target column names).
-    readme : dict
+    readme : Dict
         Dictionary containing tooltips to guide user's choices.
     df : pd.DataFrame
         Loaded dataset.
-    load_options : dict
+    load_options : Dict
         Loading options selected by user (upload or download, dataset name if download).
 
     Returns
@@ -137,21 +137,26 @@ def input_columns(
 
 
 def input_future_regressors(
-    datasets: dict, dates: dict, params: dict, dimensions: dict, load_options: dict, date_col: str
+    datasets: Dict[Any, Any],
+    dates: Dict[Any, Any],
+    params: Dict[Any, Any],
+    dimensions: Dict[Any, Any],
+    load_options: Dict[Any, Any],
+    date_col: str,
 ) -> pd.DataFrame:
     """Adds future regressors dataframe in datasets dictionary's values.
 
     Parameters
     ----------
-    datasets : dict
+    datasets : Dict
         Dictionary storing all dataframes.
-    dates : dict
+    dates : Dict
         Dictionary containing future forecasting dates information.
-    params : dict
+    params : Dict
         Dictionary containing all model parameters and list of selected regressors.
-    dimensions : dict
+    dimensions : Dict
         Dictionary containing dimensions information.
-    load_options : dict
+    load_options : Dict
         Loading options selected by user (including csv delimiter).
     date_col : str
         Name of date column.

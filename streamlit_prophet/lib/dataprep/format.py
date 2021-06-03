@@ -1,4 +1,4 @@
-from typing import Tuple
+from typing import Any, Dict, List, Tuple
 
 import numpy as np
 import pandas as pd
@@ -6,7 +6,7 @@ import streamlit as st
 
 
 @st.cache()
-def remove_empty_cols(df: pd.DataFrame) -> Tuple[pd.DataFrame, list]:
+def remove_empty_cols(df: pd.DataFrame) -> Tuple[pd.DataFrame, List[Any]]:
     """Remove columns with strictly less than 2 distinct values in input dataframe.
 
     Parameters
@@ -26,7 +26,7 @@ def remove_empty_cols(df: pd.DataFrame) -> Tuple[pd.DataFrame, list]:
     return df.drop(empty_cols, axis=1), empty_cols
 
 
-def print_empty_cols(empty_cols: list) -> None:
+def print_empty_cols(empty_cols: List[Any]) -> None:
     """Displays a message in streamlit dashboard if the input list is not empty.
 
     Parameters
@@ -44,7 +44,11 @@ def print_empty_cols(empty_cols: list) -> None:
 
 @st.cache(suppress_st_warning=True)
 def format_date_and_target(
-    df_input: pd.DataFrame, date_col: str, target_col: str, config: dict, load_options: dict
+    df_input: pd.DataFrame,
+    date_col: str,
+    target_col: str,
+    config: Dict[Any, Any],
+    load_options: Dict[Any, Any],
 ) -> pd.DataFrame:
     """Formats date and target columns of input dataframe.
 
@@ -56,9 +60,9 @@ def format_date_and_target(
         Name of date column in input dataframe.
     target_col : str
         Name of target column in input dataframe.
-    config : dict
+    config : Dict
         Lib configuration dictionary.
-    load_options : dict
+    load_options : Dict
         Loading options selected by user.
 
     Returns
@@ -73,7 +77,9 @@ def format_date_and_target(
     return df
 
 
-def _format_date(df: pd.DataFrame, date_col: str, load_options: dict, config: dict) -> pd.DataFrame:
+def _format_date(
+    df: pd.DataFrame, date_col: str, load_options: Dict[Any, Any], config: Dict[Any, Any]
+) -> pd.DataFrame:
     """Formats date column of input dataframe.
 
     Parameters
@@ -82,9 +88,9 @@ def _format_date(df: pd.DataFrame, date_col: str, load_options: dict, config: di
         Input dataframe whose columns will be formatted.
     date_col : str
         Name of date column in input dataframe.
-    load_options : dict
+    load_options : Dict
         Loading options selected by user.
-    config : dict
+    config : Dict
         Lib config dictionary containing information about default date format.
 
     Returns
@@ -114,7 +120,7 @@ def _format_date(df: pd.DataFrame, date_col: str, load_options: dict, config: di
         st.stop()
 
 
-def __check_date_format(date_series: pd.Series):
+def __check_date_format(date_series: pd.Series) -> bool:
     """Checks whether the date column has been correctly converted to datetime.
 
     Parameters
@@ -136,7 +142,7 @@ def __check_date_format(date_series: pd.Series):
         return False
 
 
-def _format_target(df: pd.DataFrame, target_col: str, config: dict) -> pd.DataFrame:
+def _format_target(df: pd.DataFrame, target_col: str, config: Dict[Any, Any]) -> pd.DataFrame:
     """Formats target column of input dataframe.
 
     Parameters
@@ -192,17 +198,21 @@ def _rename_cols(df: pd.DataFrame, date_col: str, target_col: str) -> pd.DataFra
 # NB: date_col and target_col not used, only added to avoid unexpected caching when their values change
 @st.cache()
 def filter_and_aggregate_df(
-    df_input: pd.DataFrame, dimensions: dict, config: dict, date_col: str, target_col: str
-) -> Tuple[pd.DataFrame, list]:
+    df_input: pd.DataFrame,
+    dimensions: Dict[Any, Any],
+    config: Dict[Any, Any],
+    date_col: str,
+    target_col: str,
+) -> Tuple[pd.DataFrame, List[Any]]:
     """Filters and aggregates input dataframe according to dimensions dictionary specifications.
 
     Parameters
     ----------
     df_input : pd.DataFrame
         Input dataframe that will be filtered and/or aggregated.
-    dimensions : dict
+    dimensions : Dict
         Filtering and aggregation specifications.
-    config : dict
+    config : Dict
         Lib configuration dictionary.
     date_col : str
         Name of date column in input dataframe.
@@ -223,14 +233,14 @@ def filter_and_aggregate_df(
     return df, cols_to_drop
 
 
-def _filter(df: pd.DataFrame, dimensions: dict) -> pd.DataFrame:
+def _filter(df: pd.DataFrame, dimensions: Dict[Any, Any]) -> pd.DataFrame:
     """Filters input dataframe according to dimensions dictionary specifications.
 
     Parameters
     ----------
     df : pd.DataFrame
         Input dataframe that will be filtered and/or aggregated.
-    dimensions : dict
+    dimensions : Dict
         Filtering specifications.
 
     Returns
@@ -244,14 +254,14 @@ def _filter(df: pd.DataFrame, dimensions: dict) -> pd.DataFrame:
     return df.drop(filter_cols, axis=1)
 
 
-def _format_regressors(df: pd.DataFrame, config: dict) -> Tuple[pd.DataFrame, list]:
+def _format_regressors(df: pd.DataFrame, config: Dict[Any, Any]) -> Tuple[pd.DataFrame, List[Any]]:
     """Format some columns in input dataframe.
 
     Parameters
     ----------
     df : pd.DataFrame
         Input dataframe whose columns will be formatted.
-    config : dict
+    config : Dict
         Lib configuration dictionary.
 
     Returns
@@ -296,7 +306,7 @@ def __one_hot_encoding(df: pd.DataFrame, col: str) -> pd.DataFrame:
     return df.drop(col, axis=1)
 
 
-def print_removed_cols(cols_removed: list) -> None:
+def print_removed_cols(cols_removed: List[Any]) -> None:
     """Displays a message in streamlit dashboard if the input list is not empty.
 
     Parameters
@@ -313,14 +323,14 @@ def print_removed_cols(cols_removed: list) -> None:
         )
 
 
-def _aggregate(df: pd.DataFrame, dimensions: dict) -> pd.DataFrame:
+def _aggregate(df: pd.DataFrame, dimensions: Dict[Any, Any]) -> pd.DataFrame:
     """Aggregates input dataframe according to dimensions dictionary specifications.
 
     Parameters
     ----------
     df : pd.DataFrame
         Input dataframe that will be filtered and/or aggregated.
-    dimensions : dict
+    dimensions : Dict
         Filtering specifications.
 
     Returns
@@ -335,14 +345,14 @@ def _aggregate(df: pd.DataFrame, dimensions: dict) -> pd.DataFrame:
 
 
 @st.cache()
-def format_datetime(df_input: pd.DataFrame, resampling: dict) -> pd.DataFrame:
+def format_datetime(df_input: pd.DataFrame, resampling: Dict[Any, Any]) -> pd.DataFrame:
     """Formats date column to datetime in input dataframe.
 
     Parameters
     ----------
     df_input : pd.DataFrame
         Input dataframe whose date column will be formatted to datetime.
-    resampling : dict
+    resampling : Dict
         Dictionary whose "freq" key contains the frequency of input dataframe.
 
     Returns
@@ -358,14 +368,14 @@ def format_datetime(df_input: pd.DataFrame, resampling: dict) -> pd.DataFrame:
 
 
 @st.cache()
-def resample_df(df_input: pd.DataFrame, resampling: dict) -> pd.DataFrame:
+def resample_df(df_input: pd.DataFrame, resampling: Dict[Any, Any]) -> pd.DataFrame:
     """Resamples input dataframe according to resampling dictionary specifications.
 
     Parameters
     ----------
     df_input : pd.DataFrame
         Input dataframe that will be resampled.
-    resampling : dict
+    resampling : Dict
         Resampling specifications.
 
     Returns
@@ -382,14 +392,14 @@ def resample_df(df_input: pd.DataFrame, resampling: dict) -> pd.DataFrame:
     return df
 
 
-def check_dataset_size(df: pd.DataFrame, config: dict) -> None:
+def check_dataset_size(df: pd.DataFrame, config: Dict[Any, Any]) -> None:
     """Displays a message in streamlit dashboard and stops it if the input dataframe has not enough rows.
 
     Parameters
     ----------
     df : pd.DataFrame
         Input dataframe.
-    config : dict
+    config : Dict
         Lib configuration dictionary where the minimum number of rows is given.
     """
     if (
@@ -404,23 +414,28 @@ def check_dataset_size(df: pd.DataFrame, config: dict) -> None:
 
 
 def check_future_regressors_df(
-    datasets: dict, dates: dict, params: dict, resampling: dict, date_col: str, dimensions: dict
+    datasets: Dict[Any, Any],
+    dates: Dict[Any, Any],
+    params: Dict[Any, Any],
+    resampling: Dict[Any, Any],
+    date_col: str,
+    dimensions: Dict[Any, Any],
 ) -> bool:
     """Displays a message if the future regressors dataframe is incorrect and says whether or not to use it afterwards.
 
     Parameters
     ----------
-    datasets : dict
+    datasets : Dict
         Dictionary storing all dataframes.
-    dates : dict
+    dates : Dict
         Dictionary containing future forecasting dates information.
-    params : dict
+    params : Dict
         Dictionary containing all model parameters and list of selected regressors.
-    resampling : dict
+    resampling : Dict
         Dictionary containing dataset frequency information.
     date_col : str
         Name of date column.
-    dimensions : dict
+    dimensions : Dict
         Dictionary containing dimensions information.
 
     Returns
@@ -488,34 +503,34 @@ def check_future_regressors_df(
 
 
 def prepare_future_df(
-    datasets: dict,
-    dates: dict,
+    datasets: Dict[Any, Any],
+    dates: Dict[Any, Any],
     date_col: str,
     target_col: str,
-    dimensions: dict,
-    load_options: dict,
-    config: dict,
-    resampling: dict,
-) -> Tuple[pd.DataFrame, dict]:
+    dimensions: Dict[Any, Any],
+    load_options: Dict[Any, Any],
+    config: Dict[Any, Any],
+    resampling: Dict[Any, Any],
+) -> Tuple[pd.DataFrame, Dict[Any, Any]]:
     """Applies data preparation to the dataset provided with future regressors.
 
     Parameters
     ----------
-    datasets : dict
+    datasets : Dict
         Dictionary storing all dataframes.
-    dates : dict
+    dates : Dict
         Dictionary containing future forecasting dates information.
     date_col : str
         Name of date column.
     target_col : str
         Name of target column.
-    dimensions : dict
+    dimensions : Dict
         Dictionary containing dimensions information.
-    load_options : dict
+    load_options : Dict
         Loading options selected by user.
-    config : dict
+    config : Dict
         Lib configuration dictionary.
-    resampling : dict
+    resampling : Dict
         Resampling specifications.
 
     Returns

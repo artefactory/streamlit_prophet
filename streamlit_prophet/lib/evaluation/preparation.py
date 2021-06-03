@@ -1,20 +1,26 @@
+from typing import Any, Dict
+
 import pandas as pd
 
 
 def get_evaluation_df(
-    datasets: dict, forecasts: dict, dates: dict, eval: dict, use_cv: bool
+    datasets: Dict[Any, Any],
+    forecasts: Dict[Any, Any],
+    dates: Dict[Any, Any],
+    eval: Dict[Any, Any],
+    use_cv: bool,
 ) -> pd.DataFrame:
     """Generates a dataframe that will be used for evaluation.
 
     Parameters
     ----------
-    datasets : dict
+    datasets : Dict
         Dictionary containing evaluation dataframe.
-    forecasts : dict
+    forecasts : Dict
         Dictionary where all forecasts are stored.
-    dates : dict
+    dates : Dict
         Dictionary containing all dates information.
-    eval : dict
+    eval : Dict
         Evaluation specifications.
     use_cv : bool
         Whether or not cross-validation is used.

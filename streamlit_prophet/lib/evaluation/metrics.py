@@ -1,4 +1,4 @@
-from typing import Tuple
+from typing import Any, Dict, Tuple
 
 from datetime import timedelta
 
@@ -28,7 +28,7 @@ def MAPE(y_true: pd.Series, y_pred: pd.Series) -> float:
         mask = (y_true != 0) & (~np.isnan(y_true)) & (~np.isnan(y_pred))
         y_true, y_pred = y_true, y_pred
         mape = np.mean(np.abs((y_true - y_pred) / y_true)[mask])
-        return 0 if np.isnan(mape) else mape
+        return 0 if np.isnan(mape) else float(mape)
     except:
         return 0
 
@@ -55,7 +55,7 @@ def SMAPE(y_true: pd.Series, y_pred: pd.Series) -> float:
         nominator = np.abs(y_true - y_pred)
         denominator = np.abs(y_true) + np.abs(y_pred)
         smape = np.mean((2.0 * nominator / denominator)[mask])
-        return 0 if np.isnan(smape) else smape
+        return 0 if np.isnan(smape) else float(smape)
     except:
         return 0
 
@@ -79,7 +79,7 @@ def MSE(y_true: pd.Series, y_pred: pd.Series) -> float:
         y_true, y_pred = np.array(y_true).ravel(), np.array(y_pred).ravel()
         mask = (~np.isnan(y_true)) & (~np.isnan(y_pred))
         mse = ((y_true - y_pred) ** 2)[mask].mean()
-        return 0 if np.isnan(mse) else mse
+        return 0 if np.isnan(mse) else float(mse)
     except:
         return 0
 
@@ -101,7 +101,7 @@ def RMSE(y_true: pd.Series, y_pred: pd.Series) -> float:
     """
     y_true, y_pred = np.array(y_true).ravel(), np.array(y_pred).ravel()
     rmse = np.sqrt(MSE(y_true, y_pred))
-    return rmse
+    return float(rmse)
 
 
 def MAE(y_true: pd.Series, y_pred: pd.Series) -> float:
@@ -123,34 +123,34 @@ def MAE(y_true: pd.Series, y_pred: pd.Series) -> float:
         y_true, y_pred = np.array(y_true).ravel(), np.array(y_pred).ravel()
         mask = (~np.isnan(y_true)) & (~np.isnan(y_pred))
         mae = abs(y_true - y_pred)[mask].mean()
-        return 0 if np.isnan(mae) else mae
+        return 0 if np.isnan(mae) else float(mae)
     except:
         return 0
 
 
 def get_perf_metrics(
     evaluation_df: pd.DataFrame,
-    eval: dict,
-    dates: dict,
-    resampling: dict,
+    eval: Dict[Any, Any],
+    dates: Dict[Any, Any],
+    resampling: Dict[Any, Any],
     use_cv: bool,
-    config: dict,
-) -> Tuple[pd.DataFrame, dict]:
+    config: Dict[Any, Any],
+) -> Tuple[pd.DataFrame, Dict[Any, Any]]:
     """Computes all metrics to gather them in a dataframe and a dictionary.
 
     Parameters
     ----------
     evaluation_df : pd.DataFrame
         Evaluation dataframe.
-    eval : dict
+    eval : Dict
         Evaluation specifications.
-    dates : dict
+    dates : Dict
         Dictionary containing all dates information.
-    resampling : dict
+    resampling : Dict
         Resampling specifications.
     use_cv : bool
         Whether or note cross-validation is used.
-    config : dict
+    config : Dict
         Lib configuration dictionary.
 
     Returns
@@ -190,14 +190,14 @@ def _preprocess_eval_df(evaluation_df: pd.DataFrame, use_cv: bool) -> pd.DataFra
     return df
 
 
-def _compute_metrics(df: pd.DataFrame, eval: dict) -> pd.DataFrame:
+def _compute_metrics(df: pd.DataFrame, eval: Dict[Any, Any]) -> pd.DataFrame:
     """Computes all metrics and gather them in a dataframe.
 
     Parameters
     ----------
     df : pd.DataFrame
         Evaluation dataframe.
-    eval : dict
+    eval : Dict
         Evaluation specifications.
 
     Returns
@@ -227,23 +227,28 @@ def _compute_metrics(df: pd.DataFrame, eval: dict) -> pd.DataFrame:
 
 
 def _format_eval_results(
-    metrics_df: pd.DataFrame, dates: dict, eval: dict, resampling: dict, use_cv: bool, config: dict
-) -> Tuple[pd.DataFrame, dict]:
+    metrics_df: pd.DataFrame,
+    dates: Dict[Any, Any],
+    eval: Dict[Any, Any],
+    resampling: Dict[Any, Any],
+    use_cv: bool,
+    config: Dict[Any, Any],
+) -> Tuple[pd.DataFrame, Dict[Any, Any]]:
     """Formats dataframe containing evaluation results and creates a dictionary containing the same information.
 
     Parameters
     ----------
     metrics_df : pd.DataFrame
         Dataframe with all metrics at the desired granularity.
-    dates : dict
+    dates : Dict
         Dictionary containing all dates information.
-    eval : dict
+    eval : Dict
         Evaluation specifications.
-    resampling : dict
+    resampling : Dict
         Resampling specifications.
     use_cv : bool
         Whether or note cross-validation is used.
-    config : dict
+    config : Dict
         Lib configuration dictionary.
 
     Returns
@@ -266,16 +271,18 @@ def _format_eval_results(
     return metrics_df, metrics_dict
 
 
-def __format_metrics_values(metrics_df: pd.DataFrame, eval: dict, config: dict) -> pd.DataFrame:
+def __format_metrics_values(
+    metrics_df: pd.DataFrame, eval: Dict[Any, Any], config: Dict[Any, Any]
+) -> pd.DataFrame:
     """Formats metrics values with the right number of decimals.
 
     Parameters
     ----------
     metrics_df : pd.DataFrame
         Dataframe with all metrics at the desired granularity.
-    eval : dict
+    eval : Dict
         Evaluation specifications.
-    config : dict
+    config : Dict
         Lib configuration dictionary containing information about the number of decimals to keep.
 
     Returns
@@ -293,7 +300,10 @@ def __format_metrics_values(metrics_df: pd.DataFrame, eval: dict, config: dict) 
 
 
 def __format_metrics_df_cv(
-    metrics_df: pd.DataFrame, dates: dict, eval: dict, resampling: dict
+    metrics_df: pd.DataFrame,
+    dates: Dict[Any, Any],
+    eval: Dict[Any, Any],
+    resampling: Dict[Any, Any],
 ) -> pd.DataFrame:
     """Formats dataframe containing evaluation metrics, in case cross-validation is used.
 
@@ -301,11 +311,11 @@ def __format_metrics_df_cv(
     ----------
     metrics_df : pd.DataFrame
         Dataframe with all metrics for each cross-validation fold.
-    dates : dict
+    dates : Dict
         Dictionary containing cross-validation dates information.
-    eval : dict
+    eval : Dict
         Evaluation specifications.
-    resampling : dict
+    resampling : Dict
         Resampling specifications.
 
     Returns
@@ -334,14 +344,14 @@ def __format_metrics_df_cv(
     return metrics_df
 
 
-def __add_avg_std_metrics(metrics_df: pd.DataFrame, eval: dict) -> pd.DataFrame:
+def __add_avg_std_metrics(metrics_df: pd.DataFrame, eval: Dict[Any, Any]) -> pd.DataFrame:
     """Adds rows for average and standard-deviation over each fold to dataframe containing evaluation metrics.
 
     Parameters
     ----------
     metrics_df : pd.DataFrame
         Dataframe with all metrics for each cross-validation fold.
-    eval : dict
+    eval : Dict
         Evaluation specifications.
 
     Returns
