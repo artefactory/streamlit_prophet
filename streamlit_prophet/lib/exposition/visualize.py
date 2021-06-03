@@ -1,5 +1,3 @@
-# type: ignore
-
 from typing import Any, Dict
 
 import datetime
@@ -9,6 +7,7 @@ import plotly.express as px
 import plotly.figure_factory as ff
 import plotly.graph_objects as go
 import streamlit as st
+from fbprophet import Prophet
 from fbprophet.plot import plot_plotly
 from plotly.subplots import make_subplots
 from streamlit_prophet.lib.evaluation.metrics import get_perf_metrics
@@ -205,7 +204,7 @@ def plot_future(
     dates: Dict[Any, Any],
     target_col: str,
     cleaning: Dict[Any, Any],
-    readme: Dict,
+    readme: Dict[Any, Any],
 ) -> None:
     """Plots a graph with predictions for future dates, with explanations.
 
@@ -240,7 +239,7 @@ def plot_future(
 
 
 def plot_forecasts_vs_truth(
-    eval_df: pd.DataFrame, target_col: str, use_cv: bool, style: Dict
+    eval_df: pd.DataFrame, target_col: str, use_cv: bool, style: Dict[Any, Any]
 ) -> go.Figure:
     """Creates a plotly line plot showing forecasts and actual values on evaluation period.
 
@@ -398,8 +397,8 @@ def plot_residuals_distrib(eval_df: pd.DataFrame, use_cv: bool, style: Dict[Any,
         residuals = [x[x.between(x_min, x_max)] for x in residuals]
     else:
         labels = [""]
-        residuals = pd.Series(eval_df["residuals"])
-        residuals = [residuals[residuals.between(x_min, x_max)]]
+        residuals_series = pd.Series(eval_df["residuals"])
+        residuals = [residuals[residuals_series.between(x_min, x_max)]]
     colors = (
         reverse_list(style["colors"], eval_df["Fold"].nunique()) if use_cv else [style["colors"][2]]
     )
@@ -424,7 +423,11 @@ def plot_residuals_distrib(eval_df: pd.DataFrame, use_cv: bool, style: Dict[Any,
 
 
 def plot_detailed_metrics(
-    metrics_df: pd.DataFrame, perf: Dict[Any, Any], eval: Dict[Any, Any], use_cv: bool, style: Dict
+    metrics_df: pd.DataFrame,
+    perf: Dict[Any, Any],
+    eval: Dict[Any, Any],
+    use_cv: bool,
+    style: Dict[Any, Any],
 ) -> None:
     """Displays a dataframe or plots graphs showing model performance on selected metrics.
 
@@ -468,7 +471,7 @@ def plot_detailed_metrics(
 
 
 def make_separate_components_plot(
-    model,
+    model: Prophet,
     forecast_df: pd.DataFrame,
     target_col: str,
     cleaning: Dict[Any, Any],
@@ -557,7 +560,7 @@ def make_separate_components_plot(
 
 
 def make_waterfall_components_plot(
-    model,
+    model: Prophet,
     forecast_df: pd.DataFrame,
     start_date: datetime.date,
     end_date: datetime.date,
