@@ -88,6 +88,9 @@ def get_components_mapping(
     Dict[str, list]
         dict with value: list of columns to sum under key: new column name
     """
+    if cols_to_drop is None:
+        cols_to_drop = []
+
     components_mapping = defaultdict(list)
     for col in components.columns:
         if (

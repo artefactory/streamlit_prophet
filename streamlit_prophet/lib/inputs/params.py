@@ -250,8 +250,8 @@ def input_regressors(df: pd.DataFrame, config: dict, params: dict, readme: dict)
     default_params = config["model"]
     all_cols = set(df.columns) - {"ds", "y"}
     mask = df[all_cols].isnull().sum() == 0
-    eligible_cols = list(mask[mask].index)
-    _print_removed_regressors(list(set(all_cols) - set(eligible_cols)))
+    eligible_cols = sorted(list(mask[mask].index))
+    _print_removed_regressors(sorted(set(all_cols) - set(eligible_cols)))
     if len(eligible_cols) > 0:
         if st.checkbox(
             "Add all detected regressors",
