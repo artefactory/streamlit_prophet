@@ -32,6 +32,7 @@ jobs:
       run: |
         source "$HOME/.poetry/env"
         poetry install
+        poetry run pip install --upgrade pip
 
     - name: Run safety checks
       run: |
