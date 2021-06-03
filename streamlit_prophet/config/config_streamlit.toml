@@ -36,8 +36,7 @@ growth = ['linear', 'flat'] # List of options, the first element of the list wil
 seasonality_mode = ['additive', 'multiplicative'] # List of options, the first element of the list will be the default parameter.
 changepoint_range = 0.8
 holidays_country = "FR" # List of countries whose holidays will be added as regressors.
-# Options: "France", "United States", "United Kingdom", "Canada", "Brazil", "Mexico", "India", "China", "Japan",
-# "Germany", "Italy", "Russia", "Belgium", "Portugal", "Poland"
+# Options: "FR", "US", "UK", "CA", "BR", "MX", "IN", "CN", "JP", "DE", "IT", "RU", "BE", "PT", "PL"
 public_holidays = false
 school_holidays = false
 lockdown_events = []  # list of int with lockdown number (starting at 0) for the selected country

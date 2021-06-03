@@ -25,6 +25,8 @@ def instantiate_prophet_model(params, use_regressors=True, dates=None) -> Prophe
         Model parameters.
     use_regressors : bool
         Whether or not to add regressors to the model.
+    dates : dict
+        Dictionary containing all relevant dates for training and forecasting.
 
     Returns
     -------
@@ -260,14 +262,14 @@ def forecast_future(
         config,
         resampling,
     )
-    models["future"] = instantiate_prophet_model(params, use_regressors=use_regressors)
+    models["future"] = instantiate_prophet_model(params, use_regressors=use_regressors, dates=dates)
     models["future"].fit(datasets["full"], seed=config["global"]["seed"])
     forecasts["future"] = models["future"].predict(datasets["future"])
     return datasets, models, forecasts
 
 
 def _add_prophet_holidays(model: Prophet, holidays_params: dict, dates: dict) -> pd.DataFrame:
-    """Add all available holidays fto the Prophet model
+    """Add all available holidays to the Prophet model
 
     Parameters
     ----------
@@ -275,26 +277,32 @@ def _add_prophet_holidays(model: Prophet, holidays_params: dict, dates: dict) ->
         Prophet model to add holidays to
     holidays_params: dict
         dict of parameters including 'country': str, 'public_holidays': bool, 'school_holidays': bool, lockdown_events: List[int]
+    dates : dict
+        Dictionary containing all relevant dates for training and forecasting.
+
+    Returns
+    -------
+    Prophet
+        Prophet model with holidays added
     """
-    holidays_country = holidays_params["country"]
+    country = holidays_params["country"]
     if holidays_params["public_holidays"]:
-        model.add_country_holidays(holidays_country)
+        model.add_country_holidays(country)
 
     holidays_df_list = []
     if holidays_params["school_holidays"]:
         years = list(range(min(dates.values()).year, max(dates.values()).year + 1))
-        get_holidays_func = SCHOOL_HOLIDAYS_FUNC_MAPPING[holidays_country]
+        get_holidays_func = SCHOOL_HOLIDAYS_FUNC_MAPPING[country]
         holidays_df = get_holidays_func(years)
         holidays_df[["lower_window", "upper_window"]] = 0
         holidays_df_list.append(holidays_df)
 
     for lockdown_idx in holidays_params["lockdown_events"]:
-        start, end = COVID_LOCKDOWN_DATES_MAPPING[holidays_country][lockdown_idx]
-        ds = pd.date_range(start=start, end=end)
+        start, end = COVID_LOCKDOWN_DATES_MAPPING[country][lockdown_idx]
         lockdown_df = pd.DataFrame(
             {
                 "holiday": lockdown_format_func(lockdown_idx),
-                "ds": ds,
+                "ds": pd.date_range(start=start, end=end),
                 "lower_window": 0,
                 "upper_window": 0,
             }
