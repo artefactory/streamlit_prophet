@@ -196,7 +196,7 @@ def input_holidays_params(
     countries = list(COUNTRY_NAMES_MAPPING.keys())
     default_country = config["model"]["holidays_country"]
     country = st.selectbox(
-        label="Chose the country you want to add holidays for",
+        label="Select a country",
         options=countries,
         index=countries.index(default_country),
         format_func=lambda x: COUNTRY_NAMES_MAPPING[x],

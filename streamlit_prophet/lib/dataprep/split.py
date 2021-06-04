@@ -52,11 +52,11 @@ def print_train_val_dates(val: pd.DataFrame, train: pd.DataFrame) -> None:
         Dataframe containing training data.
     """
     st.success(
-        f"""Train: [ {train.ds.min().strftime('%Y/%m/%d')} -
-                           {train.ds.max().strftime('%Y/%m/%d')} ]
-                    Valid: [ {val.ds.min().strftime('%Y/%m/%d')} -
-                           {val.ds.max().strftime('%Y/%m/%d')} ]
-                        ({round((len(val) / float(len(train) + len(val)) * 100))}% of data used for validation)"""
+        f"""Train:              \n"""
+        f"""[ {train.ds.min().strftime('%Y/%m/%d')} - {train.ds.max().strftime('%Y/%m/%d')} ]              \n"""
+        f"""Valid:              \n"""
+        f"""[ {val.ds.min().strftime('%Y/%m/%d')} - {val.ds.max().strftime('%Y/%m/%d')} ]              \n"""
+        f"""({round((len(val) / float(len(train) + len(val)) * 100))}% of data used for validation)"""
     )
 
 
@@ -312,23 +312,27 @@ def print_cv_folds_dates(dates: Dict[Any, Any], freq: str) -> None:
         cutoffs_text.append(f"""Fold {i + 1}:           """)
         if freq in ["s", "H"]:
             cutoffs_text.append(
-                f"""Train: [ {dates['train_start_date'].strftime('%Y/%m/%d %H:%M:%S')} - """
-                f"""{cutoff.strftime('%Y/%m/%d %H:%M:%S')} ]"""
+                f"""Train:              \n"""
+                f"""[ {dates['train_start_date'].strftime('%Y/%m/%d %H:%M:%S')} - """
+                f"""{cutoff.strftime('%Y/%m/%d %H:%M:%S')} ]              """
             )
             cutoffs_text.append(
-                f"""Valid: ] {cutoff.strftime('%Y/%m/%d %H:%M:%S')} - """
+                f"""Valid:              \n"""
+                f"""] {cutoff.strftime('%Y/%m/%d %H:%M:%S')} - """
                 f"""{(cutoff + timedelta(seconds=convert_into_nb_of_seconds(freq, horizon)))
-                                .strftime('%Y/%m/%d %H:%M:%S')} ]"""
+                                .strftime('%Y/%m/%d %H:%M:%S')} ]              \n"""
             )
         else:
             cutoffs_text.append(
-                f"""Train: [ {dates['train_start_date'].strftime('%Y/%m/%d')} - """
-                f"""{cutoff.strftime('%Y/%m/%d')} ]"""
+                f"""Train:              \n"""
+                f"""[ {dates['train_start_date'].strftime('%Y/%m/%d')} - """
+                f"""{cutoff.strftime('%Y/%m/%d')} ]              """
             )
             cutoffs_text.append(
-                f"""Valid: ] {cutoff.strftime('%Y/%m/%d')} - """
+                f"""Valid:              \n"""
+                f"""] {cutoff.strftime('%Y/%m/%d')} - """
                 f"""{(cutoff + timedelta(days=convert_into_nb_of_days(freq, horizon)))
-                                .strftime('%Y/%m/%d')} ]"""
+                    .strftime('%Y/%m/%d')} ]              \n"""
             )
         cutoffs_text.append("")
     st.success("\n".join(cutoffs_text))
@@ -383,11 +387,13 @@ def print_forecast_dates(dates: Dict[Any, Any], resampling: Dict[Any, Any]) -> N
     """
     if resampling["freq"][-1] in ["s", "H"]:
         st.success(
-            f"""Forecast: {dates['forecast_start_date'].strftime('%Y/%m/%d %H:%M:%S')} -
-                                 {dates['forecast_end_date'].strftime('%Y/%m/%d %H:%M:%S')}"""
+            f"""Forecast:              \n"""
+            f"""{dates['forecast_start_date'].strftime('%Y/%m/%d %H:%M:%S')} -
+                {dates['forecast_end_date'].strftime('%Y/%m/%d %H:%M:%S')}"""
         )
     else:
         st.success(
-            f"""Forecast: {dates['forecast_start_date'].strftime('%Y/%m/%d')} -
-                                 {dates['forecast_end_date'].strftime('%Y/%m/%d')}"""
+            f"""Forecast:              \n"""
+            f"""{dates['forecast_start_date'].strftime('%Y/%m/%d')} -
+                {dates['forecast_end_date'].strftime('%Y/%m/%d')}"""
         )
