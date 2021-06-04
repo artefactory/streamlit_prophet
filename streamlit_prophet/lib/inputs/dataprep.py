@@ -68,7 +68,7 @@ def input_dimensions(df: pd.DataFrame, readme: dict, config: dict) -> dict:
         Filtering and aggregation specifications (dimensions, values to keep, aggregation function).
     """
     dimensions = dict()
-    eligible_cols = set(df.columns) - {"ds", "y"}
+    eligible_cols = sorted(set(df.columns) - {"ds", "y"})
     if len(eligible_cols) > 0:
         config_dimensions = config["columns"]["dimensions"]
         if config_dimensions not in ["false", False]:
@@ -127,7 +127,7 @@ def _autodetect_dimensions(df: pd.DataFrame) -> list:
     list
         List of dimension columns detected. The user will be able to change that list later if it is incorrect.
     """
-    eligible_cols = set(df.columns) - {"ds", "y"}
+    eligible_cols = sorted(set(df.columns) - {"ds", "y"})
     detected_cols = []
     for col in eligible_cols:
         values = df[col].value_counts()
