@@ -204,6 +204,11 @@ def make_params_test(regressors: Dict[Any, Any] = dict()) -> Dict[Any, Any]:
             "changepoint_range": default_params["changepoint_range"],
             "growth": default_params["growth"][0],
         },
-        "holidays": ["US"],
+        "holidays": {
+            "country": "US",
+            "public_holidays": True,
+            "school_holidays": False,
+            "lockdown_events": [],
+        },
         "regressors": regressors,
     }

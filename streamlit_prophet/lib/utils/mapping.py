@@ -1,5 +1,37 @@
 from typing import Any, Dict, List, Tuple
 
+from streamlit_prophet.lib.utils.holidays import get_school_holidays_FR
+
+COUNTRY_NAMES_MAPPING = {
+    "FR": "France",
+    "US": "United States",
+    "UK": "United Kingdom",
+    "CA": "Canada",
+    "BR": "Brazil",
+    "MX": "Mexico",
+    "IN": "India",
+    "CN": "China",
+    "JP": "Japan",
+    "DE": "Germany",
+    "IT": "Italy",
+    "RU": "Russia",
+    "BE": "Belgium",
+    "PT": "Portugal",
+    "PL": "Poland",
+}
+
+COVID_LOCKDOWN_DATES_MAPPING = {
+    "FR": [
+        ("2020-03-17", "2020-05-11"),
+        ("2020-10-30", "2020-12-15"),
+        ("2021-03-20", "2021-05-03"),
+    ]
+}
+
+SCHOOL_HOLIDAYS_FUNC_MAPPING = {
+    "FR": get_school_holidays_FR,
+}
+
 
 def convert_into_nb_of_days(freq: str, horizon: int) -> int:
     """Converts a forecasting horizon in number of days.
@@ -88,23 +120,7 @@ def mapping_country_names(countries: List[Any]) -> Tuple[Dict[Any, Any], List[An
     list
         Country short names.
     """
-    mapping = {
-        "France": "FR",
-        "United States": "US",
-        "United Kingdom": "UK",
-        "Canada": "CA",
-        "Brazil": "BR",
-        "Mexico": "MX",
-        "India": "IN",
-        "China": "CN",
-        "Japan": "JP",
-        "Germany": "DE",
-        "Italy": "IT",
-        "Russia": "RU",
-        "Belgium": "BE",
-        "Portugal": "PT",
-        "Poland": "PL",
-    }
+    mapping = {v: k for k, v in COUNTRY_NAMES_MAPPING.items()}
     return mapping, [mapping[country] for country in countries]
 
 

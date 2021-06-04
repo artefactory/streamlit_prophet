@@ -121,14 +121,14 @@ def input_columns(
     else:
         date_col = st.selectbox(
             "Date column",
-            list(df.columns)
+            sorted(df.columns)
             if config["columns"]["date"] in ["false", False]
             else [config["columns"]["date"]],
             help=readme["tooltips"]["date_column"],
         )
         target_col = st.selectbox(
             "Target column",
-            list(set(df.columns) - {date_col})
+            sorted(set(df.columns) - {date_col})
             if config["columns"]["target"] in ["false", False]
             else [config["columns"]["target"]],
             help=readme["tooltips"]["target_column"],

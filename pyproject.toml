@@ -45,6 +45,7 @@ streamlit = "^0.82.0"
 loguru = "^0.5.3"
 tqdm = "^4.60.0"
 scipy = "^1.6.3"
+vacances-scolaires-france = "^0.8.0"
 
 [tool.poetry.dev-dependencies]
 # From ppt
