@@ -398,7 +398,7 @@ def plot_residuals_distrib(eval_df: pd.DataFrame, use_cv: bool, style: Dict[Any,
     else:
         labels = [""]
         residuals_series = pd.Series(eval_df["residuals"])
-        residuals = [residuals[residuals_series.between(x_min, x_max)]]
+        residuals = [residuals_series[residuals_series.between(x_min, x_max)]]
     colors = (
         reverse_list(style["colors"], eval_df["Fold"].nunique()) if use_cv else [style["colors"][2]]
     )
