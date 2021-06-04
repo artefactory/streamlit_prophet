@@ -1,3 +1,5 @@
+from typing import Any, Dict, List
+
 import re
 from datetime import datetime, timedelta
 
@@ -8,18 +10,20 @@ from streamlit_prophet.lib.dataprep.format import prepare_future_df
 from streamlit_prophet.lib.utils.mapping import convert_into_nb_of_days, convert_into_nb_of_seconds
 
 
-def get_train_val_sets(df: pd.DataFrame, dates: dict, config: dict, datasets: dict) -> dict:
+def get_train_val_sets(
+    df: pd.DataFrame, dates: Dict[Any, Any], config: Dict[Any, Any], datasets: Dict[Any, Any]
+) -> Dict[Any, Any]:
     """Adds training and validation dataframes in datasets dictionary's values.
 
     Parameters
     ----------
     df : pd.DataFrame
         Input dataframe containing both training and validation samples.
-    dates : dict
+    dates : Dict
         Dictionary containing training and validation dates information.
-    config : dict
+    config : Dict
         Lib configuration dictionary.
-    datasets : dict
+    datasets : Dict
         Empty dictionary.
 
     Returns
@@ -57,7 +61,7 @@ def print_train_val_dates(val: pd.DataFrame, train: pd.DataFrame) -> None:
 
 
 def raise_error_train_val_dates(
-    val: pd.DataFrame, train: pd.DataFrame, config: dict, dates: dict
+    val: pd.DataFrame, train: pd.DataFrame, config: Dict[Any, Any], dates: Dict[Any, Any]
 ) -> None:
     """Displays a message in streamlit dashboard and stops it if training and/or validation dates are incorrect.
 
@@ -67,9 +71,9 @@ def raise_error_train_val_dates(
         Dataframe containing validation data.
     train : pd.DataFrame
         Dataframe containing training data.
-    config : dict
+    config : Dict
         Lib configuration dictionary where rules for training and validation dates are given.
-    dates : dict
+    dates : Dict
         Dictionary containing training and validation dates information.
     """
     threshold_train = config["validity"]["min_data_points_train"]
@@ -99,16 +103,18 @@ def raise_error_train_val_dates(
         st.stop()
 
 
-def get_train_set(df: pd.DataFrame, dates: dict, datasets: dict) -> dict:
+def get_train_set(
+    df: pd.DataFrame, dates: Dict[Any, Any], datasets: Dict[Any, Any]
+) -> Dict[Any, Any]:
     """Adds training dataframe in datasets dictionary's values.
 
     Parameters
     ----------
     df : pd.DataFrame
         Input dataframe containing both training and validation samples.
-    dates : dict
+    dates : Dict
         Dictionary containing training dates information.
-    datasets : dict
+    datasets : Dict
         Empty dictionary.
 
     Returns
@@ -123,12 +129,12 @@ def get_train_set(df: pd.DataFrame, dates: dict, datasets: dict) -> dict:
     return datasets
 
 
-def make_eval_df(datasets: dict) -> dict:
+def make_eval_df(datasets: Dict[Any, Any]) -> Dict[Any, Any]:
     """Adds evaluation dataframe in datasets dictionary's values.
 
     Parameters
     ----------
-    datasets : dict
+    datasets : Dict
         Dictionary containing training and validation dataframes.
 
     Returns
@@ -143,40 +149,40 @@ def make_eval_df(datasets: dict) -> dict:
 
 
 def make_future_df(
-    dates: dict,
+    dates: Dict[Any, Any],
     df: pd.DataFrame,
-    datasets: dict,
-    cleaning: dict,
+    datasets: Dict[Any, Any],
+    cleaning: Dict[Any, Any],
     date_col: str,
     target_col: str,
-    dimensions: dict,
-    load_options: dict,
-    config: dict,
-    resampling: dict,
-) -> dict:
+    dimensions: Dict[Any, Any],
+    load_options: Dict[Any, Any],
+    config: Dict[Any, Any],
+    resampling: Dict[Any, Any],
+) -> Dict[Any, Any]:
     """Adds future dataframe in datasets dictionary's values.
 
     Parameters
     ----------
-    dates : dict
+    dates : Dict
         Dictionary containing future forecasting dates information.
     df : pd.DataFrame
         Full input dataframe, after cleaning, filtering and resampling.
-    datasets : dict
+    datasets : Dict
         Dictionary storing all dataframes.
-    cleaning : dict
+    cleaning : Dict
         Cleaning specifications to apply to future dataframe.
     date_col : str
         Name of date column.
     target_col : str
         Name of target column.
-    dimensions : dict
+    dimensions : Dict
         Dictionary containing dimensions information.
-    load_options : dict
+    load_options : Dict
         Loading options selected by user.
-    config : dict
+    config : Dict
         Lib configuration dictionary.
-    resampling : dict
+    resampling : Dict
         Resampling specifications.
 
     Returns
@@ -194,7 +200,11 @@ def make_future_df(
 
 
 def get_train_end_date_default_value(
-    df: pd.DataFrame, dates: dict, resampling: dict, config: dict, use_cv: bool
+    df: pd.DataFrame,
+    dates: Dict[Any, Any],
+    resampling: Dict[Any, Any],
+    config: Dict[Any, Any],
+    use_cv: bool,
 ) -> pd.Timestamp:
     """Calculates training end date default value in streamlit dashboard.
 
@@ -202,11 +212,11 @@ def get_train_end_date_default_value(
     ----------
     df : pd.DataFrame
         Input dataframe containing all observations.
-    dates : dict
+    dates : Dict
         Dictionary containing training start date information.
-    resampling : dict
+    resampling : Dict
         Dictionary containing dataset frequency information.
-    config : dict
+    config : Dict
         Lib configuration dictionary containing validation period length information.
     use_cv : bool
         Whether or not cross-validation is used.
@@ -226,12 +236,12 @@ def get_train_end_date_default_value(
     return default_end
 
 
-def get_cv_cutoffs(dates: dict, freq: str) -> list:
+def get_cv_cutoffs(dates: Dict[Any, Any], freq: str) -> List[Any]:
     """Generates the list of cross-validation cutoff dates.
 
     Parameters
     ----------
-    dates : dict
+    dates : Dict
         Dictionary containing cross-validation dates information (number of folds, horizon, end date).
     freq : str
         Dataset frequency.
@@ -258,14 +268,14 @@ def get_cv_cutoffs(dates: dict, freq: str) -> list:
     return cutoffs
 
 
-def get_max_possible_cv_horizon(dates: dict, resampling: dict) -> int:
+def get_max_possible_cv_horizon(dates: Dict[Any, Any], resampling: Dict[Any, Any]) -> int:
     """Calculates maximum possible cross-validation horizon value in streamlit dashboard.
 
     Parameters
     ----------
-    dates : dict
+    dates : Dict
         Dictionary containing training date information and number of cross-validation folds.
-    resampling : dict
+    resampling : Dict
         Dictionary containing dataset frequency information.
 
     Returns
@@ -284,15 +294,15 @@ def get_max_possible_cv_horizon(dates: dict, resampling: dict) -> int:
     else:
         nb_days_training = (dates["train_end_date"] - dates["train_start_date"]).days
         max_horizon = (nb_days_training // convert_into_nb_of_days(freq, 1)) // dates["n_folds"]
-    return max_horizon
+    return int(max_horizon)
 
 
-def print_cv_folds_dates(dates: dict, freq: str) -> None:
+def print_cv_folds_dates(dates: Dict[Any, Any], freq: str) -> None:
     """Displays a message in streamlit dashboard with cross-validation folds' dates.
 
     Parameters
     ----------
-    dates : dict
+    dates : Dict
         Dictionary containing cross-validation dates information.
     freq : str
         Dataset frequency.
@@ -324,16 +334,18 @@ def print_cv_folds_dates(dates: dict, freq: str) -> None:
     st.success("\n".join(cutoffs_text))
 
 
-def raise_error_cv_dates(dates: dict, resampling: dict, config: dict) -> None:
+def raise_error_cv_dates(
+    dates: Dict[Any, Any], resampling: Dict[Any, Any], config: Dict[Any, Any]
+) -> None:
     """Displays a message in streamlit dashboard and stops it if cross-validation dates are incorrect.
 
     Parameters
     ----------
-    dates : dict
+    dates : Dict
         Dictionary containing cross-validation dates information.
-    resampling : dict
+    resampling : Dict
         Dictionary containing dataset frequency information.
-    config : dict
+    config : Dict
         Lib configuration dictionary where rules for cross-validation dates are given.
     """
     threshold_train = config["validity"]["min_data_points_train"]
@@ -359,12 +371,12 @@ def raise_error_cv_dates(dates: dict, resampling: dict, config: dict) -> None:
         st.stop()
 
 
-def print_forecast_dates(dates: dict, resampling: dict) -> None:
+def print_forecast_dates(dates: Dict[Any, Any], resampling: Dict[Any, Any]) -> None:
     """Displays a message in streamlit dashboard with future forecast dates.
 
     Parameters
     ----------
-    dates : dict
+    dates : Dict
         Dictionary containing future forecast dates information.
     resampling : str
         Dictionary containing dataset frequency information.

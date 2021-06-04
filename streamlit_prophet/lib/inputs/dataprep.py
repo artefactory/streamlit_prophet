@@ -1,18 +1,22 @@
+from typing import Any, Dict, List
+
 import pandas as pd
 import streamlit as st
 from streamlit_prophet.lib.utils.mapping import dayname_to_daynumber
 
 
-def input_cleaning(resampling: dict, readme: dict, config: dict) -> dict:
+def input_cleaning(
+    resampling: Dict[Any, Any], readme: Dict[Any, Any], config: Dict[Any, Any]
+) -> Dict[Any, Any]:
     """Lets the user enter cleaning specifications.
 
     Parameters
     ----------
-    resampling : dict
+    resampling : Dict
         Dictionary containing dataset frequency information.
-    readme : dict
+    readme : Dict
         Dictionary containing tooltips to guide user's choices.
-    config : dict
+    config : Dict
         Dictionary where user can provide default cleaning choices.
 
     Returns
@@ -21,7 +25,7 @@ def input_cleaning(resampling: dict, readme: dict, config: dict) -> dict:
         Cleaning specifications (remove_days, del_days, del_negative, del_zeros, log_transform).
     """
     # TODO : Ajouter une option "Remove holidays"
-    cleaning = dict()
+    cleaning: Dict[Any, Any] = dict()
     if resampling["freq"][-1] in ["s", "H", "D"]:
         del_days = st.multiselect(
             "Remove days",
@@ -50,16 +54,18 @@ def input_cleaning(resampling: dict, readme: dict, config: dict) -> dict:
     return cleaning
 
 
-def input_dimensions(df: pd.DataFrame, readme: dict, config: dict) -> dict:
+def input_dimensions(
+    df: pd.DataFrame, readme: Dict[Any, Any], config: Dict[Any, Any]
+) -> Dict[Any, Any]:
     """Lets the user enter filtering and aggregation specifications.
 
     Parameters
     ----------
     df : pd.DataFrame
         Input dataframe that will be used to detect dimension columns.
-    readme : dict
+    readme : Dict
         Dictionary containing tooltips to guide user's choices.
-    config : dict
+    config : Dict
         Dictionary where user can provide the list of dimensions.
 
     Returns
@@ -67,7 +73,7 @@ def input_dimensions(df: pd.DataFrame, readme: dict, config: dict) -> dict:
     dict
         Filtering and aggregation specifications (dimensions, values to keep, aggregation function).
     """
-    dimensions = dict()
+    dimensions: Dict[Any, Any] = dict()
     eligible_cols = sorted(set(df.columns) - {"ds", "y"})
     if len(eligible_cols) > 0:
         config_dimensions = config["columns"]["dimensions"]
@@ -114,7 +120,7 @@ def input_dimensions(df: pd.DataFrame, readme: dict, config: dict) -> dict:
     return dimensions
 
 
-def _autodetect_dimensions(df: pd.DataFrame) -> list:
+def _autodetect_dimensions(df: pd.DataFrame) -> List[Any]:
     """Detects dimension columns in input dataframe.
 
     Parameters
@@ -138,14 +144,14 @@ def _autodetect_dimensions(df: pd.DataFrame) -> list:
     return detected_cols
 
 
-def input_resampling(df: pd.DataFrame, readme: dict) -> dict:
+def input_resampling(df: pd.DataFrame, readme: Dict[Any, Any]) -> Dict[Any, Any]:
     """Lets the user enter resampling specifications.
 
     Parameters
     ----------
     df : pd.DataFrame
         Input dataframe that will be used to detect current frequency in dataset.
-    readme : dict
+    readme : Dict
         Dictionary containing tooltips to guide user's choices.
 
     Returns
@@ -153,7 +159,7 @@ def input_resampling(df: pd.DataFrame, readme: dict) -> dict:
     dict
         Resampling specifications (resample or not, frequency, aggregation function).
     """
-    resampling = dict()
+    resampling: Dict[Any, Any] = dict()
     resampling["freq"] = _autodetect_freq(df)
     st.write(f"Frequency detected in dataset: {resampling['freq']}")
     resampling["resample"] = st.checkbox(
@@ -216,3 +222,5 @@ def _autodetect_freq(df: pd.DataFrame) -> str:
             return f"{round(days/90)}Q"
         else:
             return f"{round(days/365)}Y"
+    else:
+        raise ValueError("No frequency detected.")

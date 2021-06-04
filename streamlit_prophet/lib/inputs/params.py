@@ -1,4 +1,4 @@
-# type: ignore
+from typing import Any, Dict, List
 
 import pandas as pd
 import streamlit as st
@@ -10,18 +10,23 @@ from streamlit_prophet.lib.utils.mapping import (
 )
 
 
-def input_seasonality_params(config: dict, params: dict, resampling: dict, readme: dict) -> dict:
+def input_seasonality_params(
+    config: Dict[Any, Any],
+    params: Dict[Any, Any],
+    resampling: Dict[Any, Any],
+    readme: Dict[Any, Any],
+) -> Dict[Any, Any]:
     """Lets the user enter seasonality parameters.
 
     Parameters
     ----------
-    params : dict
+    params : Dict
         Model parameters.
-    config : dict
+    config : Dict
         Lib config dictionary containing information about default parameters.
-    resampling : dict
+    resampling : Dict
         Dictionary containing dataset frequency information.
-    readme : dict
+    readme : Dict
         Dictionary containing tooltips to guide user's choices.
 
     Returns
@@ -30,7 +35,7 @@ def input_seasonality_params(config: dict, params: dict, resampling: dict, readm
         Model parameters with seasonality parameters added.
     """
     default_params = config["model"]
-    seasonalities = {
+    seasonalities: Dict[str, Dict[Any, Any]] = {
         "yearly": {"period": 365.25, "prophet_param": None},
         "monthly": {"period": 30.5, "prophet_param": None},
         "weekly": {"period": 7, "prophet_param": None},
@@ -38,6 +43,7 @@ def input_seasonality_params(config: dict, params: dict, resampling: dict, readm
     if resampling["freq"][-1] in ["s", "H"]:
         seasonalities["daily"] = {"period": 1, "prophet_param": None}
     for seasonality, values in seasonalities.items():
+
         values["prophet_param"] = st.selectbox(
             f"{seasonality.capitalize()} seasonality",
             ["auto", False, "custom"] if seasonality[0] in ["y", "w", "d"] else [False, "custom"],
@@ -68,7 +74,7 @@ def input_seasonality_params(config: dict, params: dict, resampling: dict, readm
         "Add a custom seasonality", value=False, help=readme["tooltips"]["add_custom_seasonality"]
     )
     if add_custom_seasonality:
-        custom_seasonality = dict()
+        custom_seasonality: Dict[Any, Any] = dict()
         custom_seasonality["custom_param"] = dict()
         custom_seasonality["custom_param"]["name"] = st.text_input(
             "Name", value="custom_seasonality", help=readme["tooltips"]["seasonality_name"]
@@ -90,14 +96,14 @@ def input_seasonality_params(config: dict, params: dict, resampling: dict, readm
     return params
 
 
-def input_prior_scale_params(config: dict, readme: dict) -> dict:
+def input_prior_scale_params(config: Dict[Any, Any], readme: Dict[Any, Any]) -> Dict[Any, Any]:
     """Lets the user enter prior scale parameters.
 
     Parameters
     ----------
-    config : dict
+    config : Dict
         Lib config dictionary containing information about default parameters.
-    readme : dict
+    readme : Dict
         Dictionary containing tooltips to guide user's choices.
 
     Returns
@@ -131,16 +137,18 @@ def input_prior_scale_params(config: dict, readme: dict) -> dict:
     return params
 
 
-def input_other_params(config: dict, params: dict, readme: dict) -> dict:
+def input_other_params(
+    config: Dict[Any, Any], params: Dict[Any, Any], readme: Dict[Any, Any]
+) -> Dict[Any, Any]:
     """Lets the user enter other parameters (growth, changepoints_range, n_changepoints).
 
     Parameters
     ----------
-    config : dict
+    config : Dict
         Lib config dictionary containing information about default parameters.
-    params : dict
+    params : Dict
         Model parameters.
-    readme : dict
+    readme : Dict
         Dictionary containing tooltips to guide user's choices.
 
     Returns
@@ -166,16 +174,18 @@ def input_other_params(config: dict, params: dict, readme: dict) -> dict:
     return params
 
 
-def input_holidays_params(params: dict, readme: dict, config: dict) -> dict:
+def input_holidays_params(
+    params: Dict[Any, Any], readme: Dict[Any, Any], config: Dict[Any, Any]
+) -> Dict[Any, Any]:
     """Lets the user enter holidays parameters.
 
     Parameters
     ----------
-    params : dict
+    params : Dict
         Model parameters.
-    readme : dict
+    readme : Dict
         Dictionary containing tooltips to guide user's choices.
-    config : dict
+    config : Dict
         Dictionary where user can provide the list of countries whose holidays will be included.
 
     Returns
@@ -227,18 +237,20 @@ def input_holidays_params(params: dict, readme: dict, config: dict) -> dict:
     return params
 
 
-def input_regressors(df: pd.DataFrame, config: dict, params: dict, readme: dict) -> dict:
+def input_regressors(
+    df: pd.DataFrame, config: Dict[Any, Any], params: Dict[Any, Any], readme: Dict[Any, Any]
+) -> Dict[Any, Any]:
     """Lets the user select regressors.
 
     Parameters
     ----------
-    df : dict
+    df : Dict
         Prepared dataset (after filtering, resampling, cleaning).
-    config : dict
+    config : Dict
         Lib config dictionary containing information about default parameters.
-    params : dict
+    params : Dict
         Model parameters.
-    readme : dict
+    readme : Dict
         Dictionary containing tooltips to guide user's choices.
 
     Returns
@@ -246,7 +258,7 @@ def input_regressors(df: pd.DataFrame, config: dict, params: dict, readme: dict)
     dict
         Model parameters with regressors information added.
     """
-    regressors = dict()
+    regressors: Dict[Any, Any] = dict()
     default_params = config["model"]
     all_cols = set(df.columns) - {"ds", "y"}
     mask = df[all_cols].isnull().sum() == 0
@@ -292,7 +304,7 @@ def input_regressors(df: pd.DataFrame, config: dict, params: dict, readme: dict)
     return params
 
 
-def _print_removed_regressors(nan_cols: list) -> None:
+def _print_removed_regressors(nan_cols: List[Any]) -> None:
     """Displays a message in streamlit dashboard if the input list is not empty.
 
     Parameters

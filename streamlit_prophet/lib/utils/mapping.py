@@ -1,4 +1,4 @@
-from typing import Tuple
+from typing import Any, Dict, List, Tuple
 
 from streamlit_prophet.lib.utils.holidays import get_school_holidays_FR
 
@@ -87,7 +87,7 @@ def convert_into_nb_of_seconds(freq: str, horizon: int) -> int:
     return mapping[freq]
 
 
-def dayname_to_daynumber(days: list) -> list:
+def dayname_to_daynumber(days: List[Any]) -> List[Any]:
     """Converts a list of day names into a list of day numbers from 0 (Monday) to 6 (Sunday).
 
     Parameters
@@ -105,7 +105,7 @@ def dayname_to_daynumber(days: list) -> list:
     return [mapping[day] for day in days]
 
 
-def mapping_country_names(countries: list) -> Tuple[dict, list]:
+def mapping_country_names(countries: List[Any]) -> Tuple[Dict[Any, Any], List[Any]]:
     """Converts a list of country long names into a list of country short names.
 
     Parameters

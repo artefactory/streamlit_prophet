@@ -1,4 +1,4 @@
-from typing import Tuple
+from typing import Any, Dict, Tuple
 
 import io
 from pathlib import Path
@@ -21,14 +21,14 @@ def get_project_root() -> str:
 
 
 @st.cache(suppress_st_warning=True)
-def load_dataset(file, load_options: dict) -> pd.DataFrame:
+def load_dataset(file: str, load_options: Dict[Any, Any]) -> pd.DataFrame:
     """Loads dataset from user's file system as a pandas dataframe.
 
     Parameters
     ----------
     file
         Uploaded dataset file.
-    load_options : dict
+    load_options : Dict
         Dictionary containing separator information.
 
     Returns
@@ -48,7 +48,7 @@ def load_dataset(file, load_options: dict) -> pd.DataFrame:
 @st.cache(allow_output_mutation=True)
 def load_config(
     config_streamlit_filename: str, config_instructions_filename: str, config_readme_filename: str
-) -> Tuple[dict, dict, dict]:
+) -> Tuple[Dict[Any, Any], Dict[Any, Any], Dict[Any, Any]]:
     """Loads configuration files.
 
     Parameters
@@ -72,7 +72,7 @@ def load_config(
         Path(get_project_root()) / f"config/{config_instructions_filename}"
     )
     config_readme = toml.load(Path(get_project_root()) / f"config/{config_readme_filename}")
-    return config_streamlit, config_instructions, config_readme
+    return dict(config_streamlit), dict(config_instructions), dict(config_readme)
 
 
 @st.cache()
@@ -95,7 +95,7 @@ def download_toy_dataset(url: str) -> pd.DataFrame:
 
 
 @st.cache()
-def load_custom_config(config_file) -> dict:
+def load_custom_config(config_file: io.BytesIO) -> Dict[Any, Any]:
     """Loads config toml file from user's file system as a dictionary.
 
     Parameters
@@ -109,12 +109,12 @@ def load_custom_config(config_file) -> dict:
         Loaded config dictionary.
     """
     toml_file = Path(get_project_root()) / f"config/custom_{config_file.name}"
-    write_bytesio_to_file(toml_file, config_file)
+    write_bytesio_to_file(str(toml_file), config_file)
     config = toml.load(toml_file)
-    return config
+    return dict(config)
 
 
-def write_bytesio_to_file(filename, bytesio) -> None:
+def write_bytesio_to_file(filename: str, bytesio: io.BytesIO) -> None:
     """
     Write the contents of the given BytesIO to a file.
 

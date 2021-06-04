@@ -1,14 +1,16 @@
+from typing import Any, Dict
+
 import streamlit as st
 
 
-def input_metrics(readme: dict, config: dict) -> dict:
+def input_metrics(readme: Dict[Any, Any], config: Dict[Any, Any]) -> Dict[Any, Any]:
     """Lets the user select evaluation metrics to be used for model evaluation.
 
     Parameters
     ----------
-    readme : dict
+    readme : Dict
         Dictionary containing tooltips to guide user's choices.
-    config : dict
+    config : Dict
         Lib config containing the default list of metrics to use for evaluation.
 
     Returns
@@ -26,16 +28,16 @@ def input_metrics(readme: dict, config: dict) -> dict:
     return eval
 
 
-def input_scope_eval(eval: dict, use_cv: bool, readme: dict) -> dict:
+def input_scope_eval(eval: Dict[Any, Any], use_cv: bool, readme: Dict[Any, Any]) -> Dict[Any, Any]:
     """Lets the user define the scope of model evaluation (granularity, evaluation set).
 
     Parameters
     ----------
-    eval : dict
+    eval : Dict
         Dictionary containing evaluation metrics information.
     use_cv : bool
         Whether or not cross-validation is used.
-    readme : dict
+    readme : Dict
         Dictionary containing tooltips to guide user's choices.
 
     Returns

@@ -6,7 +6,7 @@ import pandas as pd
 from vacances_scolaires_france import SchoolHolidayDates
 
 
-def lockdown_format_func(lockdown_idx: int):
+def lockdown_format_func(lockdown_idx: int) -> str:
     return f"Lockdown {lockdown_idx + 1}"
 
 
@@ -24,7 +24,7 @@ def get_school_holidays_FR(years: List[int]) -> pd.DataFrame:
         Holidays dataframe with columns 'ds' and 'holiday'.
     """
 
-    def _get_school_holidays_FR_for_year(year: int):
+    def _get_school_holidays_FR_for_year(year: int) -> pd.DataFrame:
         fr_holidays = SchoolHolidayDates()
         df_vacances = pd.DataFrame.from_dict(fr_holidays.holidays_for_year(year)).T.reset_index(
             drop=True

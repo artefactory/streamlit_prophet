@@ -1,4 +1,7 @@
-def reverse_list(L: list, N: int) -> list:
+from typing import Any, List
+
+
+def reverse_list(L: List[Any], N: int) -> List[Any]:
     """Cuts the list after the N-th element and reverses its order.
 
     Parameters

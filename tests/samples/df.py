@@ -1,4 +1,4 @@
-from typing import Optional
+from typing import Any, Dict, Optional
 
 import numpy as np
 import pandas as pd
@@ -10,13 +10,13 @@ config, _, _ = load_config(
 
 
 def make_test_df(
-    ds: Optional[dict] = None,
-    cols: Optional[dict] = None,
+    ds: Optional[Dict[Any, Any]] = None,
+    cols: Optional[Dict[Any, Any]] = None,
     start: str = "2010-01-01",
     end: str = "2020-01-01",
     freq: str = "D",
     range: int = 10,
-):
+) -> pd.DataFrame:
     """Creates a sample dataframe with specifications defined by the arguments, for testing purpose.
 
     Parameters

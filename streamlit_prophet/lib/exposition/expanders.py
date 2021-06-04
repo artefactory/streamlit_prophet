@@ -1,18 +1,22 @@
+from typing import Any, Dict
+
 import plotly.graph_objects as go
 import streamlit as st
 from streamlit_prophet.lib.exposition.preparation import get_cv_dates_dict, get_hover_template_cv
 
 
-def plot_cv_dates(cv_dates: dict, resampling: dict, style: dict) -> go.Figure:
+def plot_cv_dates(
+    cv_dates: Dict[Any, Any], resampling: Dict[Any, Any], style: Dict[Any, Any]
+) -> go.Figure:
     """Creates a plotly bar plot showing training and validation dates for each cross-validation fold.
 
     Parameters
     ----------
-    cv_dates : dict
+    cv_dates : Dict
         Dictionary containing training and validation dates of each cross-validation fold.
-    resampling : dict
+    resampling : Dict
         Resampling specifications (granularity, dataset frequency).
-    style : dict
+    style : Dict
         Style specifications for the graph (colors).
 
     Returns
@@ -69,12 +73,14 @@ def plot_cv_dates(cv_dates: dict, resampling: dict, style: dict) -> go.Figure:
     return fig
 
 
-def display_expander(readme: dict, section: str, title: str, add_blank: bool = False) -> None:
+def display_expander(
+    readme: Dict[Any, Any], section: str, title: str, add_blank: bool = False
+) -> None:
     """Displays a streamlit expander with information about a section of the dashboard.
 
     Parameters
     ----------
-    readme : dict
+    readme : Dict
         Dictionary containing explanations about the section.
     section : str
         Section of the dashboard on top of which the expander will be displayed.
@@ -92,7 +98,11 @@ def display_expander(readme: dict, section: str, title: str, add_blank: bool = F
 
 
 def display_expanders_performance(
-    use_cv: bool, dates: dict, resampling: dict, style: dict, readme: dict
+    use_cv: bool,
+    dates: Dict[Any, Any],
+    resampling: Dict[Any, Any],
+    style: Dict[Any, Any],
+    readme: Dict[Any, Any],
 ) -> None:
     """Displays a streamlit expander with information about performance section.
 
@@ -100,13 +110,13 @@ def display_expanders_performance(
     ----------
     use_cv : bool
         Whether or not cross-validation is used.
-    dates : dict
+    dates : Dict
         Dictionary containing cross-validation dates information.
-    resampling : dict
+    resampling : Dict
         Resampling specifications (granularity, dataset frequency).
-    style : dict
+    style : Dict
         Style specifications for the graph (colors).
-    readme : dict
+    readme : Dict
         Dictionary containing explanations about the section.
     """
     st.write("")

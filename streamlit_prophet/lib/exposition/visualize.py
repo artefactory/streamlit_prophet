@@ -1,4 +1,4 @@
-# type: ignore
+from typing import Any, Dict
 
 import datetime
 
@@ -7,6 +7,7 @@ import plotly.express as px
 import plotly.figure_factory as ff
 import plotly.graph_objects as go
 import streamlit as st
+from fbprophet import Prophet
 from fbprophet.plot import plot_plotly
 from plotly.subplots import make_subplots
 from streamlit_prophet.lib.evaluation.metrics import get_perf_metrics
@@ -24,11 +25,11 @@ from streamlit_prophet.lib.utils.misc import reverse_list
 def plot_overview(
     make_future_forecast: bool,
     use_cv: bool,
-    models: dict,
-    forecasts: dict,
+    models: Dict[Any, Any],
+    forecasts: Dict[Any, Any],
     target_col: str,
-    cleaning: dict,
-    readme: dict,
+    cleaning: Dict[Any, Any],
+    readme: Dict[Any, Any],
 ) -> None:
     """Plots a graph with predictions and actual values, with explanations.
 
@@ -38,15 +39,15 @@ def plot_overview(
         Whether or not a forecast is made on future dates.
     use_cv : bool
         Whether or not cross-validation is used.
-    models : dict
+    models : Dict
         Dictionary containing a model fitted on evaluation data and another model fitted on the whole dataset.
-    forecasts : dict
+    forecasts : Dict
         Dictionary containing evaluation forecasts and future forecasts if a future forecast is made.
     target_col : str
         Name of target column.
-    cleaning : dict
+    cleaning : Dict
         Cleaning specifications.
-    readme : dict
+    readme : Dict
         Dictionary containing explanations about the graph.
     """
     display_expander(readme, "overview", "More info on this plot")
@@ -75,13 +76,13 @@ def plot_overview(
 def plot_performance(
     use_cv: bool,
     target_col: str,
-    datasets: dict,
-    forecasts: dict,
-    dates: dict,
-    eval: dict,
-    resampling: dict,
-    config: dict,
-    readme: dict,
+    datasets: Dict[Any, Any],
+    forecasts: Dict[Any, Any],
+    dates: Dict[Any, Any],
+    eval: Dict[Any, Any],
+    resampling: Dict[Any, Any],
+    config: Dict[Any, Any],
+    readme: Dict[Any, Any],
 ) -> None:
     """Plots several graphs showing model performance, with explanations.
 
@@ -91,19 +92,19 @@ def plot_performance(
         Whether or not cross-validation is used.
     target_col : str
         Name of target column.
-    datasets : dict
+    datasets : Dict
         Dictionary containing evaluation dataset.
-    forecasts : dict
+    forecasts : Dict
         Dictionary containing evaluation forecasts.
-    dates : dict
+    dates : Dict
         Dictionary containing evaluation dates.
-    eval : dict
+    eval : Dict
         Evaluation specifications (metrics, evaluation set, granularity).
-    resampling : dict
+    resampling : Dict
         Resampling specifications (granularity, dataset frequency).
-    config : dict
+    config : Dict
         Cleaning specifications.
-    readme : dict
+    readme : Dict
         Dictionary containing explanations about the graphs.
     """
     style = config["style"]
@@ -137,12 +138,12 @@ def plot_components(
     use_cv: bool,
     make_future_forecast: bool,
     target_col: str,
-    models: dict,
-    forecasts: dict,
-    cleaning: dict,
-    resampling: dict,
-    config: dict,
-    readme: dict,
+    models: Dict[Any, Any],
+    forecasts: Dict[Any, Any],
+    cleaning: Dict[Any, Any],
+    resampling: Dict[Any, Any],
+    config: Dict[Any, Any],
+    readme: Dict[Any, Any],
     df: pd.DataFrame,
 ) -> None:
     """Plots a graph showing the different components of prediction, with explanations.
@@ -155,17 +156,17 @@ def plot_components(
         Whether or not a future forecast is made.
     target_col : str
         Name of target column.
-    models : dict
+    models : Dict
         Dictionary containing a model fitted on evaluation data.
-    forecasts : dict
+    forecasts : Dict
         Dictionary containing evaluation forecasts.
-    cleaning : dict
+    cleaning : Dict
         Cleaning specifications.
-    resampling : dict
+    resampling : Dict
         Resampling specifications (granularity, dataset frequency).
-    config : dict
+    config : Dict
         Cleaning specifications.
-    readme : dict
+    readme : Dict
         Dictionary containing explanations about the graph.
     df: pd.DataFrame
         Dataframe containing the ground truth.
@@ -198,23 +199,28 @@ def plot_components(
 
 
 def plot_future(
-    models: dict, forecasts: dict, dates: dict, target_col: str, cleaning: dict, readme: dict
+    models: Dict[Any, Any],
+    forecasts: Dict[Any, Any],
+    dates: Dict[Any, Any],
+    target_col: str,
+    cleaning: Dict[Any, Any],
+    readme: Dict[Any, Any],
 ) -> None:
     """Plots a graph with predictions for future dates, with explanations.
 
     Parameters
     ----------
-    models : dict
+    models : Dict
         Dictionary containing a model fitted on the whole dataset.
-    forecasts : dict
+    forecasts : Dict
         Dictionary containing future forecast.
-    dates : dict
+    dates : Dict
         Dictionary containing future forecast dates.
     target_col : str
         Name of target column.
-    cleaning : dict
+    cleaning : Dict
         Cleaning specifications.
-    readme : dict
+    readme : Dict
         Dictionary containing explanations about the graph.
     """
     display_expander(readme, "future", "More info on this plot")
@@ -233,7 +239,7 @@ def plot_future(
 
 
 def plot_forecasts_vs_truth(
-    eval_df: pd.DataFrame, target_col: str, use_cv: bool, style: dict
+    eval_df: pd.DataFrame, target_col: str, use_cv: bool, style: Dict[Any, Any]
 ) -> go.Figure:
     """Creates a plotly line plot showing forecasts and actual values on evaluation period.
 
@@ -245,7 +251,7 @@ def plot_forecasts_vs_truth(
         Name of target column.
     use_cv : bool
         Whether or not cross-validation is used.
-    style : dict
+    style : Dict
         Style specifications for the graph (colors).
 
     Returns
@@ -308,7 +314,9 @@ def plot_forecasts_vs_truth(
     return fig
 
 
-def plot_truth_vs_actual_scatter(eval_df: pd.DataFrame, use_cv: bool, style: dict) -> go.Figure:
+def plot_truth_vs_actual_scatter(
+    eval_df: pd.DataFrame, use_cv: bool, style: Dict[Any, Any]
+) -> go.Figure:
     """Creates a plotly scatter plot showing forecasts and actual values on evaluation period.
 
     Parameters
@@ -317,7 +325,7 @@ def plot_truth_vs_actual_scatter(eval_df: pd.DataFrame, use_cv: bool, style: dic
         Evaluation dataframe.
     use_cv : bool
         Whether or not cross-validation is used.
-    style : dict
+    style : Dict
         Style specifications for the graph (colors).
 
     Returns
@@ -361,7 +369,7 @@ def plot_truth_vs_actual_scatter(eval_df: pd.DataFrame, use_cv: bool, style: dic
     return fig
 
 
-def plot_residuals_distrib(eval_df: pd.DataFrame, use_cv: bool, style: dict) -> go.Figure:
+def plot_residuals_distrib(eval_df: pd.DataFrame, use_cv: bool, style: Dict[Any, Any]) -> go.Figure:
     """Creates a plotly distribution plot showing distribution of residuals on evaluation period.
 
     Parameters
@@ -370,7 +378,7 @@ def plot_residuals_distrib(eval_df: pd.DataFrame, use_cv: bool, style: dict) -> 
         Evaluation dataframe.
     use_cv : bool
         Whether or not cross-validation is used.
-    style : dict
+    style : Dict
         Style specifications for the graph (colors).
 
     Returns
@@ -389,8 +397,8 @@ def plot_residuals_distrib(eval_df: pd.DataFrame, use_cv: bool, style: dict) -> 
         residuals = [x[x.between(x_min, x_max)] for x in residuals]
     else:
         labels = [""]
-        residuals = pd.Series(eval_df["residuals"])
-        residuals = [residuals[residuals.between(x_min, x_max)]]
+        residuals_series = pd.Series(eval_df["residuals"])
+        residuals = [residuals_series[residuals_series.between(x_min, x_max)]]
     colors = (
         reverse_list(style["colors"], eval_df["Fold"].nunique()) if use_cv else [style["colors"][2]]
     )
@@ -415,7 +423,11 @@ def plot_residuals_distrib(eval_df: pd.DataFrame, use_cv: bool, style: dict) -> 
 
 
 def plot_detailed_metrics(
-    metrics_df: pd.DataFrame, perf: dict, eval: dict, use_cv: bool, style: dict
+    metrics_df: pd.DataFrame,
+    perf: Dict[Any, Any],
+    eval: Dict[Any, Any],
+    use_cv: bool,
+    style: Dict[Any, Any],
 ) -> None:
     """Displays a dataframe or plots graphs showing model performance on selected metrics.
 
@@ -423,13 +435,13 @@ def plot_detailed_metrics(
     ----------
     metrics_df : pd.DataFrame
         Dataframe containing model performance on different metrics at the desired granularity.
-    perf : dict
+    perf : Dict
         Dictionary containing model performance on different metrics at the desired granularity.
-    eval : dict
+    eval : Dict
         Evaluation specifications (evaluation set, selected metrics, granularity).
     use_cv : bool
         Whether or not cross-validation is used.
-    style : dict
+    style : Dict
         Style specifications for the graph (colors).
     """
     metrics = [metric for metric in perf.keys() if perf[metric][eval["granularity"]].nunique() > 1]
@@ -459,12 +471,12 @@ def plot_detailed_metrics(
 
 
 def make_separate_components_plot(
-    model,
+    model: Prophet,
     forecast_df: pd.DataFrame,
     target_col: str,
-    cleaning: dict,
-    resampling: dict,
-    style: dict,
+    cleaning: Dict[Any, Any],
+    resampling: Dict[Any, Any],
+    style: Dict[Any, Any],
 ) -> go.Figure:
     """Creates plotly area charts with the components of the prediction, each one on its own subplot.
 
@@ -476,11 +488,11 @@ def make_separate_components_plot(
         Predictions of Prophet model.
     target_col : str
         Name of target column.
-    cleaning : dict
+    cleaning : Dict
         Cleaning specifications.
-    resampling : dict
+    resampling : Dict
         Resampling specifications (granularity, dataset frequency).
-    style : dict
+    style : Dict
         Style specifications for the graph (colors).
 
     Returns
@@ -548,14 +560,14 @@ def make_separate_components_plot(
 
 
 def make_waterfall_components_plot(
-    model,
+    model: Prophet,
     forecast_df: pd.DataFrame,
     start_date: datetime.date,
     end_date: datetime.date,
     target_col: str,
-    cleaning: dict,
-    resampling: dict,
-    style: dict,
+    cleaning: Dict[Any, Any],
+    resampling: Dict[Any, Any],
+    style: Dict[Any, Any],
     df: pd.DataFrame,
 ) -> go.Figure:
     """Creates a waterfall chart with the components of the prediction.
@@ -572,11 +584,11 @@ def make_waterfall_components_plot(
         End date for components computation.
     target_col : str
         Name of target column.
-    cleaning : dict
+    cleaning : Dict
         Cleaning specifications.
-    resampling : dict
+    resampling : Dict
         Resampling specifications (granularity, dataset frequency).
-    style : dict
+    style : Dict
         Style specifications for the graph (colors).
     df: pd.DataFrame
         Dataframe containing the ground truth.
@@ -622,11 +634,11 @@ def make_waterfall_components_plot(
 
 def display_global_metrics(
     evaluation_df: pd.DataFrame,
-    eval: dict,
-    dates: dict,
-    resampling: dict,
+    eval: Dict[Any, Any],
+    dates: Dict[Any, Any],
+    resampling: Dict[Any, Any],
     use_cv: bool,
-    config: dict,
+    config: Dict[Any, Any],
 ) -> None:
     """Displays all global metrics.
 
@@ -634,15 +646,15 @@ def display_global_metrics(
     ----------
     evaluation_df : pd.DataFrame
         Evaluation dataframe.
-    eval : dict
+    eval : Dict
         Evaluation specifications.
-    dates : dict
+    dates : Dict
         Dictionary containing all dates information.
-    resampling : dict
+    resampling : Dict
         Resampling specifications.
     use_cv : bool
         Whether or note cross-validation is used.
-    config : dict
+    config : Dict
         Lib configuration dictionary.
     """
     eval_all = {

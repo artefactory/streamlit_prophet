@@ -1,18 +1,18 @@
-from typing import Tuple
+from typing import Any, Dict, Tuple
 
 import numpy as np
 import pandas as pd
 import streamlit as st
 
 
-def clean_df(df: pd.DataFrame, cleaning: dict) -> pd.DataFrame:
+def clean_df(df: pd.DataFrame, cleaning: Dict[Any, Any]) -> pd.DataFrame:
     """Cleans the input dataframe according to cleaning dict specifications.
 
     Parameters
     ----------
     df : pd.DataFrame
         Input dataframe that has to be cleaned.
-    cleaning : dict
+    cleaning : Dict
         Cleaning specifications.
 
     Returns
@@ -25,14 +25,14 @@ def clean_df(df: pd.DataFrame, cleaning: dict) -> pd.DataFrame:
     return df
 
 
-def clean_future_df(df: pd.DataFrame, cleaning: dict) -> pd.DataFrame:
+def clean_future_df(df: pd.DataFrame, cleaning: Dict[Any, Any]) -> pd.DataFrame:
     """Cleans the input dataframe according to cleaning dict specifications.
 
     Parameters
     ----------
     df : pd.DataFrame
         Input dataframe that has to be cleaned.
-    cleaning : dict
+    cleaning : Dict
         Cleaning specifications.
 
     Returns
@@ -52,7 +52,7 @@ def clean_future_df(df: pd.DataFrame, cleaning: dict) -> pd.DataFrame:
 
 
 @st.cache(suppress_st_warning=True)
-def _log_transform(df: pd.DataFrame, cleaning: dict) -> pd.DataFrame:
+def _log_transform(df: pd.DataFrame, cleaning: Dict[Any, Any]) -> pd.DataFrame:
     """Applies a log transform to the y column of input dataframe, if possible.
     Raises an error in streamlit dashboard if not possible.
 
@@ -60,7 +60,7 @@ def _log_transform(df: pd.DataFrame, cleaning: dict) -> pd.DataFrame:
     ----------
     df : pd.DataFrame
         Input dataframe that has to be cleaned.
-    cleaning : dict
+    cleaning : Dict
         Cleaning specifications.
 
     Returns
@@ -81,14 +81,14 @@ def _log_transform(df: pd.DataFrame, cleaning: dict) -> pd.DataFrame:
 
 
 @st.cache()
-def _remove_rows(df: pd.DataFrame, cleaning: dict) -> pd.DataFrame:
+def _remove_rows(df: pd.DataFrame, cleaning: Dict[Any, Any]) -> pd.DataFrame:
     """Removes some rows of the input dataframe according to cleaning dict specifications.
 
     Parameters
     ----------
     df : pd.DataFrame
         Input dataframe that has to be cleaned.
-    cleaning : dict
+    cleaning : Dict
         Cleaning specifications.
 
     Returns
@@ -111,14 +111,16 @@ def _remove_rows(df: pd.DataFrame, cleaning: dict) -> pd.DataFrame:
     return df_clean
 
 
-def exp_transform(datasets: dict, forecasts: dict) -> Tuple[dict, dict]:
+def exp_transform(
+    datasets: Dict[Any, Any], forecasts: Dict[Any, Any]
+) -> Tuple[Dict[Any, Any], Dict[Any, Any]]:
     """Applies an exp transform to the y column of dataframes which are values of input dictionaries.
 
     Parameters
     ----------
-    datasets : dict
+    datasets : Dict
         A dictionary whose values are dataframes used as an input to fit a Prophet model.
-    forecasts : dict
+    forecasts : Dict
         A dictionary whose values are dataframes which are the output of a Prophet prediction.
 
     Returns

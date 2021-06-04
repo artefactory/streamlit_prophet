@@ -1,3 +1,5 @@
+from typing import Any, Dict
+
 import base64
 
 import pandas as pd
@@ -28,12 +30,12 @@ def get_df_download_link(df: pd.DataFrame, filename: str, linkname: str) -> str:
     return href
 
 
-def get_config_download_link(config: dict, filename: str, linkname: str) -> str:
+def get_config_download_link(config: Dict[Any, Any], filename: str, linkname: str) -> str:
     """Creates a link to download the config as a toml file. Removes keys that should not be customized.
 
     Parameters
     ----------
-    config : dict
+    config : Dict
         Config file to export as toml.
     filename : str
         Name of the exported file.
@@ -116,10 +118,10 @@ def display_2_download_links(
 
 
 def display_config_download_links(
-    config1: dict,
+    config1: Dict[Any, Any],
     filename1: str,
     linkname1: str,
-    config2: dict,
+    config2: Dict[Any, Any],
     filename2: str,
     linkname2: str,
 ) -> None:
@@ -127,13 +129,13 @@ def display_config_download_links(
 
     Parameters
     ----------
-    config1 : dict
+    config1 : Dict
         First config file to export as toml.
     filename1 : str
         Name of the first exported file.
     linkname1 : str
         Text displayed in the streamlit app for the first link.
-    config2 : dict
+    config2 : Dict
         Second config file to export as toml.
     filename2 : str
         Name of the second exported file.

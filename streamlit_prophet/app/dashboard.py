@@ -1,3 +1,5 @@
+from typing import Any, Dict
+
 import streamlit as st
 from streamlit_prophet.lib.dataprep.clean import clean_df
 from streamlit_prophet.lib.dataprep.format import (
@@ -49,7 +51,7 @@ config, instructions, readme = load_config(
 )
 
 # Initialization
-dates = dict()
+dates: Dict[Any, Any] = dict()
 
 # Info
 with st.beta_expander("What is this app?", expanded=False):

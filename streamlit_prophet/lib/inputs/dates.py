@@ -1,4 +1,4 @@
-from typing import Tuple
+from typing import Any, Dict, Tuple
 
 import datetime
 from datetime import timedelta
@@ -21,21 +21,25 @@ from streamlit_prophet.lib.utils.mapping import (
 
 
 def input_train_dates(
-    df: pd.DataFrame, use_cv: bool, config: dict, resampling: dict, dates: dict
-) -> dict:
+    df: pd.DataFrame,
+    use_cv: bool,
+    config: Dict[Any, Any],
+    resampling: Dict[Any, Any],
+    dates: Dict[Any, Any],
+) -> Dict[Any, Any]:
     """Lets the user enter training dates.
 
     Parameters
     ----------
-    df : dict
+    df : Dict
         Prepared dataset (after filtering, resampling, cleaning).
     use_cv : bool
         Whether or not cross-validation is used.
-    config : dict
+    config : Dict
         Lib config dictionary containing information needed to set default dates displayed in streamlit.
-    resampling : dict
+    resampling : Dict
         Dictionary containing dataset frequency information.
-    dates : dict
+    dates : Dict
         Empty dictionary.
 
     Returns
@@ -58,16 +62,18 @@ def input_train_dates(
     return dates
 
 
-def input_val_dates(df: pd.DataFrame, dates: dict, config: dict) -> dict:
+def input_val_dates(
+    df: pd.DataFrame, dates: Dict[Any, Any], config: Dict[Any, Any]
+) -> Dict[Any, Any]:
     """Lets the user enter validation dates.
 
     Parameters
     ----------
-    df : dict
+    df : Dict
         Prepared dataset (after filtering, resampling, cleaning).
-    dates : dict
+    dates : Dict
         Dictionary containing training dates information.
-    config : dict
+    config : Dict
         Lib config dictionary containing information needed to set default dates displayed in streamlit.
 
     Returns
@@ -91,18 +97,23 @@ def input_val_dates(df: pd.DataFrame, dates: dict, config: dict) -> dict:
     return dates
 
 
-def input_cv(dates: dict, resampling: dict, config: dict, readme: dict) -> dict:
+def input_cv(
+    dates: Dict[Any, Any],
+    resampling: Dict[Any, Any],
+    config: Dict[Any, Any],
+    readme: Dict[Any, Any],
+) -> Dict[Any, Any]:
     """Lets the user enter cross-validation specifications.
 
     Parameters
     ----------
-    dates : dict
+    dates : Dict
         Dictionary containing training dates information.
-    resampling : dict
+    resampling : Dict
         Dictionary containing dataset frequency information.
-    config : dict
+    config : Dict
         Lib config dictionary containing information needed to set default dates displayed in streamlit.
-    readme : dict
+    readme : Dict
         Dictionary containing tooltips to guide user's choices.
 
     Returns
@@ -132,21 +143,25 @@ def input_cv(dates: dict, resampling: dict, config: dict, readme: dict) -> dict:
 
 
 def input_forecast_dates(
-    df: pd.DataFrame, dates: dict, resampling: dict, config: dict, readme: dict
-) -> dict:
+    df: pd.DataFrame,
+    dates: Dict[Any, Any],
+    resampling: Dict[Any, Any],
+    config: Dict[Any, Any],
+    readme: Dict[Any, Any],
+) -> Dict[Any, Any]:
     """Lets the user enter future forecast dates.
 
     Parameters
     ----------
     df : pd.DataFrame
         Prepared dataset (after filtering, resampling, cleaning).
-    dates : dict
+    dates : Dict
         Dictionary containing dates information.
-    resampling : dict
+    resampling : Dict
         Dictionary containing dataset frequency information.
-    config : dict
+    config : Dict
         Lib config dictionary containing information needed to set default dates displayed in streamlit.
-    readme : dict
+    readme : Dict
         Dictionary containing tooltips to guide user's choices.
 
     Returns
@@ -183,7 +198,7 @@ def input_forecast_dates(
 
 
 def input_waterfall_dates(
-    forecast_df: pd.DataFrame, resampling: dict
+    forecast_df: pd.DataFrame, resampling: Dict[Any, Any]
 ) -> Tuple[datetime.date, datetime.date]:
     """Lets the user enter dates for waterfall components chart.
 
@@ -191,7 +206,7 @@ def input_waterfall_dates(
     ----------
     forecast_df : pd.DataFrame
         Dataframe with forecast and components.
-    resampling : dict
+    resampling : Dict
         Resampling specifications (granularity, dataset frequency).
 
     Returns

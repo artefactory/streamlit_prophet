@@ -1,4 +1,4 @@
-from typing import Tuple
+from typing import Any, Dict, Optional, Tuple
 
 import pandas as pd
 from fbprophet import Prophet
@@ -16,12 +16,14 @@ from streamlit_prophet.lib.utils.mapping import (
 )
 
 
-def instantiate_prophet_model(params, use_regressors=True, dates=None) -> Prophet:
+def instantiate_prophet_model(
+    params: Dict[Any, Any], use_regressors: bool = True, dates: Optional[Dict[Any, Any]] = None
+) -> Prophet:
     """Instantiates a Prophet model with input parameters.
 
     Parameters
     ----------
-    params : dict
+    params : Dict
         Model parameters.
     use_regressors : bool
         Whether or not to add regressors to the model.
@@ -41,7 +43,8 @@ def instantiate_prophet_model(params, use_regressors=True, dates=None) -> Prophe
     for _, values in params["seasonalities"].items():
         if "custom_param" in values:
             model.add_seasonality(**values["custom_param"])
-    model = _add_prophet_holidays(model, params["holidays"], dates)
+    if dates:
+        model = _add_prophet_holidays(model, params["holidays"], dates)
 
     if use_regressors:
         for regressor in params["regressors"].keys():
@@ -52,26 +55,26 @@ def instantiate_prophet_model(params, use_regressors=True, dates=None) -> Prophe
 
 
 def forecast_workflow(
-    config: dict,
+    config: Dict[Any, Any],
     use_cv: bool,
     make_future_forecast: bool,
     evaluate: bool,
-    cleaning: dict,
-    resampling: dict,
-    params: dict,
-    dates: dict,
-    datasets: dict,
+    cleaning: Dict[Any, Any],
+    resampling: Dict[Any, Any],
+    params: Dict[Any, Any],
+    dates: Dict[Any, Any],
+    datasets: Dict[Any, Any],
     df: pd.DataFrame,
     date_col: str,
     target_col: str,
-    dimensions: dict,
-    load_options: dict,
-) -> Tuple[dict, dict, dict]:
+    dimensions: Dict[Any, Any],
+    load_options: Dict[Any, Any],
+) -> Tuple[Dict[Any, Any], Dict[Any, Any], Dict[Any, Any]]:
     """Trains a Prophet model and makes a prediction on evaluation data and future data if needed.
 
     Parameters
     ----------
-    config : dict
+    config : Dict
         Lib configuration dictionary, containing information about random seed to use for training.
     use_cv : bool
         Whether or not cross-validation is used.
@@ -79,15 +82,15 @@ def forecast_workflow(
         Whether or not to make a forecast on future dates.
     evaluate : bool
         Whether or not to do a model evaluation.
-    cleaning : dict
+    cleaning : Dict
         Dataset cleaning specifications.
-    resampling : dict
+    resampling : Dict
         Dataset resampling specifications.
-    params : dict
+    params : Dict
         Model parameters.
-    dates : dict
+    dates : Dict
         Dictionary containing all relevant dates for training and forecasting.
-    datasets : dict
+    datasets : Dict
         Dictionary containing all relevant dataframes for training and forecasting.
     df : pd.DataFrame
         Full input dataframe, after cleaning, filtering and resampling.
@@ -95,9 +98,9 @@ def forecast_workflow(
         Name of date column.
     target_col : str
         Name of target column.
-    dimensions : dict
+    dimensions : Dict
         Dictionary containing dimensions information.
-    load_options : dict
+    load_options : Dict
         Loading options selected by user.
 
     Returns
@@ -109,7 +112,8 @@ def forecast_workflow(
     dict
         Dictionary containing the different forecasts.
     """
-    models, forecasts = dict(), dict()
+    models: Dict[Any, Any] = dict()
+    forecasts: Dict[Any, Any] = dict()
     with suppress_stdout_stderr():
         if evaluate:
             datasets, models, forecasts = forecast_eval(
@@ -137,34 +141,34 @@ def forecast_workflow(
 
 
 def forecast_eval(
-    config: dict,
+    config: Dict[Any, Any],
     use_cv: bool,
-    resampling: dict,
-    params: dict,
-    dates: dict,
-    datasets: dict,
-    models: dict,
-    forecasts: dict,
-) -> Tuple[dict, dict, dict]:
+    resampling: Dict[Any, Any],
+    params: Dict[Any, Any],
+    dates: Dict[Any, Any],
+    datasets: Dict[Any, Any],
+    models: Dict[Any, Any],
+    forecasts: Dict[Any, Any],
+) -> Tuple[Dict[Any, Any], Dict[Any, Any], Dict[Any, Any]]:
     """Trains a Prophet model on training data and makes a prediction on evaluation data.
 
     Parameters
     ----------
-    config : dict
+    config : Dict
         Lib configuration dictionary, containing information about random seed to use for training.
     use_cv : bool
         Whether or not cross-validation is used.
-    resampling : dict
+    resampling : Dict
         Dataset resampling specifications.
-    params : dict
+    params : Dict
         Model parameters.
-    dates : dict
+    dates : Dict
         Dictionary containing all relevant dates for training and forecasting.
-    datasets : dict
+    datasets : Dict
         Dictionary containing all relevant dataframes for training and forecasting.
-    models : dict
+    models : Dict
         Dictionary containing instantiated Prophet models.
-    forecasts : dict
+    forecasts : Dict
         Dictionary containing the different forecasts.
 
     Returns
@@ -193,49 +197,49 @@ def forecast_eval(
 
 
 def forecast_future(
-    config: dict,
-    params: dict,
-    cleaning: dict,
-    dates: dict,
-    datasets: dict,
-    models: dict,
-    forecasts: dict,
+    config: Dict[Any, Any],
+    params: Dict[Any, Any],
+    cleaning: Dict[Any, Any],
+    dates: Dict[Any, Any],
+    datasets: Dict[Any, Any],
+    models: Dict[Any, Any],
+    forecasts: Dict[Any, Any],
     df: pd.DataFrame,
-    resampling: dict,
+    resampling: Dict[Any, Any],
     date_col: str,
     target_col: str,
-    dimensions: dict,
-    load_options: dict,
-) -> Tuple[dict, dict, dict]:
+    dimensions: Dict[Any, Any],
+    load_options: Dict[Any, Any],
+) -> Tuple[Dict[Any, Any], Dict[Any, Any], Dict[Any, Any]]:
     """Trains a Prophet model on the whole dataset and makes a prediction on future data.
 
     Parameters
     ----------
-    config : dict
+    config : Dict
         Lib configuration dictionary, containing information about random seed to use for training.
-    params : dict
+    params : Dict
         Model parameters.
-    cleaning : dict
+    cleaning : Dict
         Dataset cleaning specifications.
-    dates : dict
+    dates : Dict
         Dictionary containing all relevant dates for training and forecasting.
-    datasets : dict
+    datasets : Dict
         Dictionary containing all relevant dataframes for training and forecasting.
-    models : dict
+    models : Dict
         Dictionary containing instantiated Prophet models.
-    forecasts : dict
+    forecasts : Dict
         Dictionary containing the different forecasts.
     df : pd.DataFrame
         Full input dataframe, after cleaning, filtering and resampling.
-    resampling : dict
+    resampling : Dict
         Dictionary containing dataset frequency information.
     date_col : str
         Name of date column.
     target_col : str
         Name of target column.
-    dimensions : dict
+    dimensions : Dict
         Dictionary containing dimensions information.
-    load_options : dict
+    load_options : Dict
         Loading options selected by user.
 
     Returns
@@ -268,7 +272,9 @@ def forecast_future(
     return datasets, models, forecasts
 
 
-def _add_prophet_holidays(model: Prophet, holidays_params: dict, dates: dict) -> pd.DataFrame:
+def _add_prophet_holidays(
+    model: Prophet, holidays_params: Dict[Any, Any], dates: Dict[Any, Any]
+) -> pd.DataFrame:
     """Add all available holidays to the Prophet model
 
     Parameters
