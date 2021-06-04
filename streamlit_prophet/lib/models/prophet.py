@@ -1,4 +1,4 @@
-from typing import Any, Dict, Tuple
+from typing import Any, Dict, Optional, Tuple
 
 import pandas as pd
 from fbprophet import Prophet
@@ -17,9 +17,7 @@ from streamlit_prophet.lib.utils.mapping import (
 
 
 def instantiate_prophet_model(
-    params: Dict[Any, Any],
-    use_regressors: bool = True,
-    dates: Optional[Dict[Any,Any]] = None
+    params: Dict[Any, Any], use_regressors: bool = True, dates: Optional[Dict[Any, Any]] = None
 ) -> Prophet:
     """Instantiates a Prophet model with input parameters.
 
@@ -45,7 +43,8 @@ def instantiate_prophet_model(
     for _, values in params["seasonalities"].items():
         if "custom_param" in values:
             model.add_seasonality(**values["custom_param"])
-    model = _add_prophet_holidays(model, params["holidays"], dates)
+    if dates:
+        model = _add_prophet_holidays(model, params["holidays"], dates)
 
     if use_regressors:
         for regressor in params["regressors"].keys():
@@ -273,7 +272,9 @@ def forecast_future(
     return datasets, models, forecasts
 
 
-def _add_prophet_holidays(model: Prophet, holidays_params: dict, dates: dict) -> pd.DataFrame:
+def _add_prophet_holidays(
+    model: Prophet, holidays_params: Dict[Any, Any], dates: Dict[Any, Any]
+) -> pd.DataFrame:
     """Add all available holidays to the Prophet model
 
     Parameters

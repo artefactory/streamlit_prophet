@@ -1,4 +1,4 @@
-from typing import Any, Dict, List, Tuple
+from typing import Any, Dict, List, Optional, Tuple
 
 import datetime
 from collections import defaultdict
@@ -66,9 +66,10 @@ def get_forecast_components_col_names(forecast_df: pd.DataFrame) -> List[Any]:
     ]
     return components_col
 
+
 def get_components_mapping(
-    components: pd.DataFrame, model: Prophet, cols_to_drop: List[str] = None
-) -> Dict[str, list]:
+    components: pd.DataFrame, model: Prophet, cols_to_drop: Optional[List[str]] = None
+) -> Dict[str, List[Any]]:
     """Compute a dict with value: list of columns to sum under key: new column name
     All columns in components will have as key either:
     - their own name (col: [col]) -> to be left as is
@@ -110,7 +111,9 @@ def get_components_mapping(
     return components_mapping
 
 
-def group_components(components: pd.DataFrame, components_mapping: Dict[str, list]) -> pd.DataFrame:
+def group_components(
+    components: pd.DataFrame, components_mapping: Dict[str, List[Any]]
+) -> pd.DataFrame:
     """Group components based on components_mapping in a copy of the components df
 
     Parameters
