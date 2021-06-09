@@ -30,7 +30,7 @@ jobs:
         key: venv-${{ matrix.python-version }}-${{ hashFiles('pyproject.toml') }}-${{ hashFiles('poetry.lock') }}
     - name: Install dependencies
       run: |
-        source "$HOME/.poetry/env"
+        echo "PATH=$HOME/.poetry/bin:$PATH" >> $GITHUB_ENV
         poetry run pip install --upgrade pip
         poetry install
 
