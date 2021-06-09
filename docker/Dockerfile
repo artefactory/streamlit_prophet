@@ -15,7 +15,7 @@ RUN mkdir -p /home/docker_user/workspace
 WORKDIR /home/docker_user/workspace
 
 # Install Poetry
-RUN curl -sSL https://raw.githubusercontent.com/python-poetry/poetry/master/get-poetry.py | POETRY_HOME=/home/docker_user/poetry python
+RUN curl -sSL https://raw.githubusercontent.com/python-poetry/poetry/master/install-poetry.py | POETRY_HOME=/home/docker_user/poetry python
 
 ENV PATH="${PATH}:/home/docker_user/.poetry/bin:/home/docker_user/poetry/bin"
 
