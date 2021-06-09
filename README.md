@@ -95,7 +95,7 @@ git clone git@github.com:artefactory/streamlit_prophet.git
 2. If you don't have `Poetry` installed, run:
 
 ```bash
-make download-poetry; source "$HOME/.poetry/env"
+make download-poetry; export PATH="$HOME/.poetry/bin:$PATH"
 ```
 
 3. Initialize poetry and install `pre-commit` hooks:

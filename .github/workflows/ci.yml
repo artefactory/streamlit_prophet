@@ -28,23 +28,22 @@ jobs:
       with:
         path: ~/.cache/pypoetry/virtualenvs
         key: venv-${{ matrix.python-version }}-${{ hashFiles('pyproject.toml') }}-${{ hashFiles('poetry.lock') }}
+    - name: Set Poetry Path
+      run: |
+        echo "$HOME/.poetry/bin" >> $GITHUB_PATH
     - name: Install dependencies
       run: |
-        source "$HOME/.poetry/env"
         poetry run pip install --upgrade pip
         poetry install
 
     - name: Run safety checks
       run: |
-        source "$HOME/.poetry/env"
         STRICT=1 make check-safety
 
     - name: Run style checks
       run: |
-        source "$HOME/.poetry/env"
         STRICT=1 make check-style
 
     - name: Run tests
       run: |
-        source "$HOME/.poetry/env"
         make test
