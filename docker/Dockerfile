@@ -28,4 +28,4 @@ COPY . /home/docker_user/workspace/
 
 EXPOSE 8501
 
-ENTRYPOINT ["poetry", "run", "streamlit_prophet"]
+ENTRYPOINT ["poetry", "run", "streamlit_prophet", "deploy", "dashboard"]
