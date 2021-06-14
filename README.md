@@ -104,7 +104,8 @@ make download-poetry; export PATH="$HOME/.poetry/bin:$PATH"
 make install
 ```
 
-And you are ready to develop ! For more information, see [`CONTRIBUTING`](https://github.com/artefactory/streamlit_prophet/blob/main/CONTRIBUTING.md) file at the root of this repository.
+And you are ready to develop ! For more information, see [`CONTRIBUTING`](https://github.com/artefactory/streamlit_prophet/blob/main/CONTRIBUTING.md) instructions.
+If you wish to create a Docker container, see [`DOCKER`](https://github.com/artefactory/streamlit_prophet/blob/main/DOCKER.md) instructions.
 
 
 ## ✏️ Citation
