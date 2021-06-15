@@ -26,6 +26,6 @@ RUN poetry install --no-root --no-dev
 
 COPY . /home/docker_user/workspace/
 
-EXPOSE 8501
+EXPOSE 8080
 
 ENTRYPOINT ["poetry", "run", "streamlit_prophet", "deploy", "dashboard"]
