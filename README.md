@@ -44,14 +44,7 @@ pip install virtualenv; python3.7 -m virtualenv streamlit_prophet --python=pytho
 
 
 ### Install package
-Then, install the package from PyPi: [NOT YET, ONLY WHEN PACKAGE WILL BE PUBLIC]
-
-```bash
-pip install -U streamlit_prophet
-```
-
-
-Or install it from the main branch of this repository:
+Install the package from the main branch of this repository:
 
 ```bash
 pip install git+ssh://git@github.com/artefactory/streamlit_prophet.git@main
@@ -106,7 +99,7 @@ make install
 ```
 
 And you are ready to develop ! For more information, see [`CONTRIBUTING`](https://github.com/artefactory/streamlit_prophet/blob/main/CONTRIBUTING.md) instructions.
-If you wish to create a Docker container, see [`DOCKER`](https://github.com/artefactory/streamlit_prophet/blob/main/DOCKER.md) instructions.
+If you wish to containerize the app, see [`DOCKER`](https://github.com/artefactory/streamlit_prophet/blob/main/DOCKER.md) instructions.
 
 
 ## ✏️ Citation
