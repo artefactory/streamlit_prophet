@@ -16,6 +16,7 @@ train, evaluate and optimize a [Prophet](https://facebook.github.io/prophet/) fo
 
 </div>
 
+The deployed app is available [here](https://streamlit-prophet-dot-data-sandbox-fr.ew.r.appspot.com/).
 
 ## 💻 Supported Python Versions
 
