@@ -1,4 +1,4 @@
-from typing import Any, Dict
+from typing import Any, Dict, List
 
 import datetime
 
@@ -16,7 +16,6 @@ from streamlit_prophet.lib.exposition.expanders import (
     display_expander,
     display_expanders_performance,
 )
-from streamlit_prophet.lib.exposition.export import display_2_download_links, display_download_link
 from streamlit_prophet.lib.exposition.preparation import get_forecast_components, prepare_waterfall
 from streamlit_prophet.lib.inputs.dates import input_waterfall_dates
 from streamlit_prophet.lib.utils.misc import reverse_list
@@ -30,7 +29,8 @@ def plot_overview(
     target_col: str,
     cleaning: Dict[Any, Any],
     readme: Dict[Any, Any],
-) -> None:
+    report: List[Dict[str, Any]],
+) -> List[Dict[str, Any]]:
     """Plots a graph with predictions and actual values, with explanations.
 
     Parameters
@@ -49,6 +49,8 @@ def plot_overview(
         Cleaning specifications.
     readme : Dict
         Dictionary containing explanations about the graph.
+    report: List[Dict[str, Any]]
+        List of all report components.
     """
     display_expander(readme, "overview", "More info on this plot")
     bool_param = False if cleaning["log_transform"] else True
@@ -61,16 +63,17 @@ def plot_overview(
     else:
         model = models["eval"]
         forecast = forecasts["eval"]
-    st.plotly_chart(
-        plot_plotly(
-            model,
-            forecast,
-            ylabel=target_col,
-            changepoints=bool_param,
-            trend=bool_param,
-            uncertainty=bool_param,
-        )
+    fig = plot_plotly(
+        model,
+        forecast,
+        ylabel=target_col,
+        changepoints=bool_param,
+        trend=bool_param,
+        uncertainty=bool_param,
     )
+    st.plotly_chart(fig)
+    report.append({"object": fig, "name": "overview", "type": "plot"})
+    return report
 
 
 def plot_performance(
@@ -83,7 +86,8 @@ def plot_performance(
     resampling: Dict[Any, Any],
     config: Dict[Any, Any],
     readme: Dict[Any, Any],
-) -> None:
+    report: List[Dict[str, Any]],
+) -> List[Dict[str, Any]]:
     """Plots several graphs showing model performance, with explanations.
 
     Parameters
@@ -106,6 +110,8 @@ def plot_performance(
         Cleaning specifications.
     readme : Dict
         Dictionary containing explanations about the graphs.
+    report: List[Dict[str, Any]]
+        List of all report components.
     """
     style = config["style"]
     evaluation_df = get_evaluation_df(datasets, forecasts, dates, eval, use_cv)
@@ -116,22 +122,25 @@ def plot_performance(
     display_expanders_performance(use_cv, dates, resampling, style, readme)
     display_expander(readme, "helper_metrics", "How to evaluate my model?", True)
     st.write("### Global performance")
-    display_global_metrics(evaluation_df, eval, dates, resampling, use_cv, config)
+    report = display_global_metrics(evaluation_df, eval, dates, resampling, use_cv, config, report)
     st.write("### Deep dive")
-    plot_detailed_metrics(metrics_df, metrics_dict, eval, use_cv, style)
-    display_2_download_links(
-        evaluation_df,
-        "evaluation_data",
-        "Export evaluation data",
-        metrics_df,
-        "performance_metrics",
-        "Export performance metrics",
-    )
+    report = plot_detailed_metrics(metrics_df, metrics_dict, eval, use_cv, style, report)
     st.write("## Error analysis")
     display_expander(readme, "helper_errors", "How to troubleshoot forecasting errors?", True)
-    st.plotly_chart(plot_forecasts_vs_truth(evaluation_df, target_col, use_cv, style))
-    st.plotly_chart(plot_truth_vs_actual_scatter(evaluation_df, use_cv, style))
-    st.plotly_chart(plot_residuals_distrib(evaluation_df, use_cv, style))
+    fig1 = plot_forecasts_vs_truth(evaluation_df, target_col, use_cv, style)
+    fig2 = plot_truth_vs_actual_scatter(evaluation_df, use_cv, style)
+    fig3 = plot_residuals_distrib(evaluation_df, use_cv, style)
+    st.plotly_chart(fig1)
+    st.plotly_chart(fig2)
+    st.plotly_chart(fig3)
+    report.append({"object": fig1, "name": "eval_forecast_vs_truth_line", "type": "plot"})
+    report.append({"object": fig2, "name": "eval_forecast_vs_truth_scatter", "type": "plot"})
+    report.append({"object": fig3, "name": "eval_residuals_distribution", "type": "plot"})
+    report.append({"object": evaluation_df, "name": "eval_data", "type": "dataset"})
+    report.append(
+        {"object": metrics_df.reset_index(), "name": "eval_detailed_performance", "type": "dataset"}
+    )
+    return report
 
 
 def plot_components(
@@ -145,7 +154,8 @@ def plot_components(
     config: Dict[Any, Any],
     readme: Dict[Any, Any],
     df: pd.DataFrame,
-) -> None:
+    report: List[Dict[str, Any]],
+) -> List[Dict[str, Any]]:
     """Plots a graph showing the different components of prediction, with explanations.
 
     Parameters
@@ -170,6 +180,8 @@ def plot_components(
         Dictionary containing explanations about the graph.
     df: pd.DataFrame
         Dataframe containing the ground truth.
+    report: List[Dict[str, Any]]
+        List of all report components.
     """
     style = config["style"]
     st.write("## Global impact")
@@ -184,18 +196,24 @@ def plot_components(
     else:
         forecast_df = forecasts["eval"].copy()
         model = models["eval"]
-    display_download_link(forecast_df, "forecast_components", "Export forecast components", True)
-    st.plotly_chart(
-        make_separate_components_plot(model, forecast_df, target_col, cleaning, resampling, style)
+    fig1 = make_separate_components_plot(
+        model, forecast_df, target_col, cleaning, resampling, style
     )
+    st.plotly_chart(fig1)
+
     st.write("## Local impact")
     display_expander(readme, "waterfall", "More info on this plot", True)
     start_date, end_date = input_waterfall_dates(forecast_df, resampling)
-    st.plotly_chart(
-        make_waterfall_components_plot(
-            model, forecast_df, start_date, end_date, target_col, cleaning, resampling, style, df
-        )
+    fig2 = make_waterfall_components_plot(
+        model, forecast_df, start_date, end_date, target_col, cleaning, resampling, style, df
     )
+    st.plotly_chart(fig2)
+
+    report.append({"object": fig1, "name": "global_components", "type": "plot"})
+    report.append({"object": fig2, "name": "local_components", "type": "plot"})
+    report.append({"object": df, "name": "model_input_data", "type": "dataset"})
+
+    return report
 
 
 def plot_future(
@@ -205,7 +223,8 @@ def plot_future(
     target_col: str,
     cleaning: Dict[Any, Any],
     readme: Dict[Any, Any],
-) -> None:
+    report: List[Dict[str, Any]],
+) -> List[Dict[str, Any]]:
     """Plots a graph with predictions for future dates, with explanations.
 
     Parameters
@@ -222,6 +241,8 @@ def plot_future(
         Cleaning specifications.
     readme : Dict
         Dictionary containing explanations about the graph.
+    report: List[Dict[str, Any]]
+        List of all report components.
     """
     display_expander(readme, "future", "More info on this plot")
     bool_param = False if cleaning["log_transform"] else True
@@ -234,8 +255,10 @@ def plot_future(
         uncertainty=bool_param,
     )
     fig.update_layout(xaxis_range=[dates["forecast_start_date"], dates["forecast_end_date"]])
-    display_download_link(forecasts["future"], "future_forecasts", "Export future forecasts", True)
     st.plotly_chart(fig)
+    report.append({"object": fig, "name": "future_forecast", "type": "plot"})
+    report.append({"object": forecasts["future"], "name": "future_forecast", "type": "dataset"})
+    return report
 
 
 def plot_forecasts_vs_truth(
@@ -428,7 +451,8 @@ def plot_detailed_metrics(
     eval: Dict[Any, Any],
     use_cv: bool,
     style: Dict[Any, Any],
-) -> None:
+    report: List[Dict[str, Any]],
+) -> List[Dict[str, Any]]:
     """Displays a dataframe or plots graphs showing model performance on selected metrics.
 
     Parameters
@@ -443,6 +467,8 @@ def plot_detailed_metrics(
         Whether or not cross-validation is used.
     style : Dict
         Style specifications for the graph (colors).
+    report: List[Dict[str, Any]]
+        List of all report components.
     """
     metrics = [metric for metric in perf.keys() if perf[metric][eval["granularity"]].nunique() > 1]
     if len(metrics) > 0:
@@ -466,8 +492,10 @@ def plot_detailed_metrics(
             showlegend=False,
         )
         st.plotly_chart(fig)
+        report.append({"object": fig, "name": "eval_detailed_performance", "type": "plot"})
     else:
         st.dataframe(metrics_df)
+    return report
 
 
 def make_separate_components_plot(
@@ -639,7 +667,8 @@ def display_global_metrics(
     resampling: Dict[Any, Any],
     use_cv: bool,
     config: Dict[Any, Any],
-) -> None:
+    report: List[Dict[str, Any]],
+) -> List[Dict[str, Any]]:
     """Displays all global metrics.
 
     Parameters
@@ -656,6 +685,8 @@ def display_global_metrics(
         Whether or note cross-validation is used.
     config : Dict
         Lib configuration dictionary.
+    report: List[Dict[str, Any]]
+        List of all report components.
     """
     eval_all = {
         "granularity": "cutoff" if use_cv else "Global",
@@ -697,3 +728,11 @@ def display_global_metrics(
             unsafe_allow_html=True,
         )
         col5.write(metrics_df.loc["Global", eval_all["metrics"][4]])
+        report.append(
+            {
+                "object": metrics_df.loc["Global"].reset_index(),
+                "name": "eval_global_performance",
+                "type": "dataset",
+            }
+        )
+    return report

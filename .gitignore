@@ -6,6 +6,7 @@
 
 # Project specific
 streamlit_prophet/config/custom_*
+report/streamlit_prophet.zip
 
 # General
 .DS_Store

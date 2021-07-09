@@ -13,6 +13,7 @@ from streamlit_prophet.lib.dataprep.format import (
     resample_df,
 )
 from streamlit_prophet.lib.dataprep.split import get_train_set, get_train_val_sets
+from streamlit_prophet.lib.exposition.export import display_save_experiment_button
 from streamlit_prophet.lib.exposition.visualize import (
     plot_components,
     plot_future,
@@ -162,14 +163,11 @@ if make_future_forecast:
 
 # Launch training & forecast
 if st.checkbox(
-    "Relaunch forecast automatically when parameters change",
+    "Launch forecast",
     value=False,
-    help=readme["tooltips"]["relaunch_choice"],
+    help=readme["tooltips"]["launch_forecast"],
 ):
-    launch_forecast = True
-else:
-    launch_forecast = st.button("Launch forecast")
-if launch_forecast:
+
     if not (evaluate | make_future_forecast):
         st.error("Please check at least 'Evaluation' or 'Forecast' in the sidebar.")
     datasets, models, forecasts = forecast_workflow(
@@ -189,18 +187,25 @@ if launch_forecast:
         load_options,
     )
 
+    # Placeholder for save experiment button
+    save_experiment_button_placeholder = st.empty()
+
     # Visualizations
+
+    report = []
 
     if evaluate | make_future_forecast:
         st.write("# 1. Overview")
-        plot_overview(make_future_forecast, use_cv, models, forecasts, target_col, cleaning, readme)
+        report = plot_overview(
+            make_future_forecast, use_cv, models, forecasts, target_col, cleaning, readme, report
+        )
 
     if evaluate:
         st.write(
             f'# 2. Evaluation on {"CV" if use_cv else ""} {eval["set"].lower()} set{"s" if use_cv else ""}'
         )
-        plot_performance(
-            use_cv, target_col, datasets, forecasts, dates, eval, resampling, config, readme
+        report = plot_performance(
+            use_cv, target_col, datasets, forecasts, dates, eval, resampling, config, readme, report
         )
 
     if evaluate | make_future_forecast:
@@ -209,7 +214,7 @@ if launch_forecast:
             if evaluate
             else "# 2. Impact of components and regressors"
         )
-        plot_components(
+        report = plot_components(
             use_cv,
             make_future_forecast,
             target_col,
@@ -220,8 +225,27 @@ if launch_forecast:
             config,
             readme,
             df,
+            report,
         )
 
     if make_future_forecast:
         st.write("# 4. Future forecast" if evaluate else "# 3. Future forecast")
-        plot_future(models, forecasts, dates, target_col, cleaning, readme)
+        report = plot_future(models, forecasts, dates, target_col, cleaning, readme, report)
+
+    # Save experiment
+    with save_experiment_button_placeholder:
+        display_save_experiment_button(
+            report,
+            config,
+            use_cv,
+            make_future_forecast,
+            evaluate,
+            cleaning,
+            resampling,
+            params,
+            dates,
+            date_col,
+            target_col,
+            dimensions,
+            readme,
+        )
