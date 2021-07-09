@@ -37,7 +37,7 @@ def make_resampling_test(
 
 
 # Dimensions
-def make_dimensions_test(df: pd.DataFrame, frac: float = 0.5, agg: str = "Mean") -> Dict[Any, Any]:
+def make_dimensions_test(df: pd.DataFrame, frac: float = 0.5, agg: Any = "Mean") -> Dict[Any, Any]:
     """Creates a dimensions dictionary with specifications defined by the arguments, for testing purpose.
 
     Parameters

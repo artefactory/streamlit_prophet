@@ -1,4 +1,4 @@
-from typing import Any, Dict
+from typing import Any, Dict, List
 
 import streamlit as st
 from streamlit_prophet.lib.dataprep.clean import clean_df
@@ -191,8 +191,7 @@ if st.checkbox(
     save_experiment_button_placeholder = st.empty()
 
     # Visualizations
-
-    report = []
+    report: List[Dict[str, Any]] = []
 
     if evaluate | make_future_forecast:
         st.write("# 1. Overview")
