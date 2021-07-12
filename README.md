@@ -74,9 +74,11 @@ assess your model performance.
 * <strong>Make a forecast</strong>: Make a forecast on future dates that are not included in your dataset,
 with the model previously trained.
 
-Once you are satisfied, click on "save your experiment" to download all plots and data locally.
+Once you are satisfied, click on "save experiment" to download all plots and data locally.
 
-![](references/demo.gif)
+https://user-images.githubusercontent.com/56996548/125320272-d5887e80-e33b-11eb-9781-750468078d3d.mp4
+
+
 
 ## 🛠️ How to contribute ?
 
