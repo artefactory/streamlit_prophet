@@ -12,8 +12,7 @@
 [![Semantic Versions](https://img.shields.io/badge/%F0%9F%9A%80-semantic%20versions-informational.svg)](https://github.com/artefactory/streamlit_prophet/releases)
 [![License](https://img.shields.io/badge/License-Private%20Use-informational.svg)](https://github.com/artefactory/streamlit_prophet}/blob/main/LICENSE)
 
-`streamlit_prophet` is a Python package that deploys a Streamlit app on which you can 
-train, evaluate and optimize a [Prophet](https://facebook.github.io/prophet/) forecasting model
+Deploy a [Streamlit](https://streamlit.io/) app to visually train, evaluate and optimize a [Prophet](https://facebook.github.io/prophet/) forecasting model
 
 </div>
 
@@ -72,8 +71,10 @@ Then, follow the guidelines in the sidebar to:
 Look at the tooltips to understand how each parameter is impacting forecasts.
 * <strong>Select evaluation method</strong>: Define the evaluation process, the metrics and the granularity to
 assess your model performance.
-* <strong>Make a forecast</strong>: You can optionnaly make a forecast on future dates that are not included in your dataset,
+* <strong>Make a forecast</strong>: Make a forecast on future dates that are not included in your dataset,
 with the model previously trained.
+
+Once you are satisfied, click on "save your experiment" to download all plots and data locally.
 
 ![](references/demo.gif)
 
@@ -108,7 +109,7 @@ If you wish to containerize the app, see [`DOCKER`](https://github.com/artefacto
 ```
 @misc{streamlit_prophet,
   author = {artefactory},
-  title = {`streamlit_prophet` is a Python package that deploys a Streamlit app on which you can train, evaluate and optimize a Prophet forecasting model},
+  title = {Deploy a Streamlit app to viusally train, evaluate and optimize a Prophet forecasting model},
   year = {2021},
   publisher = {GitHub},
   journal = {GitHub repository},
