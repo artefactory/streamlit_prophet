@@ -1,5 +1,4 @@
 <div align="center">
-<h1>Streamlit Prophet</h1>
 
 ![](references/logo.png)
 
@@ -109,7 +108,7 @@ If you wish to containerize the app, see [`DOCKER`](https://github.com/artefacto
 ```
 @misc{streamlit_prophet,
   author = {artefactory},
-  title = {`streamlit_prophet` is a Python package that deploys a Streamlit app on which you can train, evaluate and optimize a Prophet model},
+  title = {`streamlit_prophet` is a Python package that deploys a Streamlit app on which you can train, evaluate and optimize a Prophet forecasting model},
   year = {2021},
   publisher = {GitHub},
   journal = {GitHub repository},

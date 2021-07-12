@@ -7,6 +7,7 @@ import pandas as pd
 import requests
 import streamlit as st
 import toml
+from PIL import Image
 
 
 def get_project_root() -> str:
@@ -127,3 +128,20 @@ def write_bytesio_to_file(filename: str, bytesio: io.BytesIO) -> None:
     """
     with open(filename, "wb") as outfile:
         outfile.write(bytesio.getbuffer())
+
+
+@st.cache
+def load_image(path: str) -> Image:
+    """Displays an image.
+
+    Parameters
+    ----------
+    path : str
+        Local path of the image.
+
+    Returns
+    -------
+    Image
+        Image to be displayed.
+    """
+    return Image.open(path)

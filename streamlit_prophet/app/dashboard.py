@@ -41,7 +41,7 @@ from streamlit_prophet.lib.inputs.params import (
     input_seasonality_params,
 )
 from streamlit_prophet.lib.models.prophet import forecast_workflow
-from streamlit_prophet.lib.utils.load import load_config
+from streamlit_prophet.lib.utils.load import load_config, load_image
 
 # Page config
 st.set_page_config(page_title="Prophet", layout="wide")
@@ -59,6 +59,7 @@ with st.beta_expander("What is this app?", expanded=False):
     st.write(readme["app"]["app_intro"])
     st.write("")
 st.write("")
+st.sidebar.image(load_image("references/logo.png"), use_column_width=True)
 
 st.sidebar.title("1. Data")
 
