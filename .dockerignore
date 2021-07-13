@@ -37,3 +37,10 @@ venv
 .AppleDouble
 .LSOverride
 ._*
+
+# Project specific
+report/*.zip
+report/config/*.toml
+report/data/*.csv
+report/plots/*.html
+streamlit_prophet/config/custom_*
