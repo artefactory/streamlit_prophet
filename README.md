@@ -16,7 +16,6 @@ Deploy a [Streamlit](https://streamlit.io/) app to visually train, evaluate and 
 
 </div>
 
-The deployed app is available [here](https://streamlit-prophet-dot-data-sandbox-fr.ew.r.appspot.com/).
 
 ## 💻 Supported Python Versions
 
@@ -118,7 +117,3 @@ If you wish to containerize the app, see [`DOCKER`](https://github.com/artefacto
   howpublished = {\url{https://github.com/artefactory/streamlit_prophet}}}
 }
 ```
-
-## ©️ Credits
-
-This project was generated with [`ppt`](https://github.com/artefactory/ppt).
