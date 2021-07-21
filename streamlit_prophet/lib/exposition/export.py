@@ -356,23 +356,22 @@ def display_save_experiment_button(
     readme : Dict
         Dictionary containing explanations on the button.
     """
-    col1, col2, col3 = st.beta_columns(3)
+    col1, col2 = st.beta_columns([1, 4])
     if col1.button("Save experiment", help=readme["tooltips"]["save_experiment_button"]):
         with col2:
-            st.write("Saving config, plots and data...")
-            zip_path = create_report_zip_file(
-                report,
-                config,
-                use_cv,
-                make_future_forecast,
-                evaluate,
-                cleaning,
-                resampling,
-                params,
-                dates,
-                date_col,
-                target_col,
-                dimensions,
-            )
-        with col3:
-            display_save_experiment_link(zip_path)
+            with st.spinner("Saving config, plots and data..."):
+                zip_path = create_report_zip_file(
+                    report,
+                    config,
+                    use_cv,
+                    make_future_forecast,
+                    evaluate,
+                    cleaning,
+                    resampling,
+                    params,
+                    dates,
+                    date_col,
+                    target_col,
+                    dimensions,
+                )
+                display_save_experiment_link(zip_path)
