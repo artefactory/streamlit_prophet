@@ -53,6 +53,7 @@ config, instructions, readme = load_config(
 
 # Initialization
 dates: Dict[Any, Any] = dict()
+report: List[Dict[str, Any]] = []
 
 # Info
 with st.beta_expander("What is this app?", expanded=False):
@@ -171,6 +172,11 @@ if st.checkbox(
 
     if not (evaluate | make_future_forecast):
         st.error("Please check at least 'Evaluation' or 'Forecast' in the sidebar.")
+
+    track_experiments = st.checkbox(
+        "Track experiments", value=False, help=readme["tooltips"]["track_experiments"]
+    )
+
     datasets, models, forecasts = forecast_workflow(
         config,
         use_cv,
@@ -188,11 +194,7 @@ if st.checkbox(
         load_options,
     )
 
-    # Placeholder for save experiment button
-    save_experiment_button_placeholder = st.empty()
-
     # Visualizations
-    report: List[Dict[str, Any]] = []
 
     if evaluate | make_future_forecast:
         st.write("# 1. Overview")
@@ -233,7 +235,7 @@ if st.checkbox(
         report = plot_future(models, forecasts, dates, target_col, cleaning, readme, report)
 
     # Save experiment
-    with save_experiment_button_placeholder:
+    if track_experiments:
         display_save_experiment_button(
             report,
             config,
@@ -247,5 +249,4 @@ if st.checkbox(
             date_col,
             target_col,
             dimensions,
-            readme,
         )

@@ -15,8 +15,9 @@ with the model previously trained.
 launch_forecast = """
 Check to launch forecast. A new forecast will be made each time some parameter is changed in the sidebar.
 """
-save_experiment_button = """
-Click to export a report containing the data, the plots and the config used to get them.
+track_experiments = """
+Check to get a link to download a report at the bottom of the page.
+The report contains the data, the plots and the config used to get them.
 """
 upload_choice = """
 * Check to load a toy dataset and see what can be done with this app.

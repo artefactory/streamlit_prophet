@@ -2,6 +2,8 @@ from typing import Any, Dict, List
 
 import base64
 import io
+import re
+import uuid
 from base64 import b64encode
 from zipfile import ZipFile
 
@@ -295,7 +297,7 @@ def create_report_zip_file(
     return zip_path
 
 
-def display_save_experiment_link(zip_path: str) -> None:
+def create_save_experiment_button(zip_path: str) -> None:
     """Displays a link to export the report as a zip file.
 
     Parameters
@@ -303,11 +305,47 @@ def display_save_experiment_link(zip_path: str) -> None:
     zip_path: str
         Path of the zip file.
     """
+
+    button_uuid = str(uuid.uuid4()).replace("-", "")
+    button_id = re.sub(r"\d+", "", button_uuid)
+
     with open(zip_path, "rb") as f:
         bytes = f.read()
         b64 = base64.b64encode(bytes).decode()
-        href = f"<a href=\"data:file/zip;base64,{b64}\" download='{zip_path}'>Download report</a>"
-    st.markdown(href, unsafe_allow_html=True)
+        href = f"<a download='{zip_path}' id='{button_id}' href=\"data:file/zip;base64,{b64}\" >Save experiment</a><br></br>"
+
+    color1 = "rgb(255, 0, 102)"
+    color2 = "rgb(0, 34, 68)"
+    color3 = "rgb(255, 255, 255)"
+    custom_css = f"""
+            <style>
+                #{button_id} {{
+                    background-color: {color1};
+                    color: {color3};
+                    padding: 0.45em 0.58em;
+                    position: relative;
+                    text-decoration: none;
+                    border-radius: 5px;
+                    border-width: 2px;
+                    border-style: solid;
+                    border-color: {color3};
+                    border-image: initial;
+                }}
+                #{button_id}:hover {{
+                    border-color: {color2};
+                    color: {color2};
+                }}
+                #{button_id}:active {{
+                    box-shadow: none;
+                    background-color: {color3};
+                    border-color: {color1};
+                    color: {color1};
+                    }}
+            </style> """
+
+    st.markdown(
+        f"<p style='text-align: center;;'> {custom_css + href} </p>", unsafe_allow_html=True
+    )
 
 
 def display_save_experiment_button(
@@ -323,7 +361,6 @@ def display_save_experiment_button(
     date_col: str,
     target_col: str,
     dimensions: Dict[Any, Any],
-    readme: Dict[Any, Any],
 ) -> None:
     """Saves locally all report components in a zip file.
 
@@ -353,25 +390,20 @@ def display_save_experiment_button(
         Name of target column.
     dimensions : Dict
         Dictionary containing dimensions information.
-    readme : Dict
-        Dictionary containing explanations on the button.
     """
-    col1, col2 = st.beta_columns([1, 4])
-    if col1.button("Save experiment", help=readme["tooltips"]["save_experiment_button"]):
-        with col2:
-            with st.spinner("Saving config, plots and data..."):
-                zip_path = create_report_zip_file(
-                    report,
-                    config,
-                    use_cv,
-                    make_future_forecast,
-                    evaluate,
-                    cleaning,
-                    resampling,
-                    params,
-                    dates,
-                    date_col,
-                    target_col,
-                    dimensions,
-                )
-                display_save_experiment_link(zip_path)
+    with st.spinner("Saving config, plots and data..."):
+        zip_path = create_report_zip_file(
+            report,
+            config,
+            use_cv,
+            make_future_forecast,
+            evaluate,
+            cleaning,
+            resampling,
+            params,
+            dates,
+            date_col,
+            target_col,
+            dimensions,
+        )
+        create_save_experiment_button(zip_path)
