@@ -2,15 +2,15 @@
 
 ![](references/logo.png)
 
-[![CI status](https://github.com/artefactory/streamlit_prophet/actions/workflows/ci.yml/badge.svg?branch%3Amain&event%3Apush)](https://github.com/artefactory/streamlit_prophet/actions/workflows/ci.yml?query=branch%3Amain)
+[![CI status](https://github.com/artefactory-global/streamlit_prophet/actions/workflows/ci.yml/badge.svg?branch%3Amain&event%3Apush)](https://github.com/artefactory-global/streamlit_prophet/actions/workflows/ci.yml?query=branch%3Amain)
 [![Python Version](https://img.shields.io/badge/Python-3.7-informational.svg)](#supported-python-versions)
-[![Dependencies Status](https://img.shields.io/badge/dependabots-active-informational.svg)](https://github.com/artefactory/streamlit_prophet}/pulls?utf8=%E2%9C%93&q=is%3Apr%20author%3Aapp%2Fdependabot)
+[![Dependencies Status](https://img.shields.io/badge/dependabots-active-informational.svg)](https://github.com/artefactory-global/streamlit_prophet}/pulls?utf8=%E2%9C%93&q=is%3Apr%20author%3Aapp%2Fdependabot)
 
 [![Code style: black](https://img.shields.io/badge/code%20style-black-000000.svg)](https://github.com/psf/black)
 [![Security: bandit](https://img.shields.io/badge/security-bandit-informational.svg)](https://github.com/PyCQA/bandit)
-[![Pre-commit](https://img.shields.io/badge/pre--commit-enabled-informational?logo=pre-commit&logoColor=white)](https://github.com/artefactory/streamlit_prophet}/blob/main/.pre-commit-config.yaml)
-[![Semantic Versions](https://img.shields.io/badge/%F0%9F%9A%80-semantic%20versions-informational.svg)](https://github.com/artefactory/streamlit_prophet/releases)
-[![License](https://img.shields.io/badge/License-Private%20Use-informational.svg)](https://github.com/artefactory/streamlit_prophet}/blob/main/LICENSE)
+[![Pre-commit](https://img.shields.io/badge/pre--commit-enabled-informational?logo=pre-commit&logoColor=white)](https://github.com/artefactory-global/streamlit_prophet}/blob/main/.pre-commit-config.yaml)
+[![Semantic Versions](https://img.shields.io/badge/%F0%9F%9A%80-semantic%20versions-informational.svg)](https://github.com/artefactory-global/streamlit_prophet/releases)
+[![License](https://img.shields.io/badge/License-Private%20Use-informational.svg)](https://github.com/artefactory-global/streamlit_prophet}/blob/main/LICENSE)
 
 Deploy a [Streamlit](https://streamlit.io/) app to visually train, evaluate and optimize a [Prophet](https://facebook.github.io/prophet/) forecasting model
 
@@ -22,7 +22,7 @@ Deploy a [Streamlit](https://streamlit.io/) app to visually train, evaluate and 
 <p>Main version supported : <strong>3.7</strong> <br>
 Other supported versions : [TBD] </p>
 
-Please make sure you have one of these versions installed to be able to access the app locally.
+Please make sure you have one of these versions installed to be able to run the app locally.
 
 
 ## ⚙️ Installation
@@ -46,7 +46,7 @@ pip install virtualenv; python3.7 -m virtualenv streamlit_prophet --python=pytho
 Install the package from the main branch of this repository:
 
 ```bash
-pip install git+ssh://git@github.com/artefactory/streamlit_prophet.git@main
+pip install git+ssh://git@github.com/artefactory-global/streamlit_prophet.git@main
 ```
 
 
@@ -86,7 +86,7 @@ If you want to contribute to the development of this package:
 1. Clone the repository:
 
 ```bash
-git clone git@github.com:artefactory/streamlit_prophet.git
+git clone git@github.com:artefactory-global/streamlit_prophet.git
 ```
 
 2. If you don't have `Poetry` installed, run:
@@ -101,19 +101,19 @@ make download-poetry; export PATH="$HOME/.poetry/bin:$PATH"
 make install
 ```
 
-And you are ready to develop ! For more information, see [`CONTRIBUTING`](https://github.com/artefactory/streamlit_prophet/blob/main/CONTRIBUTING.md) instructions.
-If you wish to containerize the app, see [`DOCKER`](https://github.com/artefactory/streamlit_prophet/blob/main/DOCKER.md) instructions.
+And you are ready to develop ! For more information, see [`CONTRIBUTING`](https://github.com/artefactory-global/streamlit_prophet/blob/main/CONTRIBUTING.md) instructions.
+If you wish to containerize the app, see [`DOCKER`](https://github.com/artefactory-global/streamlit_prophet/blob/main/DOCKER.md) instructions.
 
 
 ## ✏️ Citation
 
 ```
 @misc{streamlit_prophet,
-  author = {artefactory},
+  author = {artefactory-global},
   title = {Deploy a Streamlit app to viusally train, evaluate and optimize a Prophet forecasting model},
   year = {2021},
   publisher = {GitHub},
   journal = {GitHub repository},
-  howpublished = {\url{https://github.com/artefactory/streamlit_prophet}}}
+  howpublished = {\url{https://github.com/artefactory-global/streamlit_prophet}}}
 }
 ```
