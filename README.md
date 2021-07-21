@@ -10,7 +10,7 @@
 [![Security: bandit](https://img.shields.io/badge/security-bandit-informational.svg)](https://github.com/PyCQA/bandit)
 [![Pre-commit](https://img.shields.io/badge/pre--commit-enabled-informational?logo=pre-commit&logoColor=white)](https://github.com/artefactory-global/streamlit_prophet}/blob/main/.pre-commit-config.yaml)
 [![Semantic Versions](https://img.shields.io/badge/%F0%9F%9A%80-semantic%20versions-informational.svg)](https://github.com/artefactory-global/streamlit_prophet/releases)
-[![License](https://img.shields.io/badge/License-Private%20Use-informational.svg)](https://github.com/artefactory-global/streamlit_prophet}/blob/main/LICENSE)
+[![License](https://img.shields.io/badge/License-MIT-informational.svg)](https://github.com/artefactory-global/streamlit_prophet/blob/main/LICENSE)
 
 Deploy a [Streamlit](https://streamlit.io/) app to visually train, evaluate and optimize a [Prophet](https://facebook.github.io/prophet/) forecasting model
 
