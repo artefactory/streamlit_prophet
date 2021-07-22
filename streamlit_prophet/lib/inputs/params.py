@@ -170,7 +170,6 @@ def input_other_params(
         "growth": growth,
         "changepoint_range": changepoint_range,
     }
-    # TODO: Régler l'erreur avec growth = 'logistic'
     return params
 
 

@@ -136,7 +136,6 @@ def exp_transform(
             df_exp["y"] = np.exp(df_exp["y"])
             datasets[data] = df_exp.copy()
     for data in set(forecasts.keys()):
-        # TODO : Gérer le passage à l'exponentiel de trend / seasonalities / regressors
         if "yhat" in forecasts[data].columns:
             df_exp = forecasts[data].copy()
             df_exp["yhat"] = np.exp(df_exp["yhat"])

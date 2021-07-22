@@ -24,7 +24,6 @@ def input_cleaning(
     dict
         Cleaning specifications (remove_days, del_days, del_negative, del_zeros, log_transform).
     """
-    # TODO : Ajouter une option "Remove holidays"
     cleaning: Dict[Any, Any] = dict()
     if resampling["freq"][-1] in ["s", "H", "D"]:
         del_days = st.multiselect(
