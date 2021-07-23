@@ -18,6 +18,7 @@ Check to launch forecast. A new forecast will be made each time some parameter i
 track_experiments = """
 Check to get a link to download a report at the bottom of the page.
 The report contains the data, the plots and the config used to get them.
+Use it only when you actually want to save experiments, as it might make processings a bit slower.
 """
 upload_choice = """
 * Check to load a toy dataset and see what can be done with this app.
@@ -183,6 +184,12 @@ This parameter determines how the trend will evolve between change points:
 * `flat`: The trend will be constant over time.
 * `logistic`: The trend will look like a logistic curve between each changepoint.
 Useful if the time series has a cap or a floor that can't be exceeded.
+"""
+cap = """
+Upper value that can't be exceeded by the trend.
+"""
+floor = """
+Lower value that can't be exceeded by the trend.
 """
 changepoint_range = """
 Proportion of training data that will be used to detect changepoints in the trend.

@@ -3,6 +3,7 @@ from typing import Any, Dict, List
 import streamlit as st
 from streamlit_prophet.lib.dataprep.clean import clean_df
 from streamlit_prophet.lib.dataprep.format import (
+    add_cap_and_floor_cols,
     check_dataset_size,
     filter_and_aggregate_df,
     format_date_and_target,
@@ -115,6 +116,7 @@ with st.sidebar.beta_expander("Regressors"):
 # Other parameters
 with st.sidebar.beta_expander("Other parameters", expanded=False):
     params = input_other_params(config, params, readme)
+    df = add_cap_and_floor_cols(df, params)
 
 st.sidebar.title("3. Evaluation")
 

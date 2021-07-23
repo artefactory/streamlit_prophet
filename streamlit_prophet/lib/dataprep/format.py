@@ -559,3 +559,26 @@ def prepare_future_df(
         )
         future = pd.DataFrame(future_dates, columns=["ds"])
     return future, datasets
+
+
+@st.cache()
+def add_cap_and_floor_cols(df_input: pd.DataFrame, params: Dict[Any, Any]) -> pd.DataFrame:
+    """Resamples input dataframe according to resampling dictionary specifications.
+
+    Parameters
+    ----------
+    df_input : pd.DataFrame
+        Input dataframe that will be resampled.
+    params : Dict
+        Model parameters.
+
+    Returns
+    -------
+    pd.DataFrame
+        Dataframe with cap and floor columns if specified.
+    """
+    df = df_input.copy()  # To avoid CachedObjectMutationWarning
+    if params["other"]["growth"] == "logistic":
+        df["cap"] = params["saturation"]["cap"]
+        df["floor"] = params["saturation"]["floor"]
+    return df

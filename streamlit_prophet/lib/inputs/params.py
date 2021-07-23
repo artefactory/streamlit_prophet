@@ -157,7 +157,6 @@ def input_other_params(
         Model parameters with other parameters added.
     """
     default_params = config["model"]
-    growth = st.selectbox("growth", default_params["growth"], help=readme["tooltips"]["growth"])
     changepoint_range = st.number_input(
         "changepoint_range",
         value=default_params["changepoint_range"],
@@ -166,10 +165,29 @@ def input_other_params(
         format="%.2f",
         help=readme["tooltips"]["changepoint_range"],
     )
+    growth = st.selectbox("growth", default_params["growth"], help=readme["tooltips"]["growth"])
     params["other"] = {
         "growth": growth,
         "changepoint_range": changepoint_range,
     }
+    if growth == "logistic":
+        cap = st.number_input(
+            "cap",
+            value=default_params["cap"],
+            format="%.1f",
+            help=readme["tooltips"]["cap"],
+        )
+        floor = st.number_input(
+            "floor",
+            value=default_params["floor"],
+            format="%.1f",
+            max_value=cap,
+            help=readme["tooltips"]["floor"],
+        )
+        params["saturation"] = {
+            "cap": cap,
+            "floor": floor,
+        }
     return params
 
 
