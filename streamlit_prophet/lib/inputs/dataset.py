@@ -38,7 +38,8 @@ def input_dataset(
     if load_options["toy_dataset"]:
         dataset_name = st.selectbox(
             "Select a toy dataset",
-            list(config["datasets"].keys()),
+            options=list(config["datasets"].keys()),
+            format_func=lambda x: config["datasets"][x]["name"],
             help=readme["tooltips"]["toy_dataset"],
         )
         df = download_toy_dataset(config["datasets"][dataset_name]["url"])

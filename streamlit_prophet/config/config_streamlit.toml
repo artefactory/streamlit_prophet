@@ -1,16 +1,29 @@
 [datasets] # Toy datasets
-[datasets.M5]
-url = "https://raw.githubusercontent.com/MaximeLutel/streamlit_prophet_datasets/main/M5.csv"
+[datasets.Retail]
+name = "Retail sales"
+url = "https://raw.githubusercontent.com/MaximeLutel/streamlit_prophet_datasets/main/retail_sales.csv"
 date = "date"
 target = "sales"
-[datasets.SAV]
-url = "https://raw.githubusercontent.com/MaximeLutel/streamlit_prophet_datasets/main/SAV.csv"
-date = "ds"
-target = "target"
+[datasets.House]
+name = "House sales"
+url = "https://raw.githubusercontent.com/MaximeLutel/streamlit_prophet_datasets/main/house_sales.csv"
+date = "date"
+target = "houses_sold"
+[datasets.Energy]
+name = "Energy consumption"
+url = "https://raw.githubusercontent.com/MaximeLutel/streamlit_prophet_datasets/main/energy.csv"
+date = "Date"
+target = "Global_reactive_power"
 [datasets.Weather]
+name = "Weather"
 url = "https://raw.githubusercontent.com/MaximeLutel/streamlit_prophet_datasets/main/weather.csv"
 date = "datetime"
 target = "temperature"
+[datasets.Corn]
+name = "Corn price"
+url = "https://raw.githubusercontent.com/MaximeLutel/streamlit_prophet_datasets/main/corn_price.csv"
+date = "week"
+target = "corn_price"
 
 [columns]
 date = false # Name of date column, choose false to select it directly in the app.
