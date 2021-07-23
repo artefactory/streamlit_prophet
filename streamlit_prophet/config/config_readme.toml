@@ -7,8 +7,9 @@ All you have to do is to upload a time series dataset, and follow the guidelines
 Look at the tooltips to understand how each parameter is impacting forecasts.
 * __Select evaluation method__: Define the evaluation process, the metrics and the granularity to
 assess your model performance.
-* __Make a forecast__: You can optionnaly make a forecast on future dates that are not included in your dataset,
+* __Make a forecast__: Make a forecast on future dates that are not included in your dataset,
 with the model previously trained.
+Once you are satisfied, click on "save experiment" to download all plots and data locally.
 """
 
 [tooltips]
