@@ -5,6 +5,7 @@ import io
 import re
 import uuid
 from base64 import b64encode
+from datetime import datetime
 from pathlib import Path
 from zipfile import ZipFile
 
@@ -259,14 +260,15 @@ def create_report_zip_file(
     # Create zip file
     zip_path = "experiment.zip"
     zipObj = ZipFile(zip_path, "w")
+    report_name = f"report_{datetime.now().strftime('%Y%m%d_%Hh%Mm%Ss')}"
     # Save plots and data
     for x in report:
         if x["type"] == "plot":
-            file_name = f"report/plots/{x['name']}.html"
+            file_name = f"{report_name}/plots/{x['name']}.html"
             file_path = _get_file_path(file_name)
             x["object"].write_html(file_path)
         if x["type"] == "dataset":
-            file_name = f"report/data/{x['name']}.csv"
+            file_name = f"{report_name}/data/{x['name']}.csv"
             file_path = _get_file_path(file_name)
             x["object"].to_csv(file_path, index=False)
         zipObj.write(file_path, arcname=file_name)
@@ -274,7 +276,7 @@ def create_report_zip_file(
     default_config = config.copy()
     if "datasets" in default_config.keys():
         del default_config["datasets"]
-    file_name = "report/config/default_config.toml"
+    file_name = f"{report_name}/config/default_config.toml"
     file_path = _get_file_path(file_name)
     with open(file_path, "w") as toml_file:
         toml.dump(default_config, toml_file)
@@ -293,7 +295,7 @@ def create_report_zip_file(
             "make_future_forecast": make_future_forecast,
         },
     }
-    file_name = "report/config/user_specifications.toml"
+    file_name = f"{report_name}/config/user_specifications.toml"
     file_path = _get_file_path(file_name)
     with open(file_path, "w") as toml_file:
         toml.dump(all_specs, toml_file)
@@ -316,7 +318,7 @@ def _get_file_path(file_name: str) -> str:
     str
         Full path.
     """
-    return str(Path(get_project_root()) / f"{file_name}")
+    return str(Path(get_project_root()) / f"report/{'/'.join(file_name.split('/')[1:])}")
 
 
 def create_save_experiment_button(zip_path: str) -> None:
