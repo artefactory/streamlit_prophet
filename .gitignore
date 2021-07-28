@@ -6,7 +6,7 @@
 
 # Project specific
 streamlit_prophet/config/custom_*
-streamlit_prophet/report/*.zip
+*.zip
 app.yaml
 
 # General

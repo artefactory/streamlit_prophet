@@ -5,12 +5,14 @@ import io
 import re
 import uuid
 from base64 import b64encode
+from pathlib import Path
 from zipfile import ZipFile
 
 import pandas as pd
 import plotly.graph_objects as go
 import streamlit as st
 import toml
+from streamlit_prophet.lib.utils.load import get_project_root
 
 
 def get_dataframe_download_link(df: pd.DataFrame, filename: str, linkname: str) -> str:
@@ -254,27 +256,29 @@ def create_report_zip_file(
     str
         Path of the zip file.
     """
-    folder_path = "streamlit_prophet/report"
     # Create zip file
-    zip_path = f"{folder_path}/experiment.zip"
+    zip_path = "experiment.zip"
     zipObj = ZipFile(zip_path, "w")
     # Save plots and data
     for x in report:
         if x["type"] == "plot":
-            file_path = f"{folder_path}/plots/{x['name']}.html"
+            file_name = f"report/plots/{x['name']}.html"
+            file_path = _get_file_path(file_name)
             x["object"].write_html(file_path)
         if x["type"] == "dataset":
-            file_path = f"{folder_path}/data/{x['name']}.csv"
+            file_name = f"report/data/{x['name']}.csv"
+            file_path = _get_file_path(file_name)
             x["object"].to_csv(file_path, index=False)
-        zipObj.write(file_path)
+        zipObj.write(file_path, arcname=file_name)
     # Save default config
     default_config = config.copy()
     if "datasets" in default_config.keys():
         del default_config["datasets"]
-    file_path = f"{folder_path}/config/default_config.toml"
+    file_name = "report/config/default_config.toml"
+    file_path = _get_file_path(file_name)
     with open(file_path, "w") as toml_file:
         toml.dump(default_config, toml_file)
-    zipObj.write(file_path)
+    zipObj.write(file_path, arcname=file_name)
     # Save user specifications
     all_specs = {
         "model_params": params,
@@ -289,13 +293,30 @@ def create_report_zip_file(
             "make_future_forecast": make_future_forecast,
         },
     }
-    file_path = f"{folder_path}/config/user_specifications.toml"
+    file_name = "report/config/user_specifications.toml"
+    file_path = _get_file_path(file_name)
     with open(file_path, "w") as toml_file:
         toml.dump(all_specs, toml_file)
-    zipObj.write(file_path)
+    zipObj.write(file_path, arcname=file_name)
     # Close zip file
     zipObj.close()
     return zip_path
+
+
+def _get_file_path(file_name: str) -> str:
+    """Returns the full path of a file to include in the zip file.
+
+    Parameters
+    ----------
+    file_name: str
+        Short file name.
+
+    Returns
+    -------
+    str
+        Full path.
+    """
+    return str(Path(get_project_root()) / f"{file_name}")
 
 
 def create_save_experiment_button(zip_path: str) -> None:
