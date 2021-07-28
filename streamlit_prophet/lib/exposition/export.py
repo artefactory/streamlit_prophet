@@ -254,23 +254,24 @@ def create_report_zip_file(
     str
         Path of the zip file.
     """
+    folder_path = "streamlit_prophet/report"
     # Create zip file
-    zip_path = "report/streamlit_prophet.zip"
+    zip_path = f"{folder_path}/experiment.zip"
     zipObj = ZipFile(zip_path, "w")
     # Save plots and data
     for x in report:
         if x["type"] == "plot":
-            file_path = f"report/plots/{x['name']}.html"
+            file_path = f"{folder_path}/plots/{x['name']}.html"
             x["object"].write_html(file_path)
         if x["type"] == "dataset":
-            file_path = f"report/data/{x['name']}.csv"
+            file_path = f"{folder_path}/data/{x['name']}.csv"
             x["object"].to_csv(file_path, index=False)
         zipObj.write(file_path)
     # Save default config
     default_config = config.copy()
     if "datasets" in default_config.keys():
         del default_config["datasets"]
-    file_path = f"report/config/default_config.toml"
+    file_path = f"{folder_path}/config/default_config.toml"
     with open(file_path, "w") as toml_file:
         toml.dump(default_config, toml_file)
     zipObj.write(file_path)
@@ -288,7 +289,7 @@ def create_report_zip_file(
             "make_future_forecast": make_future_forecast,
         },
     }
-    file_path = f"report/config/user_specifications.toml"
+    file_path = f"{folder_path}/config/user_specifications.toml"
     with open(file_path, "w") as toml_file:
         toml.dump(all_specs, toml_file)
     zipObj.write(file_path)
@@ -312,7 +313,10 @@ def create_save_experiment_button(zip_path: str) -> None:
     with open(zip_path, "rb") as f:
         bytes = f.read()
         b64 = base64.b64encode(bytes).decode()
-        href = f"<a download='{zip_path}' id='{button_id}' href=\"data:file/zip;base64,{b64}\" >Save experiment</a><br></br>"
+        href = (
+            f"<a download='{zip_path}' id='{button_id}' href=\"data:file/zip;base64,{b64}\" >Save "
+            f"experiment</a><br></br> "
+        )
 
     color1 = "rgb(255, 0, 102)"
     color2 = "rgb(0, 34, 68)"

@@ -1,6 +1,6 @@
 <div align="center">
 
-![](references/logo.png)
+![](streamlit_prophet/references/logo.png)
 
 [![CI status](https://github.com/artefactory-global/streamlit_prophet/actions/workflows/ci.yml/badge.svg?branch%3Amain&event%3Apush)](https://github.com/artefactory-global/streamlit_prophet/actions/workflows/ci.yml?query=branch%3Amain)
 [![Python Version](https://img.shields.io/badge/Python-3.7-informational.svg)](#supported-python-versions)
@@ -61,7 +61,7 @@ streamlit_prophet deploy dashboard
 Now you can train, evaluate and optimize a forecasting model in just a few clicks.
 All you have to do is to upload a time series dataset, that contains a date column, a target column and optionally some features, like on the example below:
 
-![](references/input_format.png)
+![](streamlit_prophet/references/input_format.png)
 
 Then, follow the guidelines in the sidebar to:
 

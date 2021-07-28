@@ -61,7 +61,7 @@ with st.beta_expander("What is this app?", expanded=False):
     st.write(readme["app"]["app_intro"])
     st.write("")
 st.write("")
-st.sidebar.image(load_image("references/logo.png"), use_column_width=True)
+st.sidebar.image(load_image("logo.png"), use_column_width=True)
 
 st.sidebar.title("1. Data")
 

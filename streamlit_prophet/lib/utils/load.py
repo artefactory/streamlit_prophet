@@ -131,12 +131,12 @@ def write_bytesio_to_file(filename: str, bytesio: io.BytesIO) -> None:
 
 
 @st.cache
-def load_image(path: str) -> Image:
+def load_image(image_name: str) -> Image:
     """Displays an image.
 
     Parameters
     ----------
-    path : str
+    image_name : str
         Local path of the image.
 
     Returns
@@ -144,4 +144,4 @@ def load_image(path: str) -> Image:
     Image
         Image to be displayed.
     """
-    return Image.open(path)
+    return Image.open(Path(get_project_root()) / f"references/{image_name}")
