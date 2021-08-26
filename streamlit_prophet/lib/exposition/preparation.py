@@ -262,5 +262,4 @@ def prepare_waterfall(
     ]
     waterfall = waterfall.mean(axis=0, numeric_only=True)
     waterfall = waterfall[waterfall != 0]
-    waterfall = waterfall[~waterfall.index.str.endswith("holidays")]
     return waterfall
