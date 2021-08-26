@@ -32,7 +32,7 @@ classifiers = [  # Update me
 "streamlit_prophet" = "streamlit_prophet.cli.__main__:app"
 
 [tool.poetry.dependencies]
-python = ">=3.7 <3.9"
+python = ">=3.7 <3.10"
 importlib_metadata = {version = "^1.6.0", python = "<3.8"}
 typer = {extras = ["all"], version = "^0.3.2"}
 rich = "^10.1.0"
