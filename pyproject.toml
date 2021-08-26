@@ -10,17 +10,17 @@ version = "0.1.0"
 description = "`streamlit_prophet` is a Python cli/package"
 readme = "README.md"
 authors = [
-  "artefactory <maxime.lutel@artefact.com>"
+  "artefactory-global <maxime.lutel@artefact.com>"
 ]
-license = "Private Use"
-repository = "https://github.com/artefactory/streamlit_prophet}"
-homepage = "https://github.com/artefactory/streamlit_prophet}"
+license = "MIT"
+repository = "https://github.com/artefactory-global/streamlit_prophet}"
+homepage = "https://github.com/artefactory-global/streamlit_prophet}"
 
 # Keywords description https://python-poetry.org/docs/pyproject/#keywords
-keywords = []  # Update me
+keywords = []
 
 # Pypi classifiers: https://pypi.org/classifiers/
-classifiers = [  # Update me
+classifiers = [
   "Development Status :: 3 - Alpha",
   "Intended Audience :: Developers",
   "Operating System :: OS Independent",

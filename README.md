@@ -3,7 +3,7 @@
 ![](streamlit_prophet/references/logo.png)
 
 [![CI status](https://github.com/artefactory-global/streamlit_prophet/actions/workflows/ci.yml/badge.svg?branch%3Amain&event%3Apush)](https://github.com/artefactory-global/streamlit_prophet/actions/workflows/ci.yml?query=branch%3Amain)
-[![Python Version](https://img.shields.io/badge/Python-3.7-informational.svg)](#supported-python-versions)
+[![Python Version](https://img.shields.io/badge/python-3.7%20%7C%203.8%20%7C%203.9-blue.svg)](#supported-python-versions)
 [![Dependencies Status](https://img.shields.io/badge/dependabots-active-informational.svg)](https://github.com/artefactory-global/streamlit_prophet/pulls?utf8=%E2%9C%93&q=is%3Apr%20author%3Aapp%2Fdependabot)
 
 [![Code style: black](https://img.shields.io/badge/code%20style-black-000000.svg)](https://github.com/psf/black)
@@ -20,7 +20,7 @@ Deploy a [Streamlit](https://streamlit.io/) app to visually train, evaluate and 
 ## 💻 Supported Python Versions
 
 <p>Main version supported : <strong>3.7</strong> <br>
-Other supported versions : [TBD] </p>
+Other supported versions : <strong>3.8</strong> & <strong>3.9</strong> </p>
 
 Please make sure you have one of these versions installed to be able to run the app locally.
 
