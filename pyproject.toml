@@ -7,22 +7,23 @@ build-backend = "poetry.core.masonry.api"
 [tool.poetry]
 name = "streamlit_prophet"
 version = "0.1.0"
-description = "`streamlit_prophet` is a Python cli/package"
+description = "Deploy a Streamlit app to visually train, evaluate and optimize a Prophet forecasting model."
 readme = "README.md"
 authors = [
-  "artefactory-global <maxime.lutel@artefact.com>"
+  "Artefact <maxime.lutel@artefact.com>"
 ]
 license = "MIT"
-repository = "https://github.com/artefactory-global/streamlit_prophet}"
-homepage = "https://github.com/artefactory-global/streamlit_prophet}"
+repository = "https://github.com/artefactory-global/streamlit_prophet"
+homepage = "https://github.com/artefactory-global/streamlit_prophet"
 
 # Keywords description https://python-poetry.org/docs/pyproject/#keywords
-keywords = []
+keywords = ["Streamlit", "Prophet", "Forecasting", "Time Series", "App"]
 
 # Pypi classifiers: https://pypi.org/classifiers/
 classifiers = [
   "Development Status :: 3 - Alpha",
   "Intended Audience :: Developers",
+  "License :: OSI Approved :: MIT License",
   "Operating System :: OS Independent",
   "Topic :: Software Development :: Libraries :: Python Modules",
 ]
@@ -48,7 +49,6 @@ scipy = "^1.6.3"
 vacances-scolaires-france = "^0.8.0"
 
 [tool.poetry.dev-dependencies]
-# From ppt
 darglint = "^1.8.0"
 isort = "^5.8.0"
 pyupgrade = "^2.12.0"
