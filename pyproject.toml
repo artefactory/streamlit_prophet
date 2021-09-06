@@ -6,7 +6,7 @@ build-backend = "poetry.core.masonry.api"
 
 [tool.poetry]
 name = "streamlit_prophet"
-version = "0.1.0"
+version = "1.0.0"
 description = "Deploy a Streamlit app to visually train, evaluate and optimize a Prophet forecasting model."
 readme = "README.md"
 authors = [
