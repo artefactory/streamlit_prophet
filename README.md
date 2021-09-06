@@ -43,8 +43,12 @@ pip install virtualenv; python3.7 -m virtualenv streamlit_prophet --python=pytho
 
 
 ### Install package
-Install the package from the main branch of this repository:
+Install the package from PyPi:
+```bash
+pip install -U streamlit_prophet
+```
 
+Or from the main branch of this repository:
 ```bash
 pip install git+ssh://git@github.com/artefactory-global/streamlit_prophet.git@main
 ```
@@ -52,7 +56,7 @@ pip install git+ssh://git@github.com/artefactory-global/streamlit_prophet.git@ma
 
 ## 📈 Usage
 
-Once installed, run the following command from CLI to access the app:
+Once installed, run the following command from CLI to open the app in your default web browser:
 
 ```bash
 streamlit_prophet deploy dashboard
