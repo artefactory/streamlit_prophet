@@ -10,14 +10,14 @@ version = "1.0.0"
 description = "Deploy a Streamlit app to visually train, evaluate and optimize a Prophet forecasting model."
 readme = "README.md"
 authors = [
-  "Artefact <maxime.lutel@artefact.com>"
+  "Maxime Lutel <maxime.lutel@artefact.com>"
 ]
 license = "MIT"
 repository = "https://github.com/artefactory-global/streamlit_prophet"
 homepage = "https://github.com/artefactory-global/streamlit_prophet"
 
 # Keywords description https://python-poetry.org/docs/pyproject/#keywords
-keywords = ["Streamlit", "Prophet", "Forecasting", "Time Series", "App"]
+keywords = ["streamlit", "prophet", "forecasting", "time-series", "data-science"]
 
 # Pypi classifiers: https://pypi.org/classifiers/
 classifiers = [
