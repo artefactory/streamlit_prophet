@@ -103,16 +103,3 @@ make install
 And you are ready to develop ! For more information, see [`CONTRIBUTING`](https://github.com/artefactory-global/streamlit_prophet/blob/main/CONTRIBUTING.md) instructions.
 If you wish to containerize the app, see [`DOCKER`](https://github.com/artefactory-global/streamlit_prophet/blob/main/DOCKER.md) instructions.
 
-
-## ✏️ Citation
-
-```
-@misc{streamlit_prophet,
-  author = {artefactory-global},
-  title = {Deploy a Streamlit app to viusally train, evaluate and optimize a Prophet forecasting model},
-  year = {2021},
-  publisher = {GitHub},
-  journal = {GitHub repository},
-  howpublished = {\url{https://github.com/artefactory-global/streamlit_prophet}}}
-}
-```
