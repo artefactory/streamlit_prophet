@@ -20,8 +20,8 @@ Deploy a [Streamlit](https://streamlit.io/) app to visually train, evaluate and 
 ## 💻 Requirements
 
 ### Python version
-<p>Main supported version : <strong>3.7</strong> <br>
-Other supported versions : <strong>3.8</strong> & <strong>3.9</strong> </p>
+* Main supported version : <strong>3.7</strong> <br>
+* Other supported versions : <strong>3.8</strong> & <strong>3.9</strong>
 
 Please make sure you have one of these versions installed to be able to run the app on your machine.
 
@@ -68,7 +68,8 @@ streamlit_prophet deploy dashboard
 ```
 
 Now you can train, evaluate and optimize a forecasting model in just a few clicks.
-All you have to do is to upload a time series dataset, that contains a date column, a target column and optionally some features, like on the example below:
+All you have to do is to upload a time series dataset. 
+This dataset should be a csv file that contains a date column, a target column and optionally some features, like on the example below:
 
 ![](streamlit_prophet/references/input_format.png)
 
