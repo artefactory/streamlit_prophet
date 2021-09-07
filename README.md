@@ -17,19 +17,24 @@ Deploy a [Streamlit](https://streamlit.io/) app to visually train, evaluate and 
 </div>
 
 
-## 💻 Supported Python Versions
+## 💻 Requirements
 
+### Python version
 <p>Main supported version : <strong>3.7</strong> <br>
 Other supported versions : <strong>3.8</strong> & <strong>3.9</strong> </p>
 
 Please make sure you have one of these versions installed to be able to run the app on your machine.
 
+### Operating System
+Windows users have to install [WSL2](https://docs.microsoft.com/en-us/windows/wsl/) to download the package. 
+This is due to the incompatibility between Windows and Prophet's main dependency (pystan). 
+Other operating systems should work fine.
 
 ## ⚙️ Installation
 
 
 ### Create a virtual environment (optional)
-First, we strongly advise to create and activate a new virtual environment, to avoid any dependency issue.
+We strongly advise to create and activate a new virtual environment, to avoid any dependency issue.
 
 For example with conda:
 ```bash
