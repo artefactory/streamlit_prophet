@@ -24,7 +24,6 @@ classifiers = [
   "Development Status :: 3 - Alpha",
   "Intended Audience :: Developers",
   "License :: OSI Approved :: MIT License",
-  "Operating System :: OS Independent",
   "Topic :: Software Development :: Libraries :: Python Modules",
 ]
 
@@ -37,14 +36,13 @@ python = ">=3.7 <3.10"
 importlib_metadata = {version = "^1.6.0", python = "<3.8"}
 typer = {extras = ["all"], version = "^0.3.2"}
 rich = "^10.1.0"
-pandas = "^1.0.5"  # Not to break fbprophet holidays
+pandas = "^1.1.5"
 numpy = "^1.20.2"
-pystan = "^2.14"
-fbprophet = "^0.7.1"
+pystan = "2.18.0.0"
+fbprophet = "0.7.1"
 holidays = "^0.11.1"
 plotly = "^4.11.0"
 streamlit = "0.80.0"
-tqdm = "^4.60.0"
 scipy = "^1.6.3"
 vacances-scolaires-france = "^0.8.0"
 

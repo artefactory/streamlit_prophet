@@ -19,17 +19,17 @@ Deploy a [Streamlit](https://streamlit.io/) app to visually train, evaluate and 
 
 ## 💻 Supported Python Versions
 
-<p>Main version supported : <strong>3.7</strong> <br>
+<p>Main supported version : <strong>3.7</strong> <br>
 Other supported versions : <strong>3.8</strong> & <strong>3.9</strong> </p>
 
-Please make sure you have one of these versions installed to be able to run the app locally.
+Please make sure you have one of these versions installed to be able to run the app on your machine.
 
 
 ## ⚙️ Installation
 
 
 ### Create a virtual environment (optional)
-If you want to avoid any dependencies issues, first create and activate a new virtual environment.
+First, we strongly advise to create and activate a new virtual environment, to avoid any dependency issue.
 
 For example with conda:
 ```bash
@@ -43,7 +43,7 @@ pip install virtualenv; python3.7 -m virtualenv streamlit_prophet --python=pytho
 
 
 ### Install package
-Install the package from PyPi:
+Install the package from PyPi (it should take a few minutes):
 ```bash
 pip install -U streamlit_prophet
 ```
@@ -87,23 +87,19 @@ https://user-images.githubusercontent.com/56996548/126762714-f2d3f3a1-7098-4a86-
 If you want to contribute to the development of this package:
 
 1. Clone the repository:
-
 ```bash
 git clone git@github.com:artefactory-global/streamlit_prophet.git
 ```
 
 2. If you don't have `Poetry` installed, run:
-
 ```bash
 make download-poetry; export PATH="$HOME/.poetry/bin:$PATH"
 ```
 
 3. Initialize poetry and install `pre-commit` hooks:
-
 ```bash
 make install
 ```
 
 And you are ready to develop ! For more information, see [`CONTRIBUTING`](https://github.com/artefactory-global/streamlit_prophet/blob/main/CONTRIBUTING.md) instructions.
 If you wish to containerize the app, see [`DOCKER`](https://github.com/artefactory-global/streamlit_prophet/blob/main/DOCKER.md) instructions.
-
