@@ -1290,7 +1290,7 @@ python-versions = ">=3.6"
 
 [[package]]
 name = "pystan"
-version = "2.18.0.0"
+version = "2.19.1.1"
 description = "Python interface to Stan, a package for Bayesian inference"
 category = "main"
 optional = false
@@ -1857,7 +1857,7 @@ testing = ["pytest (>=4.6)", "pytest-checkdocs (>=2.4)", "pytest-flake8", "pytes
 [metadata]
 lock-version = "1.1"
 python-versions = ">=3.7 <3.10"
-content-hash = "2ac73032723b512395f18308cf9ed0fcee86cddc28ea29c4d236ec062dd4069a"
+content-hash = "cbbfa72b1fe8e1594153eaf19c99c36b7d30f146b3bc52136720dfd99e15f631"
 
 [metadata.files]
 altair = [
@@ -2829,27 +2829,26 @@ pyrsistent = [
     {file = "pyrsistent-0.18.0.tar.gz", hash = "sha256:773c781216f8c2900b42a7b638d5b517bb134ae1acbebe4d1e8f1f41ea60eb4b"},
 ]
 pystan = [
-    {file = "pystan-2.18.0.0-cp27-cp27m-macosx_10_6_intel.macosx_10_9_intel.macosx_10_9_x86_64.macosx_10_10_intel.macosx_10_10_x86_64.whl", hash = "sha256:d202befdb2d36298c56373350e0a11b2ce152cd7c101120482fa17e0d9d42de4"},
-    {file = "pystan-2.18.0.0-cp27-cp27m-manylinux1_i686.whl", hash = "sha256:f61438ee75beee74a4b0678493af715d896db1818adbfe16c93bd9b6f4facfba"},
-    {file = "pystan-2.18.0.0-cp27-cp27m-manylinux1_x86_64.whl", hash = "sha256:0c31b7849ad453a28dd55cc9367be07cb80e7a106b8114479496359e5565be02"},
-    {file = "pystan-2.18.0.0-cp27-cp27mu-manylinux1_i686.whl", hash = "sha256:ac613745e8a544e13a515563d5dda5de63eb6a58446eddb96ecae23947bd51a5"},
-    {file = "pystan-2.18.0.0-cp27-cp27mu-manylinux1_x86_64.whl", hash = "sha256:78efc5a2ae37b7b2979e870fc86f322a1bc3cd482d0bd6fc4e8ce0d0021496c7"},
-    {file = "pystan-2.18.0.0-cp35-cp35m-macosx_10_6_intel.macosx_10_9_intel.macosx_10_9_x86_64.macosx_10_10_intel.macosx_10_10_x86_64.whl", hash = "sha256:f205d7c0f2cd25f5db5e30ed0ca7ff270434ea8881f5003d6ca92ed8eae4c982"},
-    {file = "pystan-2.18.0.0-cp35-cp35m-manylinux1_i686.whl", hash = "sha256:dbb72046bed48975188289588ba580543552956a7782fbdbb6d8c7daa019918e"},
-    {file = "pystan-2.18.0.0-cp35-cp35m-manylinux1_x86_64.whl", hash = "sha256:4f21446f05ab23b3f21b2983b219828607da13e9a7c1fadbc273a61fe968950c"},
-    {file = "pystan-2.18.0.0-cp35-cp35m-win32.whl", hash = "sha256:315b98d2cfe5327924180fcd9769f9ac74f0663eab66a004e219d48ebb3aedf5"},
-    {file = "pystan-2.18.0.0-cp35-cp35m-win_amd64.whl", hash = "sha256:5deac270eaf171fb23b311ac30877724b86f4313a9576d3ade53a2e3f752cc8c"},
-    {file = "pystan-2.18.0.0-cp36-cp36m-macosx_10_6_intel.macosx_10_9_intel.macosx_10_9_x86_64.macosx_10_10_intel.macosx_10_10_x86_64.whl", hash = "sha256:c8de4b1a501c6ebd17456d0b45964de1ca795d00a85c03f2f0d1ad6bf113bbb6"},
-    {file = "pystan-2.18.0.0-cp36-cp36m-manylinux1_i686.whl", hash = "sha256:662f3983a6f5db48a4a678c5dcd36e489a49b4cd2df683cd5ee7851dc8c7d5d6"},
-    {file = "pystan-2.18.0.0-cp36-cp36m-manylinux1_x86_64.whl", hash = "sha256:93f04a688f02bc9abf5ef5fce1ede67caef384ad191aaa68c9780047a0e055e3"},
-    {file = "pystan-2.18.0.0-cp36-cp36m-win32.whl", hash = "sha256:82f0f7adaea4237d9686d1b7c05feb6649dd8ba3dfa0ad503ff7bdf98a1d3e23"},
-    {file = "pystan-2.18.0.0-cp36-cp36m-win_amd64.whl", hash = "sha256:0538351eede73f29183ee99d0f068e14d70b17aaa47434bffbde097a9fdf4f07"},
-    {file = "pystan-2.18.0.0-cp37-cp37m-macosx_10_6_intel.macosx_10_9_intel.macosx_10_9_x86_64.macosx_10_10_intel.macosx_10_10_x86_64.whl", hash = "sha256:4d1e89dd6e31c6bc0655f16093baf12b30de3f94f875acc7d914d86a64c00568"},
-    {file = "pystan-2.18.0.0-cp37-cp37m-manylinux1_i686.whl", hash = "sha256:2d35bcf5440141102913fd9f0a42a40647f3459c7efe19d7afcd0aaa4f8e6c82"},
-    {file = "pystan-2.18.0.0-cp37-cp37m-manylinux1_x86_64.whl", hash = "sha256:eebdd1b324ee3331c8a1a925ed03216ab1fc9dda3595ee07f912b17bf6e98096"},
-    {file = "pystan-2.18.0.0-cp37-cp37m-win32.whl", hash = "sha256:bdfbc9a6c7c811c7c1de79a54c2497677f99d0a1b602f0c801a5fd3218d31a0a"},
-    {file = "pystan-2.18.0.0-cp37-cp37m-win_amd64.whl", hash = "sha256:1e69e1be68c78afb7b53c2198e90b4e7447d1375cf3d9c4d5d6a06ffaf41fa6d"},
-    {file = "pystan-2.18.0.0.tar.gz", hash = "sha256:594c1523fd5cd6034ba1b58b1a0741f7e753c819d17745395defa25e526115ce"},
+    {file = "pystan-2.19.1.1-cp27-cp27m-macosx_10_6_intel.whl", hash = "sha256:4a0820df5fcd13c7a4cae75d59809adee72d1135a604dc2b5f068d4ac8ca349e"},
+    {file = "pystan-2.19.1.1-cp27-cp27m-manylinux1_x86_64.whl", hash = "sha256:2baa4106ddc7fb90712bd0e5ab8693ce130b001c6166839247511326edc6d0ba"},
+    {file = "pystan-2.19.1.1-cp27-cp27mu-manylinux1_x86_64.whl", hash = "sha256:6c4bbbb0a59144135d9821f2b9c308bfdf70aa61befdc7dc435f4c86bfb4457e"},
+    {file = "pystan-2.19.1.1-cp35-cp35m-macosx_10_6_intel.whl", hash = "sha256:1127522641533a6ccb7684d4008d06c092cbe6f3ee7d44679a87937ee39093ab"},
+    {file = "pystan-2.19.1.1-cp35-cp35m-manylinux1_x86_64.whl", hash = "sha256:43fdd98561f0cba0637f1fa343ed7d5adc885d04a655ab6302dbfd08f016105d"},
+    {file = "pystan-2.19.1.1-cp35-cp35m-win32.whl", hash = "sha256:e6580cec2f5ed1bdb44eab83d54fe87b11e673ed65d6c2064d8d9f76265ce049"},
+    {file = "pystan-2.19.1.1-cp35-cp35m-win_amd64.whl", hash = "sha256:c87bd98db2b5c67fa08177de04c98b46d1fcd68ae53dbe55ffc5187868068002"},
+    {file = "pystan-2.19.1.1-cp36-cp36m-macosx_10_6_intel.whl", hash = "sha256:e9fbbf10dfc0ef8e7343ee4a3e17fd5c214fb12fc42615673e14908949b410e4"},
+    {file = "pystan-2.19.1.1-cp36-cp36m-manylinux1_x86_64.whl", hash = "sha256:5020ac3ca3a840f428f090fc5fe75412e2a7948ac7e3de59f4bbfd7a4539c0ef"},
+    {file = "pystan-2.19.1.1-cp36-cp36m-win32.whl", hash = "sha256:61340356889547e29e2e6db7ef28f821b91e73fee80a888e81a794a24a249987"},
+    {file = "pystan-2.19.1.1-cp36-cp36m-win_amd64.whl", hash = "sha256:bc1193f52bc6c6419dd753bcb0b6958b24fe588dc3da3c7f70bd23dcbda6ec2a"},
+    {file = "pystan-2.19.1.1-cp37-cp37m-macosx_10_6_intel.whl", hash = "sha256:5b67008f5780c7cf0f3fbad5bc54bc9919efc9655d63e0314dc013e85c7a0f14"},
+    {file = "pystan-2.19.1.1-cp37-cp37m-manylinux1_x86_64.whl", hash = "sha256:2b44502aaa8866e0bcc81df1537e7e08b74aaf4cc9d4bf43e7c8b168f3568ca6"},
+    {file = "pystan-2.19.1.1-cp37-cp37m-win32.whl", hash = "sha256:b2ef9031dfbd65757828e2441cb9a76c9217fb5bb93817fee2550722e7a785b3"},
+    {file = "pystan-2.19.1.1-cp37-cp37m-win_amd64.whl", hash = "sha256:3622520b2e55d2ce70a3027d9910b6197a8bc2ef59e01967be9c4e607a48a9c1"},
+    {file = "pystan-2.19.1.1-cp38-cp38-macosx_10_9_x86_64.whl", hash = "sha256:837a62976b32e4fd2bd48fee3b419c651e19747280e440d5934bea3822b22115"},
+    {file = "pystan-2.19.1.1-cp38-cp38-manylinux1_x86_64.whl", hash = "sha256:e8e0924c318a0ea67260167a74f040078a4ce0d3fd4a7d566aa76f7752a85fab"},
+    {file = "pystan-2.19.1.1-cp38-cp38-win32.whl", hash = "sha256:f16c399da3d9d72e9661b131c23d51a59c789416598885714813fcb552234c83"},
+    {file = "pystan-2.19.1.1-cp38-cp38-win_amd64.whl", hash = "sha256:9d8c2ae05d1dca854a55b2ae9276af5866e473fb8264d03d5267abadb3c602da"},
+    {file = "pystan-2.19.1.1.tar.gz", hash = "sha256:fa8bad8dbc0da22bbe6f36af56c9abbfcf10f92df8ce627d59a36bd8d25eb038"},
 ]
 pytest = [
     {file = "pytest-6.2.5-py3-none-any.whl", hash = "sha256:7310f8d27bc79ced999e760ca304d69f6ba6c6649c0b60fb0e04a4a77cacc134"},

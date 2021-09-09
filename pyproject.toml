@@ -38,7 +38,7 @@ typer = {extras = ["all"], version = "^0.3.2"}
 rich = "^10.1.0"
 pandas = "^1.1.5"
 numpy = "^1.20.2"
-pystan = "2.18.0.0"
+pystan = "2.19.1.1"
 fbprophet = "0.7.1"
 holidays = "^0.11.1"
 plotly = "^4.11.0"
