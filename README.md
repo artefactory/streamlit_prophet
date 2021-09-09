@@ -12,10 +12,11 @@
 [![Semantic Versions](https://img.shields.io/badge/%F0%9F%9A%80-semantic%20versions-informational.svg)](https://github.com/artefactory-global/streamlit_prophet/releases)
 [![License](https://img.shields.io/badge/License-MIT-informational.svg)](https://github.com/artefactory-global/streamlit_prophet/blob/main/LICENSE)
 
-Deploy a [Streamlit](https://streamlit.io/) app to visually train, evaluate and optimize a [Prophet](https://facebook.github.io/prophet/) forecasting model
+Deploy a [Streamlit](https://streamlit.io/) app to train, evaluate and optimize a [Prophet](https://facebook.github.io/prophet/) forecasting model visually
 
 </div>
 
+https://user-images.githubusercontent.com/56996548/126762714-f2d3f3a1-7098-4a86-8c60-0a69d0f913a7.mp4
 
 ## 💻 Requirements
 
@@ -27,7 +28,7 @@ Please make sure you have one of these versions installed to be able to run the 
 
 ### Operating System
 Windows users have to install [WSL2](https://docs.microsoft.com/en-us/windows/wsl/) to download the package. 
-This is due to the incompatibility between Windows and Prophet's main dependency (pystan). 
+This is due to an incompatibility between Windows and Prophet's main dependency (pystan). 
 Other operating systems should work fine.
 
 ## ⚙️ Installation
@@ -55,7 +56,7 @@ pip install -U streamlit_prophet
 
 Or from the main branch of this repository:
 ```bash
-pip install git+ssh://git@github.com/artefactory-global/streamlit_prophet.git@main
+pip install git+https://github.com/artefactory-global/streamlit_prophet.git@main
 ```
 
 
@@ -67,7 +68,7 @@ Once installed, run the following command from CLI to open the app in your defau
 streamlit_prophet deploy dashboard
 ```
 
-Now you can train, evaluate and optimize a forecasting model in just a few clicks.
+Now you can train, evaluate and optimize forecasting models in a few clicks.
 All you have to do is to upload a time series dataset. 
 This dataset should be a csv file that contains a date column, a target column and optionally some features, like on the example below:
 
@@ -85,27 +86,12 @@ with the model previously trained.
 
 Once you are satisfied, click on "save experiment" to download all plots and data locally.
 
-https://user-images.githubusercontent.com/56996548/126762714-f2d3f3a1-7098-4a86-8c60-0a69d0f913a7.mp4
-
 
 ## 🛠️ How to contribute ?
 
-If you want to contribute to the development of this package:
+All contributions, ideas and bug reports are welcome! 
+We encourage you to open an [issue](https://github.com/artefactory-global/streamlit_prophet/issues) for any change you would like to make on this project.
 
-1. Clone the repository:
-```bash
-git clone git@github.com:artefactory-global/streamlit_prophet.git
-```
 
-2. If you don't have `Poetry` installed, run:
-```bash
-make download-poetry; export PATH="$HOME/.poetry/bin:$PATH"
-```
-
-3. Initialize poetry and install `pre-commit` hooks:
-```bash
-make install
-```
-
-And you are ready to develop ! For more information, see [`CONTRIBUTING`](https://github.com/artefactory-global/streamlit_prophet/blob/main/CONTRIBUTING.md) instructions.
+For more information, see [`CONTRIBUTING`](https://github.com/artefactory-global/streamlit_prophet/blob/main/CONTRIBUTING.md) instructions.
 If you wish to containerize the app, see [`DOCKER`](https://github.com/artefactory-global/streamlit_prophet/blob/main/DOCKER.md) instructions.
