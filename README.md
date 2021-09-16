@@ -17,7 +17,7 @@ Deploy a [Streamlit](https://streamlit.io/) app to train, evaluate and optimize 
 
 ## ⭐  Quick Start  ⭐
 
-[Test the app online](https://share.streamlit.io/maximelutel/streamlit_prophet/main/streamlit_prophet/app/dashboard.py) with shared computing resources & [read introductory article](https://medium.com/artefact-engineering-and-data-science)
+[Test the app online](https://share.streamlit.io/maximelutel/streamlit_prophet/main/streamlit_prophet/app/dashboard.py) with shared computing resources & [read introductory article](https://medium.com/artefact-engineering-and-data-science/visual-time-series-forecasting-with-streamlit-prophet-71d86a769928?source=friends_link&sk=590cca0d24f53f73a9fdb0490a9a47a7)
 
 If you plan to use the app regularly, you should install the package and run it locally:
 ```bash
