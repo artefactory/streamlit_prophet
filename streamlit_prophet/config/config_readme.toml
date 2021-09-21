@@ -281,3 +281,7 @@ The following plots can help you to detect patterns in forecasting errors:
 
 If you detect a recurring error, change cleaning options or model parameters to try to correct it.
 """
+
+[links]
+repo = "https://github.com/artefactory-global/streamlit_prophet"
+article = "https://medium.com/artefact-engineering-and-data-science/visual-time-series-forecasting-with-streamlit-prophet-71d86a769928"
