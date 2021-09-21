@@ -455,3 +455,7 @@ def display_links(repo_link: str, article_link: str) -> None:
         f"<a style='display: block; text-align: center;' href={article_link}>App introduction</a>",
         unsafe_allow_html=True,
     )
+    st.sidebar.markdown(
+        f'<div style="text-align: center"> (Open in a new tab) </div>',
+        unsafe_allow_html=True,
+    )
