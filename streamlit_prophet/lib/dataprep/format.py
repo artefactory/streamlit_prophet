@@ -5,7 +5,7 @@ import pandas as pd
 import streamlit as st
 
 
-@st.cache()
+@st.cache(ttl=3600)
 def remove_empty_cols(df: pd.DataFrame) -> Tuple[pd.DataFrame, List[Any]]:
     """Remove columns with strictly less than 2 distinct values in input dataframe.
 
@@ -42,7 +42,7 @@ def print_empty_cols(empty_cols: List[Any]) -> None:
         )
 
 
-@st.cache(suppress_st_warning=True)
+@st.cache(suppress_st_warning=True, ttl=3600)
 def format_date_and_target(
     df_input: pd.DataFrame,
     date_col: str,
@@ -196,7 +196,7 @@ def _rename_cols(df: pd.DataFrame, date_col: str, target_col: str) -> pd.DataFra
 
 
 # NB: date_col and target_col not used, only added to avoid unexpected caching when their values change
-@st.cache()
+@st.cache(ttl=3600)
 def filter_and_aggregate_df(
     df_input: pd.DataFrame,
     dimensions: Dict[Any, Any],
@@ -344,7 +344,7 @@ def _aggregate(df: pd.DataFrame, dimensions: Dict[Any, Any]) -> pd.DataFrame:
     return df.groupby("ds").agg(agg_dict).reset_index()
 
 
-@st.cache()
+@st.cache(ttl=3600)
 def format_datetime(df_input: pd.DataFrame, resampling: Dict[Any, Any]) -> pd.DataFrame:
     """Formats date column to datetime in input dataframe.
 
@@ -367,7 +367,7 @@ def format_datetime(df_input: pd.DataFrame, resampling: Dict[Any, Any]) -> pd.Da
     return df
 
 
-@st.cache()
+@st.cache(ttl=3600)
 def resample_df(df_input: pd.DataFrame, resampling: Dict[Any, Any]) -> pd.DataFrame:
     """Resamples input dataframe according to resampling dictionary specifications.
 
@@ -561,7 +561,7 @@ def prepare_future_df(
     return future, datasets
 
 
-@st.cache()
+@st.cache(ttl=3600)
 def add_cap_and_floor_cols(df_input: pd.DataFrame, params: Dict[Any, Any]) -> pd.DataFrame:
     """Resamples input dataframe according to resampling dictionary specifications.
 
