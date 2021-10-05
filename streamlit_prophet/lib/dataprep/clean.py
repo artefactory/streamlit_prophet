@@ -51,7 +51,7 @@ def clean_future_df(df: pd.DataFrame, cleaning: Dict[Any, Any]) -> pd.DataFrame:
     return df_clean
 
 
-@st.cache(suppress_st_warning=True, ttl=3600)
+@st.cache(suppress_st_warning=True, ttl=900)
 def _log_transform(df: pd.DataFrame, cleaning: Dict[Any, Any]) -> pd.DataFrame:
     """Applies a log transform to the y column of input dataframe, if possible.
     Raises an error in streamlit dashboard if not possible.
@@ -80,7 +80,7 @@ def _log_transform(df: pd.DataFrame, cleaning: Dict[Any, Any]) -> pd.DataFrame:
     return df_clean
 
 
-@st.cache(ttl=3600)
+@st.cache(ttl=900)
 def _remove_rows(df: pd.DataFrame, cleaning: Dict[Any, Any]) -> pd.DataFrame:
     """Removes some rows of the input dataframe according to cleaning dict specifications.
 
