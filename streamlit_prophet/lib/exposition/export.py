@@ -141,7 +141,7 @@ def display_2_dataframe_download_links(
     """
     if add_blank:
         st.write("")
-    col1, col2 = st.beta_columns(2)
+    col1, col2 = st.columns(2)
     col1.markdown(
         f"<p style='text-align: center;;'> {get_dataframe_download_link(df1, filename1, linkname1)}</p>",
         unsafe_allow_html=True,
@@ -177,7 +177,7 @@ def display_config_download_links(
     linkname2 : str
         Text displayed in the streamlit app for the second link.
     """
-    col1, col2 = st.beta_columns(2)
+    col1, col2 = st.columns(2)
     col1.markdown(
         f"<p style='text-align: center;;'> {get_config_download_link(config1, filename1, linkname1)}</p>",
         unsafe_allow_html=True,
@@ -446,7 +446,7 @@ def display_links(repo_link: str, article_link: str) -> None:
     article_link : str
         Link of medium article.
     """
-    col1, col2 = st.sidebar.beta_columns(2)
+    col1, col2 = st.sidebar.columns(2)
     col1.markdown(
         f"<a style='display: block; text-align: center;' href={repo_link}>Source code</a>",
         unsafe_allow_html=True,

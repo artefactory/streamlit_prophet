@@ -697,7 +697,7 @@ def display_global_metrics(
     if use_cv:
         st.dataframe(metrics_df)
     else:
-        col1, col2, col3, col4, col5 = st.beta_columns(5)
+        col1, col2, col3, col4, col5 = st.columns(5)
         col1.markdown(
             f"<p style='color: {config['style']['colors'][1]}; "
             f"font-weight: bold; font-size: 20px;'> {eval_all['metrics'][0]}</p>",

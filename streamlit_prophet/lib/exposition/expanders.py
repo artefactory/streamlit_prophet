@@ -89,7 +89,7 @@ def display_expander(
     add_blank : bool
         Whether or not to add a blank after the expander.
     """
-    with st.beta_expander(title, expanded=False):
+    with st.expander(title, expanded=False):
         st.write(readme["plots"][section])
         st.write("")
     if add_blank:
@@ -120,14 +120,14 @@ def display_expanders_performance(
         Dictionary containing explanations about the section.
     """
     st.write("")
-    with st.beta_expander("More info on evaluation metrics", expanded=False):
+    with st.expander("More info on evaluation metrics", expanded=False):
         st.write(readme["plots"]["metrics"])
         st.write("")
         _display_metrics()
         st.write("")
     if use_cv:
         cv_dates = get_cv_dates_dict(dates, resampling)
-        with st.beta_expander("See cross-validation folds", expanded=False):
+        with st.expander("See cross-validation folds", expanded=False):
             st.plotly_chart(plot_cv_dates(cv_dates, resampling, style))
 
 

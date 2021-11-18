@@ -61,7 +61,7 @@ def input_dataset(
         if st.checkbox(
             "Upload my own config file", False, help=readme["tooltips"]["custom_config_choice"]
         ):
-            with st.sidebar.beta_expander("Configuration", expanded=True):
+            with st.sidebar.expander("Configuration", expanded=True):
                 display_config_download_links(
                     config,
                     "config.toml",

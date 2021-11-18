@@ -47,7 +47,7 @@ def input_train_dates(
     dict
         Dictionary containing training dates information.
     """
-    col1, col2 = st.beta_columns(2)
+    col1, col2 = st.columns(2)
     set_name = "CV" if use_cv else "Training"
     dates["train_start_date"] = col1.date_input(
         f"{set_name} start date", value=df.ds.min(), min_value=df.ds.min(), max_value=df.ds.max()
@@ -81,7 +81,7 @@ def input_val_dates(
     dict
         Dictionary containing training and validation dates information.
     """
-    col1, col2 = st.beta_columns(2)
+    col1, col2 = st.columns(2)
     dates["val_start_date"] = col1.date_input(
         "Validation start date",
         value=dates["train_end_date"] + timedelta(days=config["split"]["gap_train_valid"]),
@@ -217,7 +217,7 @@ def input_waterfall_dates(
         Waterfall end date.
     """
     max_date = forecast_df.loc[~pd.isnull(forecast_df["trend"])]["ds"].max()
-    col1, col2 = st.beta_columns(2)
+    col1, col2 = st.columns(2)
     start_date = col1.date_input(
         "Start date", value=forecast_df.ds.min(), min_value=forecast_df.ds.min(), max_value=max_date
     )
