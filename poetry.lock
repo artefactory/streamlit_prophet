@@ -1309,6 +1309,14 @@ optional = false
 python-versions = "*"
 
 [[package]]
+name = "pympler"
+version = "0.9"
+description = "A development tool to measure, monitor and analyze the memory behavior of Python objects."
+category = "main"
+optional = false
+python-versions = "*"
+
+[[package]]
 name = "pyparsing"
 version = "3.0.6"
 description = "Python parsing module"
@@ -1630,7 +1638,7 @@ pbr = ">=2.0.0,<2.1.0 || >2.1.0"
 
 [[package]]
 name = "streamlit"
-version = "1.1.0"
+version = "1.2.0"
 description = "The fastest way to build data apps in Python"
 category = "main"
 optional = false
@@ -1652,6 +1660,7 @@ pillow = ">=6.2.0"
 protobuf = ">=3.6.0,<3.11 || >3.11"
 pyarrow = "*"
 pydeck = ">=0.1.dev5"
+pympler = ">=0.9"
 python-dateutil = "*"
 requests = "*"
 toml = "*"
@@ -1934,7 +1943,7 @@ testing = ["pytest (>=4.6)", "pytest-checkdocs (>=2.4)", "pytest-flake8", "pytes
 [metadata]
 lock-version = "1.1"
 python-versions = ">=3.7 <3.10"
-content-hash = "0b9b0ca14ef880faca6a3d62c6c313e619c47d2309a1206d51bc035c9eaa9628"
+content-hash = "bc22a5cd5b5e92730fc6f5e3be43b9592f0e8ef4bbed0a22a43d4f85bdbff0ab"
 
 [metadata.files]
 altair = [
@@ -2903,6 +2912,9 @@ pylint = [
 pymeeus = [
     {file = "PyMeeus-0.5.11.tar.gz", hash = "sha256:bb9d670818d8b0594317b48a7dadea02a0594e5344263bf2054e1a011c8fed55"},
 ]
+pympler = [
+    {file = "Pympler-0.9.tar.gz", hash = "sha256:f2cbe7df622117af890249f2dea884eb702108a12d729d264b7c5983a6e06e47"},
+]
 pyparsing = [
     {file = "pyparsing-3.0.6-py3-none-any.whl", hash = "sha256:04ff808a5b90911829c55c4e26f75fa5ca8a2f5f36aa3a51f68e27033341d3e4"},
     {file = "pyparsing-3.0.6.tar.gz", hash = "sha256:d9bdec0013ef1eb5a84ab39a3b3868911598afa494f5faa038647101504e2b81"},
@@ -3209,8 +3221,8 @@ stevedore = [
     {file = "stevedore-3.5.0.tar.gz", hash = "sha256:f40253887d8712eaa2bb0ea3830374416736dc8ec0e22f5a65092c1174c44335"},
 ]
 streamlit = [
-    {file = "streamlit-1.1.0-py2.py3-none-any.whl", hash = "sha256:e4afa5b4cf1a193b6e19afdf53826dce5be48b040541d2eb761747ef67100024"},
-    {file = "streamlit-1.1.0.tar.gz", hash = "sha256:20d8620614f80653b79b58aa7d74c0e3a6f6cb9fcaf9046828b2f6e13db8701b"},
+    {file = "streamlit-1.2.0-py2.py3-none-any.whl", hash = "sha256:36846f56973f019c980a65739fcd6b621591a0c5aae1caee959b238b1432ebb7"},
+    {file = "streamlit-1.2.0.tar.gz", hash = "sha256:f13f7463d53fb866a1d07dccfacb60333c56dc9f34b001f310475beee71a08a5"},
 ]
 terminado = [
     {file = "terminado-0.12.1-py3-none-any.whl", hash = "sha256:09fdde344324a1c9c6e610ee4ca165c4bb7f5bbf982fceeeb38998a988ef8452"},

@@ -43,7 +43,7 @@ pystan = "2.19.1.1"
 fbprophet = "0.7.1"
 holidays = "^0.11.1"
 plotly = "^4.11.0"
-streamlit = "1.1"
+streamlit = "1.2.0"
 scipy = "^1.6.3"
 vacances-scolaires-france = "^0.8.0"
 
