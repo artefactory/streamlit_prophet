@@ -40,9 +40,9 @@ jobs:
       run: |
         STRICT=1 make check-safety
 
-    - name: Run style checks
-      run: |
-        STRICT=1 make check-style
+    #- name: Run style checks
+    #  run: |
+    #    STRICT=1 make check-style
 
     - name: Run tests
       run: |
