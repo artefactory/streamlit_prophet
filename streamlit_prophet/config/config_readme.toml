@@ -283,5 +283,5 @@ If you detect a recurring error, change cleaning options or model parameters to 
 """
 
 [links]
-repo = "https://github.com/artefactory-global/streamlit_prophet"
+repo = "https://github.com/artefactory/streamlit_prophet"
 article = "https://medium.com/artefact-engineering-and-data-science/visual-time-series-forecasting-with-streamlit-prophet-71d86a769928"
