@@ -159,6 +159,7 @@ def make_future_df(
     load_options: Dict[Any, Any],
     config: Dict[Any, Any],
     resampling: Dict[Any, Any],
+    params: Dict[Any, Any],
 ) -> Dict[Any, Any]:
     """Adds future dataframe in datasets dictionary's values.
 
@@ -192,7 +193,7 @@ def make_future_df(
     """
     datasets["full"] = df.copy()
     future, datasets = prepare_future_df(
-        datasets, dates, date_col, target_col, dimensions, load_options, config, resampling
+        datasets, dates, date_col, target_col, dimensions, load_options, config, resampling, params
     )
     future = clean_future_df(future, cleaning)
     datasets["future"] = future
