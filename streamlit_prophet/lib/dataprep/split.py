@@ -185,6 +185,8 @@ def make_future_df(
         Lib configuration dictionary.
     resampling : Dict
         Resampling specifications.
+    params : Dict
+        Dictionary containing all model parameters
 
     Returns
     -------

@@ -533,6 +533,8 @@ def prepare_future_df(
         Lib configuration dictionary.
     resampling : Dict
         Resampling specifications.
+    params : Dict
+        Dictionary containing all model parameters
 
     Returns
     -------
@@ -559,7 +561,7 @@ def prepare_future_df(
             freq=dates["forecast_freq"],
         )
         future = pd.DataFrame(future_dates, columns=["ds"])
-        future = add_cap_and_floor_cols(future, params)
+    future = add_cap_and_floor_cols(future, params)
     return future, datasets
 
 
