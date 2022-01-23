@@ -511,6 +511,7 @@ def prepare_future_df(
     load_options: Dict[Any, Any],
     config: Dict[Any, Any],
     resampling: Dict[Any, Any],
+    params: Dict[Any, Any],
 ) -> Tuple[pd.DataFrame, Dict[Any, Any]]:
     """Applies data preparation to the dataset provided with future regressors.
 
@@ -532,6 +533,8 @@ def prepare_future_df(
         Lib configuration dictionary.
     resampling : Dict
         Resampling specifications.
+    params : Dict
+        Dictionary containing all model parameters
 
     Returns
     -------
@@ -558,6 +561,7 @@ def prepare_future_df(
             freq=dates["forecast_freq"],
         )
         future = pd.DataFrame(future_dates, columns=["ds"])
+    future = add_cap_and_floor_cols(future, params)
     return future, datasets
 
 

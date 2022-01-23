@@ -260,6 +260,7 @@ def forecast_future(
         load_options,
         config,
         resampling,
+        params,
     )
     models["future"] = instantiate_prophet_model(params, use_regressors=use_regressors, dates=dates)
     models["future"].fit(datasets["full"], seed=config["global"]["seed"])
