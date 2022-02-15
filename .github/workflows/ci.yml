@@ -36,9 +36,9 @@ jobs:
         poetry run pip install --upgrade pip
         poetry install
 
-    - name: Run safety checks
-      run: |
-        STRICT=1 make check-safety
+    #- name: Run safety checks
+    #  run: |
+    #    STRICT=1 make check-safety
 
     #- name: Run style checks
     #  run: |

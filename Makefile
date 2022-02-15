@@ -97,6 +97,7 @@ endif
 .PHONY: check-safety
 check-safety:
 	poetry check$(POETRY_COMMAND_FLAG) && \
+	poetry run pip check$(PIP_COMMAND_FLAG) && \
 	poetry run safety check --full-report$(SAFETY_COMMAND_FLAG) && \
 	poetry run bandit -r streamlit_prophet/$(BANDIT_COMMAND_FLAG)
 
