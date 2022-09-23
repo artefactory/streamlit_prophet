@@ -46,7 +46,7 @@ plotly = "^4.11.0"
 streamlit = "1.2.0"
 scipy = "^1.6.3"
 vacances-scolaires-france = "^0.8.0"
-protobuf = "3.20.1"
+protobuf = "3.20.2"
 
 [tool.poetry.dev-dependencies]
 darglint = "^1.8.0"
