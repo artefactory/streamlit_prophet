@@ -5,7 +5,7 @@ from collections import defaultdict
 from datetime import timedelta
 
 import pandas as pd
-from fbprophet import Prophet
+from prophet import Prophet
 from streamlit_prophet.lib.utils.mapping import convert_into_nb_of_days, convert_into_nb_of_seconds
 
 

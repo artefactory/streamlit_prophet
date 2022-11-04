@@ -1,8 +1,8 @@
 from typing import Any, Dict, Optional, Tuple
 
 import pandas as pd
-from fbprophet import Prophet
-from fbprophet.diagnostics import cross_validation
+from prophet import Prophet
+from prophet.diagnostics import cross_validation
 from streamlit_prophet.lib.dataprep.clean import exp_transform
 from streamlit_prophet.lib.dataprep.format import check_future_regressors_df
 from streamlit_prophet.lib.dataprep.split import make_eval_df, make_future_df

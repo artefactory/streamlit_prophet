@@ -7,9 +7,9 @@ import plotly.express as px
 import plotly.figure_factory as ff
 import plotly.graph_objects as go
 import streamlit as st
-from fbprophet import Prophet
-from fbprophet.plot import plot_plotly
 from plotly.subplots import make_subplots
+from prophet import Prophet
+from prophet.plot import plot_plotly
 from streamlit_prophet.lib.evaluation.metrics import get_perf_metrics
 from streamlit_prophet.lib.evaluation.preparation import get_evaluation_df
 from streamlit_prophet.lib.exposition.expanders import (

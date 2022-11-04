@@ -1,7 +1,7 @@
 from typing import Any, Dict
 
 import pandas as pd
-from fbprophet import Prophet
+from prophet import Prophet
 from streamlit_prophet.lib.utils.holidays import lockdown_format_func
 from streamlit_prophet.lib.utils.mapping import (
     COVID_LOCKDOWN_DATES_MAPPING,
