@@ -592,7 +592,7 @@ version = "3.6.2"
 description = "Python plotting package"
 category = "main"
 optional = false
-python-versions = ">=3.8"
+python-versions = ">=3.7"
 
 [package.dependencies]
 contourpy = ">=1.0.1"
@@ -652,7 +652,7 @@ version = "1.23.4"
 description = "NumPy is the fundamental package for array computing with Python."
 category = "main"
 optional = false
-python-versions = ">=3.8"
+python-versions = ">=3.7"
 
 [[package]]
 name = "packaging"
@@ -671,7 +671,7 @@ version = "1.5.1"
 description = "Powerful data structures for data analysis, time series, and statistics"
 category = "main"
 optional = false
-python-versions = ">=3.8"
+python-versions = ">=3.7"
 
 [package.dependencies]
 numpy = [
@@ -829,7 +829,7 @@ python-versions = ">=2.7, !=3.0.*, !=3.1.*, !=3.2.*, !=3.3.*"
 
 [[package]]
 name = "pydeck"
-version = "0.8.0b4"
+version = "0.8.0"
 description = "Widget for deck.gl maps"
 category = "main"
 optional = false
@@ -1120,7 +1120,7 @@ version = "1.9.3"
 description = "Fundamental algorithms for scientific computing in Python"
 category = "main"
 optional = false
-python-versions = ">=3.8"
+python-versions = ">=3.7"
 
 [package.dependencies]
 numpy = ">=1.18.5,<1.26.0"
@@ -1193,7 +1193,7 @@ version = "4.1.0"
 description = "Manage dynamic plugins for Python applications"
 category = "dev"
 optional = false
-python-versions = ">=3.8"
+python-versions = ">=3.7"
 
 [package.dependencies]
 pbr = ">=2.0.0,<2.1.0 || >2.1.0"
@@ -1444,8 +1444,8 @@ testing = ["flake8 (<5)", "func-timeout", "jaraco.functools", "jaraco.itertools"
 
 [metadata]
 lock-version = "1.1"
-python-versions = ">=3.8 <3.11"
-content-hash = "b7c7ed0b28197ef9862d271e0623e27f1ddf6f9bdc0f2f8f79b33904fbc4e27f"
+python-versions = ">=3.7 <3.11"
+content-hash = "788c60b64adbc699ce378e9ffd5dd5d300260667a0feb6f131b3093701175067"
 
 [metadata.files]
 altair = [
@@ -2301,8 +2301,8 @@ pycodestyle = [
     {file = "pycodestyle-2.7.0.tar.gz", hash = "sha256:c389c1d06bf7904078ca03399a4816f974a1d590090fecea0c63ec26ebaf1cef"},
 ]
 pydeck = [
-    {file = "pydeck-0.8.0b4-py2.py3-none-any.whl", hash = "sha256:714ec23fb21e47171e4ae350668ca8a1552bae29de94e5e749bd595a60100a09"},
-    {file = "pydeck-0.8.0b4.tar.gz", hash = "sha256:103f303ef0a8f18edb10444d8136b901514779e84e340a86218e67427559e6d2"},
+    {file = "pydeck-0.8.0-py2.py3-none-any.whl", hash = "sha256:a8fa7757c6f24bba033af39db3147cb020eef44012ba7e60d954de187f9ed4d5"},
+    {file = "pydeck-0.8.0.tar.gz", hash = "sha256:07edde833f7cfcef6749124351195aa7dcd24663d4909fd7898dbd0b6fbc01ec"},
 ]
 pydocstyle = [
     {file = "pydocstyle-6.1.1-py3-none-any.whl", hash = "sha256:6987826d6775056839940041beef5c08cc7e3d71d63149b48e36727f70144dc4"},
