@@ -184,20 +184,21 @@ python-versions = ">=2.7, !=3.0.*, !=3.1.*, !=3.2.*, !=3.3.*, !=3.4.*"
 
 [[package]]
 name = "cmdstanpy"
-version = "0.9.5"
+version = "1.0.8"
 description = "Python interface to CmdStan"
 category = "main"
 optional = false
-python-versions = "*"
+python-versions = ">=3.7"
 
 [package.dependencies]
-numpy = "*"
+numpy = ">=1.21"
 pandas = "*"
+tqdm = "*"
 
 [package.extras]
-all = ["tqdm", "ujson"]
+all = ["xarray"]
 docs = ["matplotlib", "numpydoc", "sphinx", "sphinx-gallery", "sphinx-rtd-theme"]
-tests = ["pytest", "pytest-cov", "testfixtures"]
+tests = ["flake8", "mypy", "pylint", "pytest", "pytest-cov", "pytest-order", "testfixtures", "tqdm", "xarray"]
 
 [[package]]
 name = "colorama"
@@ -347,28 +348,6 @@ optional = false
 python-versions = "*"
 
 [[package]]
-name = "fbprophet"
-version = "0.7.1"
-description = "Automatic Forecasting Procedure"
-category = "main"
-optional = false
-python-versions = ">=3"
-
-[package.dependencies]
-cmdstanpy = "0.9.5"
-convertdate = ">=2.1.2"
-Cython = ">=0.22"
-holidays = ">=0.10.2"
-LunarCalendar = ">=0.0.9"
-matplotlib = ">=2.0.0"
-numpy = ">=1.15.4"
-pandas = ">=1.0.4"
-pystan = ">=2.14"
-python-dateutil = ">=2.8.0"
-setuptools-git = ">=1.2"
-tqdm = ">=4.36.1"
-
-[[package]]
 name = "filelock"
 version = "3.8.0"
 description = "A platform independent file lock."
@@ -447,11 +426,11 @@ python-versions = ">=3.6"
 
 [[package]]
 name = "holidays"
-version = "0.11.3.1"
+version = "0.14.2"
 description = "Generate and work with holidays in Python"
 category = "main"
 optional = false
-python-versions = ">=3.6"
+python-versions = ">=3.7"
 
 [package.dependencies]
 convertdate = ">=2.3.0"
@@ -792,6 +771,26 @@ nodeenv = ">=0.11.1"
 pyyaml = ">=5.1"
 toml = "*"
 virtualenv = ">=20.0.8"
+
+[[package]]
+name = "prophet"
+version = "1.1.1"
+description = "Automatic Forecasting Procedure"
+category = "main"
+optional = false
+python-versions = ">=3.7"
+
+[package.dependencies]
+cmdstanpy = ">=1.0.4"
+convertdate = ">=2.1.2"
+holidays = ">=0.14.2"
+LunarCalendar = ">=0.0.9"
+matplotlib = ">=2.0.0"
+numpy = ">=1.15.4"
+pandas = ">=1.0.4"
+python-dateutil = ">=2.8.0"
+setuptools-git = ">=1.2"
+tqdm = ">=4.36.1"
 
 [[package]]
 name = "protobuf"
@@ -1446,7 +1445,7 @@ testing = ["flake8 (<5)", "func-timeout", "jaraco.functools", "jaraco.itertools"
 [metadata]
 lock-version = "1.1"
 python-versions = ">=3.8 <3.11"
-content-hash = "2e785cae9e4231c9d19873f858c91aa650d29bf410d13f1a2c3d433da8fccbfb"
+content-hash = "b7c7ed0b28197ef9862d271e0623e27f1ddf6f9bdc0f2f8f79b33904fbc4e27f"
 
 [metadata.files]
 altair = [
@@ -1526,8 +1525,8 @@ click = [
     {file = "click-7.1.2.tar.gz", hash = "sha256:d2b5255c7c6349bc1bd1e59e08cd12acbbd63ce649f2588755783aa94dfb6b1a"},
 ]
 cmdstanpy = [
-    {file = "cmdstanpy-0.9.5-py3-none-any.whl", hash = "sha256:ba60fb1f9daf9a33faabcbba935c247e3652ce850e9a71b07d085fa163e0edd9"},
-    {file = "cmdstanpy-0.9.5.tar.gz", hash = "sha256:916c40a4c10d513c88d8553728cfd87b12f600687d827019df9fff8648f6a18f"},
+    {file = "cmdstanpy-1.0.8-py3-none-any.whl", hash = "sha256:10d8ccf3356ba012b62e72ceef9993a5382d75a7a07e8c2ee795f8363f07c816"},
+    {file = "cmdstanpy-1.0.8.tar.gz", hash = "sha256:d7e9e2ec96bb860b573ce56c8439fd11ec3289a8287231730b279fd3e85d2ba0"},
 ]
 colorama = [
     {file = "colorama-0.4.6-py2.py3-none-any.whl", hash = "sha256:4f1d9991f5acc0ca119f9d443620b77f9d6b33703e51011c16baf57afb285fc6"},
@@ -1792,9 +1791,6 @@ ephem = [
     {file = "ephem-4.1.3-cp39-cp39-win_amd64.whl", hash = "sha256:998088155eb9262988eea18d31d3e35a4f15b2691f26c8b1c01fae11f7bbd5e0"},
     {file = "ephem-4.1.3.tar.gz", hash = "sha256:7fa18685981ba528edd504052a9d5212a09aa5bf15c11a734edc6a86e8a8b56a"},
 ]
-fbprophet = [
-    {file = "fbprophet-0.7.1.tar.gz", hash = "sha256:3ac63a05caf5117d9c6ed83fa6f9d4ffc207b60a56854c905f2789d8a89c2b6f"},
-]
 filelock = [
     {file = "filelock-3.8.0-py3-none-any.whl", hash = "sha256:617eb4e5eedc82fc5f47b6d61e4d11cb837c56cb4544e39081099fa17ad109d4"},
     {file = "filelock-3.8.0.tar.gz", hash = "sha256:55447caa666f2198c5b6b13a26d2084d26fa5b115c00d065664b2124680c4edc"},
@@ -1820,8 +1816,8 @@ hijri-converter = [
     {file = "hijri_converter-2.2.4-py3-none-any.whl", hash = "sha256:5ed4f4c284626e3916cd770e09346d5cc319e2a7762c22357838864908fd6e6d"},
 ]
 holidays = [
-    {file = "holidays-0.11.3.1-py3-none-any.whl", hash = "sha256:63e2578513d0877aefd43d49870caf666fd902ec3a5884a3397f403c912a8246"},
-    {file = "holidays-0.11.3.1.tar.gz", hash = "sha256:4855afe0ebf428efbcf848477828b889f8515be7f4f15ae26682919369d92774"},
+    {file = "holidays-0.14.2-py3-none-any.whl", hash = "sha256:441156949b1c41f08bb08ef8e79fcadfd76d2dd7837f49d7bfc6a572fc442c93"},
+    {file = "holidays-0.14.2.tar.gz", hash = "sha256:0e70fd174804aea1c870b151319faebcd5cdb0d955b78230434e1afd1778498e"},
 ]
 identify = [
     {file = "identify-2.5.8-py2.py3-none-any.whl", hash = "sha256:48b7925fe122720088aeb7a6c34f17b27e706b72c61070f27fe3789094233440"},
@@ -2226,6 +2222,25 @@ pluggy = [
 pre-commit = [
     {file = "pre_commit-2.20.0-py2.py3-none-any.whl", hash = "sha256:51a5ba7c480ae8072ecdb6933df22d2f812dc897d5fe848778116129a681aac7"},
     {file = "pre_commit-2.20.0.tar.gz", hash = "sha256:a978dac7bc9ec0bcee55c18a277d553b0f419d259dadb4b9418ff2d00eb43959"},
+]
+prophet = [
+    {file = "prophet-1.1.1-cp310-cp310-macosx_10_9_x86_64.whl", hash = "sha256:53ae842456cfae42d632ead7231bee9ae8c83e7c78054845a97c9c417fd455ab"},
+    {file = "prophet-1.1.1-cp310-cp310-manylinux_2_17_aarch64.manylinux2014_aarch64.whl", hash = "sha256:9d960666863b4744fcfb622d7cee8c8ccd6feb34b043b9b23b790a575198611b"},
+    {file = "prophet-1.1.1-cp310-cp310-manylinux_2_17_x86_64.manylinux2014_x86_64.whl", hash = "sha256:67798db4a2ab777cc1ed870e36259ab86c64139b77f32849c0cb433b666b2ca2"},
+    {file = "prophet-1.1.1-cp310-cp310-win_amd64.whl", hash = "sha256:bb8d24d055ae59c91812aa4d42ecd3c7b98fe2544b66d4d4d84e70079dcdc8c8"},
+    {file = "prophet-1.1.1-cp37-cp37m-macosx_10_9_x86_64.whl", hash = "sha256:c368f78cf33991a1131e0cee9b1f5cdd5db6e8ccaa6f2ec9db842664caa39ec9"},
+    {file = "prophet-1.1.1-cp37-cp37m-manylinux_2_17_aarch64.manylinux2014_aarch64.whl", hash = "sha256:36072d0d6c2f22c486effd1454a04a2d157fd3801286339fb10d5c23e7992d6b"},
+    {file = "prophet-1.1.1-cp37-cp37m-manylinux_2_17_x86_64.manylinux2014_x86_64.whl", hash = "sha256:fdee9918b0ba603b7c91f9be8fbd7635d1dc9a92aed76743db46cd3738345395"},
+    {file = "prophet-1.1.1-cp37-cp37m-win_amd64.whl", hash = "sha256:51a4742abd6678e980cc7f3082bdfb0f1cacf7a5a1182251a26db4c1a374440d"},
+    {file = "prophet-1.1.1-cp38-cp38-macosx_10_9_x86_64.whl", hash = "sha256:79db0587c0514680487f7c94cf2a7b392f0730916d25abd9a547f1b530fc0ebf"},
+    {file = "prophet-1.1.1-cp38-cp38-manylinux_2_17_aarch64.manylinux2014_aarch64.whl", hash = "sha256:0003a79009d956c67f171bb5fa6ee88a84502d8fb8d57af5cac509a41a36035e"},
+    {file = "prophet-1.1.1-cp38-cp38-manylinux_2_17_x86_64.manylinux2014_x86_64.whl", hash = "sha256:d44a5eff71d9f177112fdbc56a39ee335783d759cd0afec088e8395505b09f84"},
+    {file = "prophet-1.1.1-cp38-cp38-win_amd64.whl", hash = "sha256:4ea6901d8ffaab1db03877e5696d2ba2a0c531188c29973ef38fa26cdffc376d"},
+    {file = "prophet-1.1.1-cp39-cp39-macosx_10_9_x86_64.whl", hash = "sha256:b513a73b80d20df181a5e2325870ce0655bb32d6e1b9c73380a085e04c2ff296"},
+    {file = "prophet-1.1.1-cp39-cp39-manylinux_2_17_aarch64.manylinux2014_aarch64.whl", hash = "sha256:83789102a9cb356dcc375e6aa0877bcbebd0c8c70f78ab0bd48aa3eda2c2f69a"},
+    {file = "prophet-1.1.1-cp39-cp39-manylinux_2_17_x86_64.manylinux2014_x86_64.whl", hash = "sha256:2590eaf638b11747c98c2573679abe7012b0aa12c2fc5bc65f3906a702429f16"},
+    {file = "prophet-1.1.1-cp39-cp39-win_amd64.whl", hash = "sha256:7ec0f509bb4510d97a430c411b050f08deb23dd8a3b02ec4f596505a5ee5b3f8"},
+    {file = "prophet-1.1.1.tar.gz", hash = "sha256:fbef61a868c6289e12bcee38fa4b68977ba1270466084605135dbcc3d3c5ab7a"},
 ]
 protobuf = [
     {file = "protobuf-3.20.1-cp310-cp310-macosx_10_9_universal2.whl", hash = "sha256:3cc797c9d15d7689ed507b165cd05913acb992d78b379f6014e013f9ecb20996"},
