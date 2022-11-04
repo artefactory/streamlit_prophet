@@ -87,7 +87,7 @@ download-poetry:
 
 .PHONY: install
 install:
-	poetry env use python3.7
+	poetry env use python3.8
 	poetry lock -n
 	poetry install -n
 ifneq ($(NO_PRE_COMMIT), 1)
