@@ -45,11 +45,11 @@ repos:
         types: [python]
         language: system
         stages: [push]
-      - id: gitleaks
-        name: gitleaks
-        entry: make gitleaks
-        require_serial: true
-        types: [file]
-        language: system
-        pass_filenames: false
-        stages: [push]
+      #- id: gitleaks
+      #  name: gitleaks
+      #  entry: make gitleaks
+      #  require_serial: true
+      #  types: [file]
+      #  language: system
+      #  pass_filenames: false
+      #  stages: [push]
