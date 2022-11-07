@@ -44,7 +44,10 @@ python-versions = ">=3.7.2"
 [package.dependencies]
 lazy-object-proxy = ">=1.4.0"
 typing-extensions = {version = ">=3.10", markers = "python_version < \"3.10\""}
-wrapt = {version = ">=1.11,<2", markers = "python_version < \"3.11\""}
+wrapt = [
+    {version = ">=1.11,<2", markers = "python_version < \"3.11\""},
+    {version = ">=1.14,<2", markers = "python_version >= \"3.11\""},
+]
 
 [[package]]
 name = "atomicwrites"
@@ -592,7 +595,7 @@ version = "3.6.2"
 description = "Python plotting package"
 category = "main"
 optional = false
-python-versions = ">=3.7"
+python-versions = ">=3.8"
 
 [package.dependencies]
 contourpy = ">=1.0.1"
@@ -652,7 +655,7 @@ version = "1.23.4"
 description = "NumPy is the fundamental package for array computing with Python."
 category = "main"
 optional = false
-python-versions = ">=3.7"
+python-versions = ">=3.8"
 
 [[package]]
 name = "packaging"
@@ -671,7 +674,7 @@ version = "1.5.1"
 description = "Powerful data structures for data analysis, time series, and statistics"
 category = "main"
 optional = false
-python-versions = ">=3.7"
+python-versions = ">=3.8"
 
 [package.dependencies]
 numpy = [
@@ -722,15 +725,15 @@ python-versions = ">=3.6"
 
 [[package]]
 name = "platformdirs"
-version = "2.5.2"
-description = "A small Python module for determining appropriate platform-specific dirs, e.g. a \"user data dir\"."
+version = "2.5.3"
+description = "A small Python package for determining appropriate platform-specific dirs, e.g. a \"user data dir\"."
 category = "dev"
 optional = false
 python-versions = ">=3.7"
 
 [package.extras]
-docs = ["furo (>=2021.7.5b38)", "proselint (>=0.10.2)", "sphinx (>=4)", "sphinx-autodoc-typehints (>=1.12)"]
-test = ["appdirs (==1.4.4)", "pytest (>=6)", "pytest-cov (>=2.7)", "pytest-mock (>=3.6)"]
+docs = ["furo (>=2022.9.29)", "proselint (>=0.13)", "sphinx (>=5.3)", "sphinx-autodoc-typehints (>=1.19.4)"]
+test = ["appdirs (==1.4.4)", "pytest (>=7.2)", "pytest-cov (>=4)", "pytest-mock (>=3.10)"]
 
 [[package]]
 name = "plotly"
@@ -1120,7 +1123,7 @@ version = "1.9.3"
 description = "Fundamental algorithms for scientific computing in Python"
 category = "main"
 optional = false
-python-versions = ">=3.7"
+python-versions = ">=3.8"
 
 [package.dependencies]
 numpy = ">=1.18.5,<1.26.0"
@@ -1193,7 +1196,7 @@ version = "4.1.0"
 description = "Manage dynamic plugins for Python applications"
 category = "dev"
 optional = false
-python-versions = ">=3.7"
+python-versions = ">=3.8"
 
 [package.dependencies]
 pbr = ">=2.0.0,<2.1.0 || >2.1.0"
@@ -1444,8 +1447,8 @@ testing = ["flake8 (<5)", "func-timeout", "jaraco.functools", "jaraco.itertools"
 
 [metadata]
 lock-version = "1.1"
-python-versions = ">=3.7 <3.11"
-content-hash = "788c60b64adbc699ce378e9ffd5dd5d300260667a0feb6f131b3093701175067"
+python-versions = "^3.8"
+content-hash = "a9b75dbcbe4532c6b8bb1c9bf52f963bf34a081568ce853b9cd124204c7c906a"
 
 [metadata.files]
 altair = [
@@ -2208,8 +2211,8 @@ pkgutil-resolve-name = [
     {file = "pkgutil_resolve_name-1.3.10.tar.gz", hash = "sha256:357d6c9e6a755653cfd78893817c0853af365dd51ec97f3d358a819373bbd174"},
 ]
 platformdirs = [
-    {file = "platformdirs-2.5.2-py3-none-any.whl", hash = "sha256:027d8e83a2d7de06bbac4e5ef7e023c02b863d7ea5d079477e722bb41ab25788"},
-    {file = "platformdirs-2.5.2.tar.gz", hash = "sha256:58c8abb07dcb441e6ee4b11d8df0ac856038f944ab98b7be6b27b2a3c7feef19"},
+    {file = "platformdirs-2.5.3-py3-none-any.whl", hash = "sha256:0cb405749187a194f444c25c82ef7225232f11564721eabffc6ec70df83b11cb"},
+    {file = "platformdirs-2.5.3.tar.gz", hash = "sha256:6e52c21afff35cb659c6e52d8b4d61b9bd544557180440538f255d9382c8cbe0"},
 ]
 plotly = [
     {file = "plotly-4.14.3-py2.py3-none-any.whl", hash = "sha256:d68fc15fcb49f88db27ab3e0c87110943e65fee02a47f33a8590f541b3042461"},
