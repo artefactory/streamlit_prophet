@@ -32,7 +32,7 @@ classifiers = [
 "streamlit_prophet" = "streamlit_prophet.cli.__main__:app"
 
 [tool.poetry.dependencies]
-python = "^3.8"
+python = ">=3.8,<3.9.7"
 importlib_metadata = {version = "^1.6.0", python = "<3.9"}
 typer = {extras = ["all"], version = "^0.3.2"}
 rich = "^10.1.0"
@@ -41,7 +41,7 @@ numpy = "^1.20.2"
 prophet = "1.1.1"
 holidays = "^0.14.2"
 plotly = "^4.11.0"
-streamlit = "1.2.0"
+streamlit = "1.14.0"
 scipy = "^1.6.3"
 vacances-scolaires-france = "^0.8.0"
 protobuf = "3.20.1"
