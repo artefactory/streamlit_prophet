@@ -36,7 +36,10 @@ python-versions = ">=3.7.2"
 [package.dependencies]
 lazy-object-proxy = ">=1.4.0"
 typing-extensions = {version = ">=3.10", markers = "python_version < \"3.10\""}
-wrapt = {version = ">=1.11,<2", markers = "python_version < \"3.11\""}
+wrapt = [
+    {version = ">=1.11,<2", markers = "python_version < \"3.11\""},
+    {version = ">=1.14,<2", markers = "python_version >= \"3.11\""},
+]
 
 [[package]]
 name = "atomicwrites"
@@ -647,7 +650,10 @@ optional = false
 python-versions = ">=3.8"
 
 [package.dependencies]
-numpy = {version = ">=1.20.3", markers = "python_version < \"3.10\""}
+numpy = [
+    {version = ">=1.20.3", markers = "python_version < \"3.10\""},
+    {version = ">=1.21.0", markers = "python_version >= \"3.10\""},
+]
 python-dateutil = ">=2.8.1"
 pytz = ">=2020.1"
 
@@ -1411,8 +1417,8 @@ testing = ["flake8 (<5)", "func-timeout", "jaraco.functools", "jaraco.itertools"
 
 [metadata]
 lock-version = "1.1"
-python-versions = ">=3.8,<3.9.7"
-content-hash = "88a2f839e5bf098b4e1a1f8c63206e68dec258fab392b06c99c4e7d4f27fc932"
+python-versions = ">=3.8,<3.9.7 || >3.9.7,<4"
+content-hash = "f392caaaf01cfac69bc41998c8c37ae96f147cfb3c89b03d849f5b314858ea12"
 
 [metadata.files]
 altair = [
