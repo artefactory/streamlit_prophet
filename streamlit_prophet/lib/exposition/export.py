@@ -437,7 +437,7 @@ def display_save_experiment_button(
 
 
 def display_links(repo_link: str, article_link: str) -> None:
-    """Displays an repository and app links.
+    """Displays a repository and app links.
 
     Parameters
     ----------
@@ -453,9 +453,5 @@ def display_links(repo_link: str, article_link: str) -> None:
     )
     col2.markdown(
         f"<a style='display: block; text-align: center;' href={article_link}>App introduction</a>",
-        unsafe_allow_html=True,
-    )
-    st.sidebar.markdown(
-        f'<div style="text-align: center"> (Open in a new tab) </div>',
         unsafe_allow_html=True,
     )
