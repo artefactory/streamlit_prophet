@@ -57,7 +57,9 @@ dates: Dict[Any, Any] = dict()
 report: List[Dict[str, Any]] = []
 
 # Info
-with st.expander("What is this app?", expanded=False):
+with st.expander(
+    "Streamlit app to build a time series forecasting model in a few clicks", expanded=False
+):
     st.write(readme["app"]["app_intro"])
     st.write("")
 st.write("")
